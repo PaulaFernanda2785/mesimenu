@@ -44,6 +44,31 @@ final class OrderRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    public function findByIdForCompany(int $companyId, int $orderId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                id,
+                company_id,
+                command_id,
+                order_number,
+                status,
+                payment_status,
+                total_amount
+            FROM orders
+            WHERE company_id = :company_id
+              AND id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $orderId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function findLastOrderNumberByPrefix(int $companyId, string $prefix): ?string
     {
         $stmt = $this->db()->prepare("
@@ -144,29 +169,24 @@ final class OrderRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
-    public function findByIdForCompany(int $companyId, int $orderId): ?array
+    public function updateStatus(int $companyId, int $orderId, string $status): void
     {
         $stmt = $this->db()->prepare("
-            SELECT
-                id,
-                company_id,
-                command_id,
-                order_number,
-                status,
-                payment_status,
-                total_amount
-            FROM orders
+            UPDATE orders
+            SET status = :status,
+                updated_at = NOW(),
+                canceled_at = CASE
+                    WHEN :status = 'canceled' THEN NOW()
+                    ELSE canceled_at
+                END
             WHERE company_id = :company_id
               AND id = :id
-            LIMIT 1
         ");
         $stmt->execute([
+            'status' => $status,
             'company_id' => $companyId,
             'id' => $orderId,
         ]);
-
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ?: null;
     }
 
     public function updatePaymentStatus(int $companyId, int $orderId, string $paymentStatus): void
@@ -183,5 +203,43 @@ final class OrderRepository extends BaseRepository
             'company_id' => $companyId,
             'id' => $orderId,
         ]);
+    }
+
+    public function countByCommand(int $companyId, int $commandId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*) AS total
+            FROM orders
+            WHERE company_id = :company_id
+              AND command_id = :command_id
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'command_id' => $commandId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int) ($row['total'] ?? 0);
+    }
+
+    public function countUnsettledByCommand(int $companyId, int $commandId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*) AS total
+            FROM orders
+            WHERE company_id = :company_id
+              AND command_id = :command_id
+              AND NOT (
+                  (status = 'finished' AND payment_status = 'paid')
+                  OR status = 'canceled'
+              )
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'command_id' => $commandId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int) ($row['total'] ?? 0);
     }
 }

@@ -26,6 +26,12 @@
         .kpi span{color:#6b7280;font-size:12px}
         .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#e5e7eb;font-size:12px}
         .muted{color:#6b7280}
+        .btn{display:inline-block;padding:10px 14px;background:#1d4ed8;color:#fff;text-decoration:none;border-radius:8px;border:0;cursor:pointer}
+        .btn.secondary{background:#475569}
+        input, select, textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box}
+        label{display:block;font-weight:bold;margin-bottom:6px}
+        .field{margin-bottom:14px}
+        .grid.two{grid-template-columns:1fr 1fr}
     </style>
 </head>
 <body>
@@ -37,6 +43,7 @@
         <a href="<?= htmlspecialchars(base_url('/saas/companies')) ?>">Empresas</a>
         <a href="<?= htmlspecialchars(base_url('/saas/plans')) ?>">Planos</a>
         <a href="<?= htmlspecialchars(base_url('/saas/subscriptions')) ?>">Assinaturas</a>
+        <a href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Cobrancas</a>
         <a href="<?= htmlspecialchars(base_url('/logout')) ?>">Sair</a>
     </aside>
     <main>

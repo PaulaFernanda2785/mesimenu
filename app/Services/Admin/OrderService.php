@@ -8,6 +8,7 @@ use App\Exceptions\ValidationException;
 use App\Repositories\CommandRepository;
 use App\Repositories\OrderItemRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\OrderStatusHistoryRepository;
 use App\Repositories\ProductRepository;
 use PDOException;
 use RuntimeException;
@@ -18,13 +19,32 @@ final class OrderService
     public function __construct(
         private readonly OrderRepository $orders = new OrderRepository(),
         private readonly OrderItemRepository $orderItems = new OrderItemRepository(),
+        private readonly OrderStatusHistoryRepository $statusHistory = new OrderStatusHistoryRepository(),
         private readonly CommandRepository $commands = new CommandRepository(),
-        private readonly ProductRepository $products = new ProductRepository()
+        private readonly ProductRepository $products = new ProductRepository(),
+        private readonly CommandLifecycleService $commandLifecycle = new CommandLifecycleService()
     ) {}
 
     public function list(int $companyId): array
     {
-        return $this->orders->allByCompany($companyId);
+        $orders = $this->orders->allByCompany($companyId);
+        if ($orders === []) {
+            return [];
+        }
+
+        $orderIds = array_map(static fn (array $order): int => (int) $order['id'], $orders);
+        $latestHistoryByOrderId = $this->statusHistory->latestByOrderIds($companyId, $orderIds);
+
+        foreach ($orders as &$order) {
+            $orderId = (int) ($order['id'] ?? 0);
+            $history = $latestHistoryByOrderId[$orderId] ?? null;
+            $order['latest_status_changed_at'] = $history['changed_at'] ?? null;
+            $order['latest_status_changed_by'] = $history['changed_by_user_name'] ?? null;
+            $order['latest_status_note'] = $history['notes'] ?? null;
+        }
+        unset($order);
+
+        return $orders;
     }
 
     public function createFromCommand(int $companyId, int $userId, array $input): int
@@ -80,9 +100,80 @@ final class OrderService
             ]);
 
             $this->orderItems->createBatch($companyId, $orderId, $items);
+            $this->statusHistory->create([
+                'company_id' => $companyId,
+                'order_id' => $orderId,
+                'old_status' => null,
+                'new_status' => 'pending',
+                'changed_by_user_id' => $userId > 0 ? $userId : null,
+                'notes' => 'Pedido criado.',
+            ]);
 
             $db->commit();
             return $orderId;
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    public function availableStatuses(): array
+    {
+        return ['pending', 'received', 'preparing', 'ready', 'delivered', 'finished', 'canceled'];
+    }
+
+    public function updateStatus(int $companyId, int $userId, array $input): void
+    {
+        $orderId = (int) ($input['order_id'] ?? 0);
+        $newStatus = trim((string) ($input['new_status'] ?? ''));
+        $notes = $this->normalizeNullableText($input['status_notes'] ?? null);
+
+        if ($orderId <= 0) {
+            throw new ValidationException('Pedido invalido para alteracao de status.');
+        }
+
+        if ($userId <= 0) {
+            throw new ValidationException('Usuario autenticado invalido para alteracao de status.');
+        }
+
+        if (!in_array($newStatus, $this->availableStatuses(), true)) {
+            throw new ValidationException('Status informado e invalido.');
+        }
+
+        $order = $this->orders->findByIdForCompany($companyId, $orderId);
+        if ($order === null) {
+            throw new ValidationException('Pedido nao pertence a empresa autenticada.');
+        }
+
+        $oldStatus = (string) ($order['status'] ?? '');
+        if ($oldStatus === $newStatus) {
+            throw new ValidationException('O pedido ja esta com esse status.');
+        }
+
+        if (!$this->isAllowedTransition($oldStatus, $newStatus)) {
+            throw new ValidationException('Transicao de status nao permitida para este pedido.');
+        }
+
+        $db = Database::connection();
+        $db->beginTransaction();
+
+        try {
+            $this->orders->updateStatus($companyId, $orderId, $newStatus);
+            $this->statusHistory->create([
+                'company_id' => $companyId,
+                'order_id' => $orderId,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'changed_by_user_id' => $userId,
+                'notes' => $notes,
+            ]);
+
+            $commandId = $order['command_id'] !== null ? (int) $order['command_id'] : null;
+            $this->commandLifecycle->tryCloseWhenOrdersSettled($companyId, $commandId);
+
+            $db->commit();
         } catch (Throwable $e) {
             if ($db->inTransaction()) {
                 $db->rollBack();
@@ -225,5 +316,22 @@ final class OrderService
     {
         $text = trim((string) ($value ?? ''));
         return $text !== '' ? $text : null;
+    }
+
+    private function isAllowedTransition(string $oldStatus, string $newStatus): bool
+    {
+        $allowedTransitions = [
+            'pending' => ['received', 'preparing', 'ready', 'delivered', 'finished', 'canceled'],
+            'received' => ['preparing', 'ready', 'delivered', 'finished', 'canceled'],
+            'preparing' => ['ready', 'delivered', 'finished', 'canceled'],
+            'ready' => ['delivered', 'finished', 'canceled'],
+            'delivered' => ['finished', 'canceled'],
+            'paid' => ['finished', 'canceled'],
+            'finished' => [],
+            'canceled' => [],
+        ];
+
+        $allowed = $allowedTransitions[$oldStatus] ?? [];
+        return in_array($newStatus, $allowed, true);
     }
 }

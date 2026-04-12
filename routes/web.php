@@ -13,6 +13,7 @@ use App\Controllers\Saas\DashboardController as SaasDashboardController;
 use App\Controllers\Saas\CompanyController as SaasCompanyController;
 use App\Controllers\Saas\PlanController as SaasPlanController;
 use App\Controllers\Saas\SubscriptionController as SaasSubscriptionController;
+use App\Controllers\Saas\SubscriptionPaymentController as SaasSubscriptionPaymentController;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\PermissionMiddleware;
 use App\Middlewares\RoleContextMiddleware;
@@ -52,6 +53,7 @@ $router->post('/admin/commands/store', [CommandController::class, 'store'], $com
 $router->get('/admin/orders', [OrderController::class, 'index'], $companyAccess('orders.view'));
 $router->get('/admin/orders/create', [OrderController::class, 'create'], $companyAccess('orders.create'));
 $router->post('/admin/orders/store', [OrderController::class, 'store'], $companyAccess('orders.create'));
+$router->post('/admin/orders/status', [OrderController::class, 'updateStatus'], $companyAccess('orders.status'));
 
 $router->get('/admin/payments', [PaymentController::class, 'index'], $companyAccess('payments.view'));
 $router->get('/admin/payments/create', [PaymentController::class, 'create'], $companyAccess('payments.create'));
@@ -65,3 +67,9 @@ $router->get('/saas/dashboard', [SaasDashboardController::class, 'index'], $saas
 $router->get('/saas/companies', [SaasCompanyController::class, 'index'], $saasAccess('companies.view'));
 $router->get('/saas/plans', [SaasPlanController::class, 'index'], $saasAccess('plans.view'));
 $router->get('/saas/subscriptions', [SaasSubscriptionController::class, 'index'], $saasAccess('subscriptions.view'));
+$router->get('/saas/subscription-payments', [SaasSubscriptionPaymentController::class, 'index'], $saasAccess('subscriptions.view'));
+$router->get('/saas/subscription-payments/create', [SaasSubscriptionPaymentController::class, 'create'], $saasAccess('subscriptions.manage'));
+$router->post('/saas/subscription-payments/store', [SaasSubscriptionPaymentController::class, 'store'], $saasAccess('subscriptions.manage'));
+$router->post('/saas/subscription-payments/mark-paid', [SaasSubscriptionPaymentController::class, 'markPaid'], $saasAccess('subscriptions.manage'));
+$router->post('/saas/subscription-payments/mark-overdue', [SaasSubscriptionPaymentController::class, 'markOverdue'], $saasAccess('subscriptions.manage'));
+$router->post('/saas/subscription-payments/cancel', [SaasSubscriptionPaymentController::class, 'cancel'], $saasAccess('subscriptions.manage'));

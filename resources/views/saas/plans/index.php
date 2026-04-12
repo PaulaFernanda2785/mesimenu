@@ -39,7 +39,7 @@
                         Produtos: <?= $plan['max_products'] !== null ? (int)$plan['max_products'] : 'Ilimitado' ?><br>
                         Mesas: <?= $plan['max_tables'] !== null ? (int)$plan['max_tables'] : 'Ilimitado' ?>
                     </td>
-                    <td><span class="badge"><?= htmlspecialchars((string)$plan['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('plan_status', $plan['status'] ?? null)) ?></span></td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>

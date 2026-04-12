@@ -26,16 +26,12 @@ final class CommandService
         $notes = trim((string) ($input['notes'] ?? ''));
 
         if ($tableId <= 0) {
-            throw new ValidationException('Selecione uma mesa válida.');
+            throw new ValidationException('Selecione uma mesa valida.');
         }
 
         $table = $this->tables->findById($companyId, $tableId);
         if ($table === null) {
-            throw new ValidationException('Mesa não encontrada para esta empresa.');
-        }
-
-        if ($this->commands->findOpenByTable($companyId, $tableId) !== null) {
-            throw new ValidationException('Já existe uma comanda aberta para esta mesa.');
+            throw new ValidationException('Mesa nao encontrada para esta empresa.');
         }
 
         if ($customerName === '') {
@@ -51,7 +47,7 @@ final class CommandService
             'notes' => $notes !== '' ? $notes : null,
         ]);
 
-        $this->tables->updateStatus($tableId, 'ocupada');
+        $this->tables->updateStatusForCompany($companyId, $tableId, 'ocupada');
 
         return $commandId;
     }

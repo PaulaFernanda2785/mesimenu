@@ -19,7 +19,8 @@ final class PaymentService
         private readonly PaymentMethodRepository $paymentMethods = new PaymentMethodRepository(),
         private readonly OrderRepository $orders = new OrderRepository(),
         private readonly CashRegisterRepository $cashRegisters = new CashRegisterRepository(),
-        private readonly CashMovementRepository $cashMovements = new CashMovementRepository()
+        private readonly CashMovementRepository $cashMovements = new CashMovementRepository(),
+        private readonly CommandLifecycleService $commandLifecycle = new CommandLifecycleService()
     ) {}
 
     public function list(int $companyId): array
@@ -142,6 +143,9 @@ final class PaymentService
             $nextPaymentStatus = $this->resolveOrderPaymentStatus($paidAfter, $totalAmount);
             $this->orders->updatePaymentStatus($companyId, $orderId, $nextPaymentStatus);
 
+            $commandId = $order['command_id'] !== null ? (int) $order['command_id'] : null;
+            $this->commandLifecycle->tryCloseWhenOrdersSettled($companyId, $commandId);
+
             $db->commit();
             return $paymentId;
         } catch (Throwable $e) {
@@ -190,4 +194,3 @@ final class PaymentService
         return $text !== '' ? $text : null;
     }
 }
-

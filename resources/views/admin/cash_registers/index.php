@@ -76,7 +76,7 @@
             <?php foreach ($cashRegisters as $cashRegister): ?>
                 <tr>
                     <td><?= (int) $cashRegister['id'] ?></td>
-                    <td><span class="badge"><?= htmlspecialchars((string) $cashRegister['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('cash_register_status', $cashRegister['status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars((string) $cashRegister['opened_at']) ?></td>
                     <td><?= htmlspecialchars((string) ($cashRegister['closed_at'] ?? '-')) ?></td>
                     <td>R$ <?= number_format((float) $cashRegister['opening_amount'], 2, ',', '.') ?></td>
@@ -96,4 +96,3 @@
         </tbody>
     </table>
 </div>
-

@@ -12,7 +12,8 @@ final class DashboardService
     public function __construct(
         private readonly CompanyRepository $companies = new CompanyRepository(),
         private readonly PlanRepository $plans = new PlanRepository(),
-        private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository()
+        private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository(),
+        private readonly SubscriptionPaymentService $subscriptionPayments = new SubscriptionPaymentService()
     ) {}
 
     public function summary(): array
@@ -21,6 +22,7 @@ final class DashboardService
             'companies' => $this->companies->summary(),
             'plans' => $this->plans->summary(),
             'subscriptions' => $this->subscriptions->summary(),
+            'subscription_payments' => $this->subscriptionPayments->summary(),
         ];
     }
 }

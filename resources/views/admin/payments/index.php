@@ -35,7 +35,7 @@
                         <?php endif; ?>
                     </td>
                     <td><?= htmlspecialchars((string) ($payment['payment_method_name'] ?? '-')) ?></td>
-                    <td><span class="badge"><?= htmlspecialchars((string) $payment['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('payment_status', $payment['status'] ?? null)) ?></span></td>
                     <td>R$ <?= number_format((float) $payment['amount'], 2, ',', '.') ?></td>
                     <td><?= htmlspecialchars((string) ($payment['transaction_reference'] ?? '-')) ?></td>
                     <td><?= htmlspecialchars((string) ($payment['received_by_user_name'] ?? '-')) ?></td>
@@ -46,4 +46,3 @@
         </tbody>
     </table>
 </div>
-

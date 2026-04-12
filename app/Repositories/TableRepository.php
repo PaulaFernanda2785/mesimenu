@@ -95,4 +95,20 @@ final class TableRepository extends BaseRepository
             'id' => $tableId,
         ]);
     }
+
+    public function updateStatusForCompany(int $companyId, int $tableId, string $status): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE tables
+            SET status = :status,
+                updated_at = NOW()
+            WHERE company_id = :company_id
+              AND id = :id
+        ");
+        $stmt->execute([
+            'status' => $status,
+            'company_id' => $companyId,
+            'id' => $tableId,
+        ]);
+    }
 }

@@ -98,4 +98,65 @@ final class CommandRepository extends BaseRepository
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
+
+    public function findByIdForCompany(int $companyId, int $commandId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                id,
+                company_id,
+                table_id,
+                customer_id,
+                customer_name,
+                status,
+                opened_at,
+                closed_at
+            FROM commands
+            WHERE company_id = :company_id
+              AND id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $commandId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function close(int $companyId, int $commandId): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE commands
+            SET status = 'fechada',
+                closed_at = NOW(),
+                updated_at = NOW()
+            WHERE company_id = :company_id
+              AND id = :id
+              AND status = 'aberta'
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $commandId,
+        ]);
+    }
+
+    public function countOpenByTable(int $companyId, int $tableId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*) AS total
+            FROM commands
+            WHERE company_id = :company_id
+              AND table_id = :table_id
+              AND status = 'aberta'
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'table_id' => $tableId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int) ($row['total'] ?? 0);
+    }
 }

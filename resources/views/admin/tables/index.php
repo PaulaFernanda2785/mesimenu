@@ -28,7 +28,7 @@
                     <td><?= (int)$table['number'] ?></td>
                     <td><?= htmlspecialchars($table['name']) ?></td>
                     <td><?= $table['capacity'] !== null ? (int)$table['capacity'] : '-' ?></td>
-                    <td><span class="badge"><?= htmlspecialchars($table['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('table_status', $table['status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars($table['qr_code_token']) ?></td>
                 </tr>
             <?php endforeach; ?>

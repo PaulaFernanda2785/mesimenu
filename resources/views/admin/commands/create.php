@@ -15,7 +15,7 @@
                     <option value="">Selecione</option>
                     <?php foreach ($tables as $table): ?>
                         <option value="<?= (int)$table['id'] ?>">
-                            Mesa <?= (int)$table['number'] ?> - <?= htmlspecialchars($table['name']) ?> (<?= htmlspecialchars($table['status']) ?>)
+                            Mesa <?= (int)$table['number'] ?> - <?= htmlspecialchars($table['name']) ?> (<?= htmlspecialchars(status_label('table_status', $table['status'] ?? null)) ?>)
                         </option>
                     <?php endforeach; ?>
                 </select>

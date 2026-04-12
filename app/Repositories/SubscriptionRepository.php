@@ -53,4 +53,52 @@ final class SubscriptionRepository extends BaseRepository
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: [];
     }
+
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                s.id,
+                s.company_id,
+                s.plan_id,
+                s.status,
+                s.billing_cycle,
+                s.amount,
+                c.name AS company_name,
+                p.name AS plan_name
+            FROM subscriptions s
+            INNER JOIN companies c ON c.id = s.company_id
+            INNER JOIN plans p ON p.id = s.plan_id
+            WHERE s.id = :id
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $id]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function activeForBilling(): array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                s.id,
+                s.company_id,
+                s.plan_id,
+                s.status,
+                s.billing_cycle,
+                s.amount,
+                c.name AS company_name,
+                c.slug AS company_slug,
+                p.name AS plan_name
+            FROM subscriptions s
+            INNER JOIN companies c ON c.id = s.company_id
+            INNER JOIN plans p ON p.id = s.plan_id
+            WHERE s.status IN ('ativa', 'trial')
+            ORDER BY c.name ASC, s.id DESC
+        ");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
 }

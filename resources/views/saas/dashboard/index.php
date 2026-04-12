@@ -2,6 +2,7 @@
 $companies = $summary['companies'] ?? [];
 $plans = $summary['plans'] ?? [];
 $subscriptions = $summary['subscriptions'] ?? [];
+$subscriptionPayments = $summary['subscription_payments'] ?? [];
 ?>
 
 <div class="topbar">
@@ -28,6 +29,14 @@ $subscriptions = $summary['subscriptions'] ?? [];
         <strong>R$ <?= number_format((float)($subscriptions['active_monthly_mrr'] ?? 0), 2, ',', '.') ?></strong>
         <span>MRR ativo (mensal)</span>
     </div>
+    <div class="kpi">
+        <strong><?= (int)($subscriptionPayments['pending_charges'] ?? 0) ?></strong>
+        <span>Cobrancas pendentes</span>
+    </div>
+    <div class="kpi">
+        <strong>R$ <?= number_format((float)($subscriptionPayments['total_paid_amount'] ?? 0), 2, ',', '.') ?></strong>
+        <span>Cobrancas pagas</span>
+    </div>
 </div>
 
 <div class="card" style="margin-top:16px">
@@ -47,6 +56,8 @@ $subscriptions = $summary['subscriptions'] ?? [];
             <tr><td>Assinaturas totais</td><td><?= (int)($subscriptions['total_subscriptions'] ?? 0) ?></td></tr>
             <tr><td>Assinaturas trial</td><td><?= (int)($subscriptions['trial_subscriptions'] ?? 0) ?></td></tr>
             <tr><td>Assinaturas vencidas</td><td><?= (int)($subscriptions['expired_subscriptions'] ?? 0) ?></td></tr>
+            <tr><td>Total de cobrancas</td><td><?= (int)($subscriptionPayments['total_charges'] ?? 0) ?></td></tr>
+            <tr><td>Cobrancas vencidas</td><td><?= (int)($subscriptionPayments['overdue_charges'] ?? 0) ?></td></tr>
         </tbody>
     </table>
 </div>

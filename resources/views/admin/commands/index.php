@@ -28,7 +28,7 @@
                     <td><?= $command['table_number'] !== null ? 'Mesa ' . (int)$command['table_number'] : '-' ?></td>
                     <td><?= htmlspecialchars($command['customer_name'] ?? '-') ?></td>
                     <td><?= htmlspecialchars($command['opened_by_user_name'] ?? '-') ?></td>
-                    <td><span class="badge"><?= htmlspecialchars($command['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('command_status', $command['status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars((string)$command['opened_at']) ?></td>
                 </tr>
             <?php endforeach; ?>

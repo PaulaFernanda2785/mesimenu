@@ -34,8 +34,8 @@
                         <span class="muted"><?= htmlspecialchars((string)($company['phone'] ?? '-')) ?></span>
                     </td>
                     <td><?= htmlspecialchars((string)($company['plan_name'] ?? 'Sem plano')) ?></td>
-                    <td><span class="badge"><?= htmlspecialchars((string)$company['status']) ?></span></td>
-                    <td><span class="badge"><?= htmlspecialchars((string)$company['subscription_status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('company_status', $company['status'] ?? null)) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('company_subscription_status', $company['subscription_status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars((string)($company['subscription_ends_at'] ?? $company['trial_ends_at'] ?? '-')) ?></td>
                 </tr>
             <?php endforeach; ?>

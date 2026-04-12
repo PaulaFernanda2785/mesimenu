@@ -31,9 +31,9 @@
                         <span class="muted"><?= htmlspecialchars((string)$subscription['company_slug']) ?></span>
                     </td>
                     <td><?= htmlspecialchars((string)$subscription['plan_name']) ?></td>
-                    <td><?= htmlspecialchars((string)$subscription['billing_cycle']) ?></td>
+                    <td><?= htmlspecialchars(status_label('billing_cycle', $subscription['billing_cycle'] ?? null)) ?></td>
                     <td>R$ <?= number_format((float)$subscription['amount'], 2, ',', '.') ?></td>
-                    <td><span class="badge"><?= htmlspecialchars((string)$subscription['status']) ?></span></td>
+                    <td><span class="badge"><?= htmlspecialchars(status_label('subscription_status', $subscription['status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars((string)$subscription['starts_at']) ?></td>
                     <td><?= htmlspecialchars((string)($subscription['ends_at'] ?? '-')) ?></td>
                 </tr>
