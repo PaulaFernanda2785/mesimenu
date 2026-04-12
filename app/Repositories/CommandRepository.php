@@ -1,0 +1,76 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Repositories;
+
+use PDO;
+
+final class CommandRepository extends BaseRepository
+{
+    public function openCommandsByCompany(int $companyId): array
+    {
+        $sql = "
+            SELECT
+                c.id,
+                c.company_id,
+                c.table_id,
+                c.customer_id,
+                c.opened_by_user_id,
+                c.customer_name,
+                c.status,
+                c.opened_at,
+                c.closed_at,
+                c.notes,
+                t.number AS table_number,
+                u.name AS opened_by_user_name
+            FROM commands c
+            LEFT JOIN tables t ON t.id = c.table_id
+            LEFT JOIN users u ON u.id = c.opened_by_user_id
+            WHERE c.company_id = :company_id
+              AND c.status = 'aberta'
+            ORDER BY c.opened_at DESC
+        ";
+
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute(['company_id' => $companyId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function create(array $data): int
+    {
+        $sql = "
+            INSERT INTO commands (
+                company_id, table_id, customer_id, opened_by_user_id,
+                customer_name, status, opened_at, notes, created_at
+            ) VALUES (
+                :company_id, :table_id, :customer_id, :opened_by_user_id,
+                :customer_name, 'aberta', NOW(), :notes, NOW()
+            )
+        ";
+
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute($data);
+
+        return (int) $this->db()->lastInsertId();
+    }
+
+    public function findOpenByTable(int $companyId, int $tableId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT id, company_id, table_id, customer_name, status
+            FROM commands
+            WHERE company_id = :company_id
+              AND table_id = :table_id
+              AND status = 'aberta'
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'table_id' => $tableId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+}
