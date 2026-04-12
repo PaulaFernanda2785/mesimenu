@@ -60,7 +60,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Status</th>
                 <th>Abertura</th>
                 <th>Fechamento</th>
@@ -71,11 +70,10 @@
         </thead>
         <tbody>
         <?php if (empty($cashRegisters)): ?>
-            <tr><td colspan="7">Nenhum caixa registrado.</td></tr>
+            <tr><td colspan="6">Nenhum caixa registrado.</td></tr>
         <?php else: ?>
             <?php foreach ($cashRegisters as $cashRegister): ?>
                 <tr>
-                    <td><?= (int) $cashRegister['id'] ?></td>
                     <td><span class="badge"><?= htmlspecialchars(status_label('cash_register_status', $cashRegister['status'] ?? null)) ?></span></td>
                     <td><?= htmlspecialchars((string) $cashRegister['opened_at']) ?></td>
                     <td><?= htmlspecialchars((string) ($cashRegister['closed_at'] ?? '-')) ?></td>

@@ -29,7 +29,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Empresa</th>
                 <th>Assinatura</th>
                 <th>Referencia</th>
@@ -41,11 +40,10 @@
         </thead>
         <tbody>
         <?php if (empty($subscriptionPayments)): ?>
-            <tr><td colspan="8">Nenhuma cobranca encontrada.</td></tr>
+            <tr><td colspan="7">Nenhuma cobranca encontrada.</td></tr>
         <?php else: ?>
             <?php foreach ($subscriptionPayments as $charge): ?>
                 <tr>
-                    <td><?= (int) $charge['id'] ?></td>
                     <td>
                         <strong><?= htmlspecialchars((string) $charge['company_name']) ?></strong><br>
                         <span class="muted"><?= htmlspecialchars((string) $charge['company_slug']) ?></span>

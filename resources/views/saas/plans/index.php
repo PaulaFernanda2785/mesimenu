@@ -9,7 +9,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Plano</th>
                 <th>Preço mensal</th>
                 <th>Preço anual</th>
@@ -19,11 +18,10 @@
         </thead>
         <tbody>
         <?php if (empty($plans)): ?>
-            <tr><td colspan="6">Nenhum plano encontrado.</td></tr>
+            <tr><td colspan="5">Nenhum plano encontrado.</td></tr>
         <?php else: ?>
             <?php foreach ($plans as $plan): ?>
                 <tr>
-                    <td><?= (int)$plan['id'] ?></td>
                     <td>
                         <strong><?= htmlspecialchars((string)$plan['name']) ?></strong><br>
                         <span class="muted"><?= htmlspecialchars((string)$plan['slug']) ?></span>

@@ -9,7 +9,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Empresa</th>
                 <th>Plano</th>
                 <th>Ciclo</th>
@@ -21,11 +20,10 @@
         </thead>
         <tbody>
         <?php if (empty($subscriptions)): ?>
-            <tr><td colspan="8">Nenhuma assinatura encontrada.</td></tr>
+            <tr><td colspan="7">Nenhuma assinatura encontrada.</td></tr>
         <?php else: ?>
             <?php foreach ($subscriptions as $subscription): ?>
                 <tr>
-                    <td><?= (int)$subscription['id'] ?></td>
                     <td>
                         <strong><?= htmlspecialchars((string)$subscription['company_name']) ?></strong><br>
                         <span class="muted"><?= htmlspecialchars((string)$subscription['company_slug']) ?></span>

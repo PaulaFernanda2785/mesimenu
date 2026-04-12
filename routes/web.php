@@ -42,6 +42,16 @@ $router->get('/admin/dashboard', [DashboardController::class, 'index'], $company
 $router->get('/admin/products', [ProductController::class, 'index'], $companyAccess('products.view'));
 $router->get('/admin/products/create', [ProductController::class, 'create'], $companyAccess('products.create'));
 $router->post('/admin/products/store', [ProductController::class, 'store'], $companyAccess('products.create'));
+$router->get('/admin/products/edit', [ProductController::class, 'edit'], $companyAccess('products.edit'));
+$router->post('/admin/products/update', [ProductController::class, 'update'], $companyAccess('products.edit'));
+$router->post('/admin/products/delete', [ProductController::class, 'delete'], $companyAccess('products.edit'));
+$router->post('/admin/products/categories/store', [ProductController::class, 'storeCategory'], $companyAccess('products.edit'));
+$router->post('/admin/products/categories/update', [ProductController::class, 'updateCategory'], $companyAccess('products.edit'));
+$router->post('/admin/products/categories/delete', [ProductController::class, 'deleteCategory'], $companyAccess('products.edit'));
+$router->get('/admin/products/additionals', [ProductController::class, 'additionals'], $companyAccess('products.edit'));
+$router->post('/admin/products/additionals/rules', [ProductController::class, 'updateAdditionalRules'], $companyAccess('products.edit'));
+$router->post('/admin/products/additionals/store', [ProductController::class, 'storeAdditionalItem'], $companyAccess('products.edit'));
+$router->post('/admin/products/additionals/remove', [ProductController::class, 'removeAdditionalItem'], $companyAccess('products.edit'));
 
 $router->get('/admin/tables', [TableController::class, 'index'], $companyAccess('tables.view'));
 $router->get('/admin/tables/create', [TableController::class, 'create'], $companyAccess('tables.manage'));

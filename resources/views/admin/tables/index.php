@@ -10,7 +10,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Número</th>
                 <th>Nome</th>
                 <th>Capacidade</th>
@@ -20,11 +19,10 @@
         </thead>
         <tbody>
         <?php if (empty($tables)): ?>
-            <tr><td colspan="6">Nenhuma mesa encontrada.</td></tr>
+            <tr><td colspan="5">Nenhuma mesa encontrada.</td></tr>
         <?php else: ?>
             <?php foreach ($tables as $table): ?>
                 <tr>
-                    <td><?= (int)$table['id'] ?></td>
                     <td><?= (int)$table['number'] ?></td>
                     <td><?= htmlspecialchars($table['name']) ?></td>
                     <td><?= $table['capacity'] !== null ? (int)$table['capacity'] : '-' ?></td>

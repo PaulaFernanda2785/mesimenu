@@ -147,7 +147,7 @@ final class PaymentService
 
             if ($nextPaymentStatus === 'paid') {
                 $currentStatus = (string) ($order['status'] ?? '');
-                if ($currentStatus !== 'finished' && $currentStatus !== 'canceled') {
+                if (in_array($currentStatus, ['ready', 'delivered'], true)) {
                     $this->orders->updateStatus($companyId, $orderId, 'finished');
                     $this->statusHistory->create([
                         'company_id' => $companyId,
@@ -155,7 +155,7 @@ final class PaymentService
                         'old_status' => $currentStatus,
                         'new_status' => 'finished',
                         'changed_by_user_id' => $userId,
-                        'notes' => 'Finalizado automaticamente apos pagamento total.',
+                        'notes' => 'Finalizado automaticamente apos pagamento total em etapa final de producao.',
                     ]);
                 }
             }

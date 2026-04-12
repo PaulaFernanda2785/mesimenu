@@ -38,18 +38,112 @@ final class OrderService
         foreach ($orders as &$order) {
             $orderId = (int) ($order['id'] ?? 0);
             $history = $latestHistoryByOrderId[$orderId] ?? null;
+            $status = (string) ($order['status'] ?? '');
+            $paymentStatus = (string) ($order['payment_status'] ?? '');
             $order['latest_status_changed_at'] = $history['changed_at'] ?? null;
             $order['latest_status_changed_by'] = $history['changed_by_user_name'] ?? null;
             $order['latest_status_note'] = $history['notes'] ?? null;
-            $order['next_statuses'] = $this->nextStatusesFor(
-                (string) ($order['status'] ?? ''),
-                (string) ($order['payment_status'] ?? '')
-            );
-            $order['can_send_kitchen'] = ((string) ($order['status'] ?? '')) === 'pending';
+            $order['next_statuses'] = $this->nextStatusesFor($status, $paymentStatus);
+            $order['can_send_kitchen'] = $status === 'pending';
+            $order['is_paid_waiting_production'] = $this->isPaidWaitingProduction($status, $paymentStatus);
         }
         unset($order);
 
         return $orders;
+    }
+
+    public function operationalPanelByTable(int $companyId): array
+    {
+        $orders = $this->list($companyId);
+        $activeOrders = array_values(array_filter(
+            $orders,
+            static fn (array $order): bool => !in_array((string) ($order['status'] ?? ''), ['finished', 'canceled'], true)
+        ));
+
+        $summary = [
+            'active_orders' => 0,
+            'tables_in_service' => 0,
+            'items_total' => 0,
+            'amount_total' => 0.0,
+            'pending' => 0,
+            'received' => 0,
+            'preparing' => 0,
+            'ready' => 0,
+            'delivered' => 0,
+            'paid_waiting_production' => 0,
+        ];
+
+        if ($activeOrders === []) {
+            return [
+                'summary' => $summary,
+                'tables' => [],
+            ];
+        }
+
+        $groups = [];
+
+        foreach ($activeOrders as $order) {
+            $status = (string) ($order['status'] ?? '');
+            if (array_key_exists($status, $summary)) {
+                $summary[$status]++;
+            }
+
+            if (!empty($order['is_paid_waiting_production'])) {
+                $summary['paid_waiting_production']++;
+            }
+
+            $itemsCount = (int) ($order['items_count'] ?? 0);
+            $totalAmount = (float) ($order['total_amount'] ?? 0);
+
+            $summary['active_orders']++;
+            $summary['items_total'] += $itemsCount;
+            $summary['amount_total'] = round($summary['amount_total'] + $totalAmount, 2);
+
+            $tableNumber = $order['table_number'] !== null ? (int) $order['table_number'] : null;
+            $groupKey = $tableNumber !== null ? 'table_' . $tableNumber : 'no_table';
+
+            if (!isset($groups[$groupKey])) {
+                $groups[$groupKey] = [
+                    'key' => $groupKey,
+                    'label' => $tableNumber !== null ? 'Mesa ' . $tableNumber : 'Pedidos sem mesa',
+                    'table_number' => $tableNumber,
+                    'orders' => [],
+                    'orders_count' => 0,
+                    'items_total' => 0,
+                    'amount_total' => 0.0,
+                ];
+            }
+
+            $groups[$groupKey]['orders'][] = $order;
+            $groups[$groupKey]['orders_count']++;
+            $groups[$groupKey]['items_total'] += $itemsCount;
+            $groups[$groupKey]['amount_total'] = round(((float) $groups[$groupKey]['amount_total']) + $totalAmount, 2);
+        }
+
+        $tables = array_values($groups);
+        usort($tables, static function (array $left, array $right): int {
+            $leftNumber = $left['table_number'];
+            $rightNumber = $right['table_number'];
+
+            if ($leftNumber === null && $rightNumber === null) {
+                return 0;
+            }
+            if ($leftNumber === null) {
+                return 1;
+            }
+            if ($rightNumber === null) {
+                return -1;
+            }
+
+            return (int) $leftNumber <=> (int) $rightNumber;
+        });
+
+        $summary['tables_in_service'] = count($tables);
+
+        return [
+            'summary' => $summary,
+            'tables' => $tables,
+        ];
     }
 
     public function createFromCommand(int $companyId, int $userId, array $input): int
@@ -208,6 +302,18 @@ final class OrderService
                 'notes' => $notes,
             ]);
 
+            if ($paymentStatus === 'paid' && in_array($newStatus, ['ready', 'delivered'], true)) {
+                $this->orders->updateStatus($companyId, $orderId, 'finished');
+                $this->statusHistory->create([
+                    'company_id' => $companyId,
+                    'order_id' => $orderId,
+                    'old_status' => $newStatus,
+                    'new_status' => 'finished',
+                    'changed_by_user_id' => $userId,
+                    'notes' => 'Finalizado automaticamente: pedido pago e em etapa final de producao.',
+                ]);
+            }
+
             $commandId = $order['command_id'] !== null ? (int) $order['command_id'] : null;
             $this->commandLifecycle->tryCloseWhenOrdersSettled($companyId, $commandId);
 
@@ -272,10 +378,24 @@ final class OrderService
         $productIds = $input['product_id'] ?? [];
         $quantities = $input['quantity'] ?? [];
         $notesList = $input['item_notes'] ?? [];
+        $additionalItemIdsList = $input['additional_item_ids'] ?? [];
 
-        if (!is_array($productIds) || !is_array($quantities) || !is_array($notesList)) {
+        if (!is_array($productIds) || !is_array($quantities) || !is_array($notesList) || !is_array($additionalItemIdsList)) {
             throw new ValidationException('Formato de itens invalido.');
         }
+
+        $productIdsForCatalog = [];
+        $rowsCount = count($productIds);
+        for ($index = 0; $index < $rowsCount; $index++) {
+            $productId = (int) ($productIds[$index] ?? 0);
+            if ($productId > 0) {
+                $productIdsForCatalog[] = $productId;
+            }
+        }
+        $productIdsForCatalog = array_values(array_unique($productIdsForCatalog));
+
+        $additionalCatalogRows = $this->products->activeAdditionalCatalogByProductIds($companyId, $productIdsForCatalog);
+        $additionalCatalogByProductId = $this->mapAdditionalCatalogRows($additionalCatalogRows);
 
         $items = [];
         $subtotal = 0.0;
@@ -311,7 +431,56 @@ final class OrderService
             $unitPrice = $product['promotional_price'] !== null
                 ? (float) $product['promotional_price']
                 : (float) $product['price'];
-            $lineSubtotal = round($unitPrice * $quantity, 2);
+            $baseSubtotal = round($unitPrice * $quantity, 2);
+            $additionalsSubtotal = 0.0;
+            $selectedAdditionals = [];
+
+            $selectedAdditionalItemIds = $this->parseAdditionalItemIds($additionalItemIdsList[$index] ?? '');
+            $additionalConfig = $additionalCatalogByProductId[(int) $product['id']] ?? null;
+
+            if ($selectedAdditionalItemIds !== []) {
+                if ($additionalConfig === null || ($additionalConfig['items'] ?? []) === []) {
+                    throw new ValidationException('O produto da linha ' . $rowNumber . ' nao possui adicionais validos para selecao.');
+                }
+            }
+
+            if ($additionalConfig !== null) {
+                $maxSelection = $additionalConfig['max_selection'] ?? null;
+                $minSelection = $additionalConfig['min_selection'] ?? null;
+                $isRequired = (bool) ($additionalConfig['is_required'] ?? false);
+                $selectedCount = count($selectedAdditionalItemIds);
+
+                if ($maxSelection !== null && $selectedCount > $maxSelection) {
+                    throw new ValidationException('A linha ' . $rowNumber . ' excedeu o limite maximo de adicionais permitidos para o produto.');
+                }
+
+                $requiredMin = $minSelection ?? ($isRequired ? 1 : 0);
+                if ($requiredMin > 0 && $selectedCount < $requiredMin) {
+                    throw new ValidationException('A linha ' . $rowNumber . ' exige ao menos ' . $requiredMin . ' adicional(is).');
+                }
+
+                foreach ($selectedAdditionalItemIds as $additionalItemId) {
+                    $additional = $additionalConfig['items'][$additionalItemId] ?? null;
+                    if ($additional === null) {
+                        throw new ValidationException('Adicional invalido selecionado na linha ' . $rowNumber . '.');
+                    }
+
+                    $additionalUnitPrice = (float) ($additional['price'] ?? 0);
+                    $additionalLineSubtotal = round($additionalUnitPrice * $quantity, 2);
+                    $additionalsSubtotal = round($additionalsSubtotal + $additionalLineSubtotal, 2);
+
+                    $selectedAdditionals[] = [
+                        'additional_item_id' => (int) ($additional['id'] ?? $additionalItemId),
+                        'additional_name_snapshot' => (string) ($additional['name'] ?? ''),
+                        'unit_price' => $additionalUnitPrice,
+                        'quantity' => $quantity,
+                        'line_subtotal' => $additionalLineSubtotal,
+                    ];
+                }
+            }
+
+            $lineSubtotal = round($baseSubtotal + $additionalsSubtotal, 2);
+            $itemNotes = ((int) ($product['allows_notes'] ?? 1)) === 1 ? $itemNote : null;
 
             $subtotal = round($subtotal + $lineSubtotal, 2);
             $items[] = [
@@ -319,8 +488,9 @@ final class OrderService
                 'product_name_snapshot' => (string) $product['name'],
                 'unit_price' => $unitPrice,
                 'quantity' => $quantity,
-                'notes' => $itemNote,
+                'notes' => $itemNotes,
                 'line_subtotal' => $lineSubtotal,
+                'additionals' => $selectedAdditionals,
             ];
         }
 
@@ -329,6 +499,62 @@ final class OrderService
         }
 
         return [$items, $subtotal];
+    }
+
+    private function mapAdditionalCatalogRows(array $rows): array
+    {
+        $map = [];
+        foreach ($rows as $row) {
+            $productId = (int) ($row['product_id'] ?? 0);
+            if ($productId <= 0) {
+                continue;
+            }
+
+            if (!isset($map[$productId])) {
+                $map[$productId] = [
+                    'is_required' => ((int) ($row['is_required'] ?? 0)) === 1,
+                    'min_selection' => $row['min_selection'] !== null ? (int) $row['min_selection'] : null,
+                    'max_selection' => $row['max_selection'] !== null ? (int) $row['max_selection'] : null,
+                    'items' => [],
+                ];
+            }
+
+            $additionalItemId = (int) ($row['additional_item_id'] ?? 0);
+            if ($additionalItemId <= 0) {
+                continue;
+            }
+
+            $map[$productId]['items'][$additionalItemId] = [
+                'id' => $additionalItemId,
+                'name' => (string) ($row['additional_name'] ?? ''),
+                'price' => (float) ($row['additional_price'] ?? 0),
+            ];
+        }
+
+        return $map;
+    }
+
+    private function parseAdditionalItemIds(mixed $raw): array
+    {
+        if (is_array($raw)) {
+            $values = $raw;
+        } else {
+            $rawText = trim((string) $raw);
+            if ($rawText === '') {
+                return [];
+            }
+            $values = explode(',', $rawText);
+        }
+
+        $ids = [];
+        foreach ($values as $value) {
+            $id = (int) trim((string) $value);
+            if ($id > 0) {
+                $ids[$id] = true;
+            }
+        }
+
+        return array_keys($ids);
     }
 
     private function parseMoney(mixed $value): float
@@ -370,6 +596,11 @@ final class OrderService
         }
 
         return $next;
+    }
+
+    private function isPaidWaitingProduction(string $status, string $paymentStatus): bool
+    {
+        return $paymentStatus === 'paid' && in_array($status, ['pending', 'received', 'preparing'], true);
     }
 
     private function isAllowedTransition(string $oldStatus, string $newStatus, string $paymentStatus): bool

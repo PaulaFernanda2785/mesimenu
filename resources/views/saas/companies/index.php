@@ -9,7 +9,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Empresa</th>
                 <th>Contato</th>
                 <th>Plano</th>
@@ -20,11 +19,10 @@
         </thead>
         <tbody>
         <?php if (empty($companies)): ?>
-            <tr><td colspan="7">Nenhuma empresa encontrada.</td></tr>
+            <tr><td colspan="6">Nenhuma empresa encontrada.</td></tr>
         <?php else: ?>
             <?php foreach ($companies as $company): ?>
                 <tr>
-                    <td><?= (int)$company['id'] ?></td>
                     <td>
                         <strong><?= htmlspecialchars((string)$company['name']) ?></strong><br>
                         <span class="muted"><?= htmlspecialchars((string)$company['slug']) ?></span>

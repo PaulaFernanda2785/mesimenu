@@ -26,11 +26,13 @@ final class OrderController extends Controller
     {
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
+        $panel = $this->service->operationalPanelByTable($companyId);
 
         return $this->view('admin/orders/index', [
             'title' => 'Pedidos',
             'user' => $user,
-            'orders' => $this->service->list($companyId),
+            'panelSummary' => $panel['summary'] ?? [],
+            'ordersByTable' => $panel['tables'] ?? [],
             'canUpdateStatus' => $this->permissions->roleHasPermission((int) ($user['role_id'] ?? 0), 'orders.status'),
             'canCancelOrder' => $this->permissions->roleHasPermission((int) ($user['role_id'] ?? 0), 'orders.cancel'),
             'canSendKitchen' => $this->permissions->roleHasPermission((int) ($user['role_id'] ?? 0), 'orders.status'),
@@ -46,7 +48,7 @@ final class OrderController extends Controller
             'title' => 'Novo Pedido',
             'user' => $user,
             'commands' => $this->commandService->listOpen($companyId),
-            'products' => $this->productService->list($companyId),
+            'products' => $this->productService->listForOrderForm($companyId),
         ]);
     }
 

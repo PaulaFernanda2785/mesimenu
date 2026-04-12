@@ -5,8 +5,6 @@
     <p><strong>Nome:</strong> <?= htmlspecialchars($user['name'] ?? '-') ?></p>
     <p><strong>E-mail:</strong> <?= htmlspecialchars($user['email'] ?? '-') ?></p>
     <p><strong>Perfil:</strong> <?= htmlspecialchars($user['role_name'] ?? '-') ?></p>
-    <p><strong>Empresa ID:</strong> <?= htmlspecialchars((string)($user['company_id'] ?? 'N/A')) ?></p>
-
     <p>
         <a href="<?= htmlspecialchars(base_url('/admin/products')) ?>">Produtos</a> |
         <a href="<?= htmlspecialchars(base_url('/admin/tables')) ?>">Mesas</a> |

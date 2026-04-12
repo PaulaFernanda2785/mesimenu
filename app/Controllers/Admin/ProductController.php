@@ -8,25 +8,31 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Exceptions\ValidationException;
+use App\Repositories\PermissionRepository;
 use App\Services\Admin\ProductService;
 
 final class ProductController extends Controller
 {
     public function __construct(
-        private readonly ProductService $service = new ProductService()
+        private readonly ProductService $service = new ProductService(),
+        private readonly PermissionRepository $permissions = new PermissionRepository()
     ) {}
 
     public function index(Request $request): Response
     {
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
-
-        $products = $this->service->list($companyId);
+        $panel = $this->service->panel($companyId);
+        $roleId = (int) ($user['role_id'] ?? 0);
 
         return $this->view('admin/products/index', [
             'title' => 'Produtos',
             'user' => $user,
-            'products' => $products,
+            'summary' => $panel['summary'] ?? [],
+            'productTabs' => $panel['tabs'] ?? [],
+            'categories' => $panel['categories'] ?? [],
+            'canManageProducts' => $this->permissions->roleHasPermission($roleId, 'products.edit'),
+            'canCreateProducts' => $this->permissions->roleHasPermission($roleId, 'products.create'),
         ]);
     }
 
@@ -39,6 +45,10 @@ final class ProductController extends Controller
             'title' => 'Novo Produto',
             'user' => $user,
             'categories' => $this->service->categories($companyId),
+            'product' => null,
+            'formAction' => base_url('/admin/products/store'),
+            'submitLabel' => 'Salvar produto',
+            'mode' => 'create',
         ]);
     }
 
@@ -47,11 +57,170 @@ final class ProductController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
 
+        $payload = $request->all();
+        $payload['image_file'] = $request->files['image_file'] ?? null;
+
         try {
-            $this->service->create($companyId, $request->all());
+            $this->service->create($companyId, $payload);
             return $this->backWithSuccess('Produto cadastrado com sucesso.', '/admin/products');
         } catch (ValidationException $e) {
             return $this->backWithError($e->getMessage(), '/admin/products/create');
+        }
+    }
+
+    public function edit(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        try {
+            return $this->view('admin/products/create', [
+                'title' => 'Editar Produto',
+                'user' => $user,
+                'categories' => $this->service->categories($companyId),
+                'product' => $this->service->findForEdit($companyId, $productId),
+                'formAction' => base_url('/admin/products/update'),
+                'submitLabel' => 'Salvar alteracoes',
+                'mode' => 'edit',
+            ]);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function update(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        $payload = $request->all();
+        $payload['image_file'] = $request->files['image_file'] ?? null;
+
+        try {
+            $this->service->update($companyId, $productId, $payload);
+            return $this->backWithSuccess('Produto atualizado com sucesso.', '/admin/products');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products/edit?product_id=' . $productId);
+        }
+    }
+
+    public function delete(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        try {
+            $this->service->delete($companyId, $productId);
+            return $this->backWithSuccess('Produto removido com sucesso.', '/admin/products');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function storeCategory(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+
+        try {
+            $this->service->createCategory($companyId, $request->all());
+            return $this->backWithSuccess('Categoria cadastrada com sucesso.', '/admin/products');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function updateCategory(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $categoryId = (int) ($request->input('category_id', 0));
+
+        try {
+            $this->service->updateCategory($companyId, $categoryId, $request->all());
+            return $this->backWithSuccess('Categoria atualizada com sucesso.', '/admin/products');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function deleteCategory(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $categoryId = (int) ($request->input('category_id', 0));
+
+        try {
+            $this->service->deleteCategory($companyId, $categoryId);
+            return $this->backWithSuccess('Categoria removida com sucesso.', '/admin/products');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function additionals(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        try {
+            $context = $this->service->productAdditionalsContext($companyId, $productId);
+            return $this->view('admin/products/additionals', [
+                'title' => 'Adicionais do Produto',
+                'user' => $user,
+                'product' => $context['product'],
+                'additionalGroup' => $context['group'],
+                'additionalItems' => $context['items'],
+            ]);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products');
+        }
+    }
+
+    public function updateAdditionalRules(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        try {
+            $this->service->updateAdditionalRules($companyId, $productId, $request->all());
+            return $this->backWithSuccess('Regras de adicionais atualizadas.', '/admin/products/additionals?product_id=' . $productId);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products/additionals?product_id=' . $productId);
+        }
+    }
+
+    public function storeAdditionalItem(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+
+        try {
+            $this->service->addAdditionalItem($companyId, $productId, $request->all());
+            return $this->backWithSuccess('Adicional cadastrado com sucesso.', '/admin/products/additionals?product_id=' . $productId);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products/additionals?product_id=' . $productId);
+        }
+    }
+
+    public function removeAdditionalItem(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $productId = (int) ($request->input('product_id', 0));
+        $additionalItemId = (int) ($request->input('additional_item_id', 0));
+
+        try {
+            $this->service->removeAdditionalItem($companyId, $productId, $additionalItemId);
+            return $this->backWithSuccess('Adicional removido com sucesso.', '/admin/products/additionals?product_id=' . $productId);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/products/additionals?product_id=' . $productId);
         }
     }
 }

@@ -14,8 +14,7 @@
                 <option value="">Selecione</option>
                 <?php foreach (($subscriptions ?? []) as $subscription): ?>
                     <option value="<?= (int) $subscription['id'] ?>">
-                        #<?= (int) $subscription['id'] ?>
-                        - <?= htmlspecialchars((string) $subscription['company_name']) ?>
+                        <?= htmlspecialchars((string) $subscription['company_name']) ?>
                         - <?= htmlspecialchars((string) $subscription['plan_name']) ?>
                         - <?= htmlspecialchars(status_label('billing_cycle', $subscription['billing_cycle'] ?? null)) ?>
                     </option>

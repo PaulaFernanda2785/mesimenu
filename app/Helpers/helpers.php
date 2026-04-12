@@ -59,6 +59,9 @@ if (!function_exists('status_label')) {
                 'paid' => 'Pago',
                 'canceled' => 'Cancelado',
             ],
+            'order_operational_flag' => [
+                'paid_waiting_production' => 'Pago aguardando producao',
+            ],
             'payment_status' => [
                 'pending' => 'Pendente',
                 'paid' => 'Pago',
@@ -161,6 +164,9 @@ if (!function_exists('status_badge_class')) {
                 'partial' => 'status-partial',
                 'paid' => 'status-paid',
                 'canceled' => 'status-canceled',
+            ],
+            'order_operational_flag' => [
+                'paid_waiting_production' => 'status-paid-waiting-production',
             ],
             'payment_status' => [
                 'pending' => 'status-pending',

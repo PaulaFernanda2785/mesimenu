@@ -10,7 +10,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Pedido</th>
                 <th>Metodo</th>
                 <th>Status</th>
@@ -22,14 +21,13 @@
         </thead>
         <tbody>
         <?php if (empty($payments)): ?>
-            <tr><td colspan="8">Nenhum pagamento encontrado.</td></tr>
+            <tr><td colspan="7">Nenhum pagamento encontrado.</td></tr>
         <?php else: ?>
             <?php foreach ($payments as $payment): ?>
                 <tr>
-                    <td><?= (int) $payment['id'] ?></td>
                     <td>
                         <?php if ($payment['order_id'] !== null): ?>
-                            <?= htmlspecialchars((string) ($payment['order_number'] ?? ('#' . $payment['order_id']))) ?>
+                            <?= htmlspecialchars((string) ($payment['order_number'] ?? 'Pedido sem numero')) ?>
                         <?php else: ?>
                             -
                         <?php endif; ?>

@@ -35,6 +35,7 @@
         .badge.status-delivered{background:#cffafe;color:#155e75}
         .badge.status-finished{background:#bbf7d0;color:#14532d}
         .badge.status-paid{background:#bbf7d0;color:#14532d}
+        .badge.status-paid-waiting-production{background:#fed7aa;color:#9a3412}
         .badge.status-partial{background:#fde68a;color:#78350f}
         .badge.status-canceled{background:#fee2e2;color:#991b1b}
         .badge.status-failed{background:#fecaca;color:#7f1d1d}

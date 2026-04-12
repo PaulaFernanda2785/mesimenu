@@ -67,7 +67,7 @@ $sections = [
                         </td>
                         <td>
                             <?= $order['table_number'] !== null ? 'Mesa ' . (int) $order['table_number'] : '-' ?><br>
-                            <?= $order['command_id'] !== null ? 'Comanda #' . (int) $order['command_id'] : '-' ?>
+                            <?= $order['command_id'] !== null ? 'Comanda ativa' : '-' ?>
                         </td>
                         <td><?= htmlspecialchars((string) ($order['customer_name'] ?? '-')) ?></td>
                         <td><?= (int) ($order['items_count'] ?? 0) ?></td>
@@ -75,6 +75,12 @@ $sections = [
                             <span class="badge <?= htmlspecialchars(status_badge_class('order_status', $order['status'] ?? null)) ?>">
                                 <?= htmlspecialchars(status_label('order_status', $order['status'] ?? null)) ?>
                             </span>
+                            <?php if (($order['payment_status'] ?? '') === 'paid' && in_array((string) ($order['status'] ?? ''), ['received', 'preparing'], true)): ?>
+                                <br>
+                                <span class="badge <?= htmlspecialchars(status_badge_class('order_operational_flag', 'paid_waiting_production')) ?>" style="margin-top:4px">
+                                    <?= htmlspecialchars(status_label('order_operational_flag', 'paid_waiting_production')) ?>
+                                </span>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <?= htmlspecialchars((string) ($order['last_printed_at'] ?? '-')) ?>
@@ -115,7 +121,6 @@ $sections = [
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Pedido</th>
                 <th>Emitido em</th>
                 <th>Emitido por</th>
@@ -125,12 +130,11 @@ $sections = [
         </thead>
         <tbody>
         <?php if (empty($recentPrints)): ?>
-            <tr><td colspan="6">Nenhum ticket emitido.</td></tr>
+            <tr><td colspan="5">Nenhum ticket emitido.</td></tr>
         <?php else: ?>
             <?php foreach ($recentPrints as $print): ?>
                 <tr>
-                    <td><?= (int) $print['id'] ?></td>
-                    <td><?= htmlspecialchars((string) ($print['order_number'] ?? ('#' . $print['order_id']))) ?></td>
+                    <td><?= htmlspecialchars((string) ($print['order_number'] ?? 'Pedido sem numero')) ?></td>
                     <td><?= htmlspecialchars((string) $print['printed_at']) ?></td>
                     <td><?= htmlspecialchars((string) ($print['printed_by_user_name'] ?? '-')) ?></td>
                     <td>

@@ -10,7 +10,6 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Mesa</th>
                 <th>Cliente</th>
                 <th>Aberta por</th>
@@ -20,11 +19,10 @@
         </thead>
         <tbody>
         <?php if (empty($commands)): ?>
-            <tr><td colspan="6">Nenhuma comanda aberta.</td></tr>
+            <tr><td colspan="5">Nenhuma comanda aberta.</td></tr>
         <?php else: ?>
             <?php foreach ($commands as $command): ?>
                 <tr>
-                    <td><?= (int)$command['id'] ?></td>
                     <td><?= $command['table_number'] !== null ? 'Mesa ' . (int)$command['table_number'] : '-' ?></td>
                     <td><?= htmlspecialchars($command['customer_name'] ?? '-') ?></td>
                     <td><?= htmlspecialchars($command['opened_by_user_name'] ?? '-') ?></td>
