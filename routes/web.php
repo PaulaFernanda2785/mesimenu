@@ -7,6 +7,8 @@ use App\Controllers\Admin\ProductController;
 use App\Controllers\Admin\TableController;
 use App\Controllers\Admin\CommandController;
 use App\Controllers\Admin\OrderController;
+use App\Controllers\Admin\PaymentController;
+use App\Controllers\Admin\CashRegisterController;
 use App\Controllers\Saas\DashboardController as SaasDashboardController;
 use App\Controllers\Saas\CompanyController as SaasCompanyController;
 use App\Controllers\Saas\PlanController as SaasPlanController;
@@ -50,6 +52,14 @@ $router->post('/admin/commands/store', [CommandController::class, 'store'], $com
 $router->get('/admin/orders', [OrderController::class, 'index'], $companyAccess('orders.view'));
 $router->get('/admin/orders/create', [OrderController::class, 'create'], $companyAccess('orders.create'));
 $router->post('/admin/orders/store', [OrderController::class, 'store'], $companyAccess('orders.create'));
+
+$router->get('/admin/payments', [PaymentController::class, 'index'], $companyAccess('payments.view'));
+$router->get('/admin/payments/create', [PaymentController::class, 'create'], $companyAccess('payments.create'));
+$router->post('/admin/payments/store', [PaymentController::class, 'store'], $companyAccess('payments.create'));
+
+$router->get('/admin/cash-registers', [CashRegisterController::class, 'index'], $companyAccess('cash_registers.open'));
+$router->post('/admin/cash-registers/open', [CashRegisterController::class, 'open'], $companyAccess('cash_registers.open'));
+$router->post('/admin/cash-registers/close', [CashRegisterController::class, 'close'], $companyAccess('cash_registers.close'));
 
 $router->get('/saas/dashboard', [SaasDashboardController::class, 'index'], $saasAccess('dashboard.view'));
 $router->get('/saas/companies', [SaasCompanyController::class, 'index'], $saasAccess('companies.view'));

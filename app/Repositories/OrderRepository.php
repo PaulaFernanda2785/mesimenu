@@ -110,4 +110,78 @@ final class OrderRepository extends BaseRepository
 
         return (int) $this->db()->lastInsertId();
     }
+
+    public function allPendingPaymentByCompany(int $companyId): array
+    {
+        $sql = "
+            SELECT
+                o.id,
+                o.order_number,
+                o.command_id,
+                o.table_id,
+                o.customer_name,
+                o.status,
+                o.payment_status,
+                o.total_amount,
+                COALESCE((
+                    SELECT SUM(p.amount)
+                    FROM payments p
+                    WHERE p.company_id = o.company_id
+                      AND p.order_id = o.id
+                      AND p.status = 'paid'
+                ), 0) AS paid_amount,
+                t.number AS table_number
+            FROM orders o
+            LEFT JOIN tables t ON t.id = o.table_id
+            WHERE o.company_id = :company_id
+              AND o.status <> 'canceled'
+            ORDER BY o.created_at DESC, o.id DESC
+        ";
+
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute(['company_id' => $companyId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function findByIdForCompany(int $companyId, int $orderId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                id,
+                company_id,
+                command_id,
+                order_number,
+                status,
+                payment_status,
+                total_amount
+            FROM orders
+            WHERE company_id = :company_id
+              AND id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $orderId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function updatePaymentStatus(int $companyId, int $orderId, string $paymentStatus): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE orders
+            SET payment_status = :payment_status,
+                updated_at = NOW()
+            WHERE company_id = :company_id
+              AND id = :id
+        ");
+        $stmt->execute([
+            'payment_status' => $paymentStatus,
+            'company_id' => $companyId,
+            'id' => $orderId,
+        ]);
+    }
 }

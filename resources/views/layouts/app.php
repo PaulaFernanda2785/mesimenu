@@ -38,6 +38,8 @@
         <a href="<?= htmlspecialchars(base_url('/admin/tables')) ?>">Mesas</a>
         <a href="<?= htmlspecialchars(base_url('/admin/commands')) ?>">Comandas</a>
         <a href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Pedidos</a>
+        <a href="<?= htmlspecialchars(base_url('/admin/payments')) ?>">Pagamentos</a>
+        <a href="<?= htmlspecialchars(base_url('/admin/cash-registers')) ?>">Caixa</a>
         <a href="<?= htmlspecialchars(base_url('/logout')) ?>">Sair</a>
     </aside>
     <main>
