@@ -64,6 +64,7 @@ $router->get('/admin/tables/edit', [TableController::class, 'edit'], $companyAcc
 $router->post('/admin/tables/update', [TableController::class, 'update'], $companyAccess('tables.manage'));
 $router->post('/admin/tables/delete', [TableController::class, 'delete'], $companyAccess('tables.manage'));
 $router->get('/admin/tables/print-qr', [TableController::class, 'printQr'], $companyAccess('tables.view'));
+$router->get('/admin/tables/modal-content', [TableController::class, 'modalContent'], $companyAccess('tables.view'));
 
 $router->get('/admin/commands', [CommandController::class, 'index'], $companyAccess('commands.view'));
 $router->get('/admin/commands/create', [CommandController::class, 'create'], $companyAccess('commands.create'));
@@ -71,6 +72,7 @@ $router->post('/admin/commands/store', [CommandController::class, 'store'], $com
 
 $router->get('/admin/orders', [OrderController::class, 'index'], $companyAccess('orders.view'));
 $router->get('/admin/orders/create', [OrderController::class, 'create'], $companyAccess('orders.create'));
+$router->get('/admin/orders/print-ticket', [OrderController::class, 'printTicket'], $companyAccess('orders.view'));
 $router->post('/admin/orders/store', [OrderController::class, 'store'], $companyAccess('orders.create'));
 $router->post('/admin/orders/status', [OrderController::class, 'updateStatus'], $companyAccess('orders.status'));
 $router->post('/admin/orders/send-kitchen', [OrderController::class, 'sendToKitchen'], $companyAccess('orders.status'));

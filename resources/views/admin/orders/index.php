@@ -114,6 +114,10 @@ $ordersByTable = is_array($ordersByTable ?? null) ? $ordersByTable : [];
                             <?php endif; ?>
                         </td>
                         <td>
+                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>" target="_blank" rel="noopener" style="margin-bottom:6px">
+                                Imprimir ticket
+                            </a>
+
                             <?php if (!empty($canSendKitchen) && !empty($order['can_send_kitchen'])): ?>
                                 <form method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/send-kitchen')) ?>" style="margin-bottom:6px">
                                     <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">

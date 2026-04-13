@@ -69,6 +69,48 @@ final class OrderRepository extends BaseRepository
         return $row ?: null;
     }
 
+    public function findWithContextById(int $companyId, int $orderId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                o.id,
+                o.company_id,
+                o.command_id,
+                o.table_id,
+                o.order_number,
+                o.status,
+                o.payment_status,
+                o.customer_name,
+                o.subtotal_amount,
+                o.discount_amount,
+                o.delivery_fee,
+                o.total_amount,
+                o.notes,
+                o.created_at,
+                t.number AS table_number,
+                t.name AS table_name,
+                c.name AS company_name,
+                ct.logo_path AS company_logo_path
+            FROM orders o
+            INNER JOIN companies c
+                ON c.id = o.company_id
+            LEFT JOIN tables t
+                ON t.id = o.table_id
+            LEFT JOIN company_themes ct
+                ON ct.company_id = o.company_id
+            WHERE o.company_id = :company_id
+              AND o.id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $orderId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function findLastOrderNumberByPrefix(int $companyId, string $prefix): ?string
     {
         $stmt = $this->db()->prepare("

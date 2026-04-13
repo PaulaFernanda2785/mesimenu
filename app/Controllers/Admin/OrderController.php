@@ -52,6 +52,25 @@ final class OrderController extends Controller
         ]);
     }
 
+    public function printTicket(Request $request): Response
+    {
+        $user = Auth::user();
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $orderId = (int) ($request->input('order_id', 0));
+        $autoPrint = $request->input('autoprint', '0') === '1';
+
+        try {
+            return $this->view('admin/orders/print_ticket', [
+                'title' => 'Imprimir Ticket do Pedido',
+                'user' => $user,
+                'context' => $this->service->ticketPrintContext($companyId, $orderId),
+                'autoPrint' => $autoPrint,
+            ]);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/orders');
+        }
+    }
+
     public function store(Request $request): Response
     {
         $guard = $this->guardSingleSubmit($request, 'orders.store', '/admin/orders/create');
@@ -78,15 +97,34 @@ final class OrderController extends Controller
         $userId = (int) ($user['id'] ?? 0);
         $roleId = (int) ($user['role_id'] ?? 0);
         $targetStatus = trim((string) ($request->input('new_status', '')));
+        $expectsJson = $this->expectsJson($request);
 
         if ($targetStatus === 'canceled' && !$this->permissions->roleHasPermission($roleId, 'orders.cancel')) {
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => false,
+                    'message' => 'Seu perfil nao possui permissao para cancelar pedidos.',
+                ], 403);
+            }
             return $this->backWithError('Seu perfil nao possui permissao para cancelar pedidos.', '/admin/orders');
         }
 
         try {
             $this->service->updateStatus($companyId, $userId, $request->all());
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => true,
+                    'message' => 'Status do pedido atualizado com sucesso.',
+                ]);
+            }
             return $this->backWithSuccess('Status do pedido atualizado com sucesso.', '/admin/orders');
         } catch (ValidationException $e) {
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => false,
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return $this->backWithError($e->getMessage(), '/admin/orders');
         }
     }
@@ -96,12 +134,48 @@ final class OrderController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
+        $expectsJson = $this->expectsJson($request);
 
         try {
             $this->service->sendToKitchen($companyId, $userId, $request->all());
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => true,
+                    'message' => 'Pedido enviado para cozinha.',
+                ]);
+            }
             return $this->backWithSuccess('Pedido enviado para cozinha.', '/admin/orders');
         } catch (ValidationException $e) {
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => false,
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return $this->backWithError($e->getMessage(), '/admin/orders');
         }
+    }
+
+    private function expectsJson(Request $request): bool
+    {
+        $requestedWith = strtolower((string) ($request->server['HTTP_X_REQUESTED_WITH'] ?? ''));
+        $accept = strtolower((string) ($request->server['HTTP_ACCEPT'] ?? ''));
+
+        return $requestedWith === 'xmlhttprequest' || str_contains($accept, 'application/json');
+    }
+
+    private function jsonResponse(array $payload, int $status = 200): Response
+    {
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json === false) {
+            $json = '{"ok":false,"message":"Falha ao serializar resposta JSON."}';
+            $status = 500;
+        }
+
+        return Response::make($json, $status, [
+            'Content-Type' => 'application/json; charset=UTF-8',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+        ]);
     }
 }

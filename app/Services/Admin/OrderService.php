@@ -34,6 +34,22 @@ final class OrderService
 
         $orderIds = array_map(static fn (array $order): int => (int) $order['id'], $orders);
         $latestHistoryByOrderId = $this->statusHistory->latestByOrderIds($companyId, $orderIds);
+        $orderIdsWithItems = [];
+        foreach ($orders as $orderRow) {
+            $status = (string) ($orderRow['status'] ?? '');
+            if (!in_array($status, ['finished', 'canceled'], true)) {
+                $orderIdsWithItems[] = (int) ($orderRow['id'] ?? 0);
+            }
+        }
+
+        $itemsByOrderId = [];
+        if ($orderIdsWithItems !== []) {
+            $orderItemsRows = $this->orderItems->activeItemsByOrderIds($companyId, $orderIdsWithItems);
+            $orderItemIds = array_map(static fn (array $item): int => (int) ($item['id'] ?? 0), $orderItemsRows);
+            $additionalRows = $this->orderItems->additionalsByOrderItemIds($companyId, $orderItemIds);
+            $additionalsByOrderItemId = $this->indexAdditionalsByOrderItemId($additionalRows);
+            $itemsByOrderId = $this->indexItemsByOrderId($orderItemsRows, $additionalsByOrderItemId);
+        }
 
         foreach ($orders as &$order) {
             $orderId = (int) ($order['id'] ?? 0);
@@ -46,6 +62,7 @@ final class OrderService
             $order['next_statuses'] = $this->nextStatusesFor($status, $paymentStatus);
             $order['can_send_kitchen'] = $status === 'pending';
             $order['is_paid_waiting_production'] = $this->isPaidWaitingProduction($status, $paymentStatus);
+            $order['items'] = is_array($itemsByOrderId[$orderId] ?? null) ? $itemsByOrderId[$orderId] : [];
         }
         unset($order);
 
@@ -245,6 +262,30 @@ final class OrderService
             'new_status' => 'received',
             'status_notes' => 'Enviado para cozinha.',
         ]);
+    }
+
+    public function ticketPrintContext(int $companyId, int $orderId): array
+    {
+        if ($orderId <= 0) {
+            throw new ValidationException('Pedido invalido para impressao.');
+        }
+
+        $order = $this->orders->findWithContextById($companyId, $orderId);
+        if ($order === null) {
+            throw new ValidationException('Pedido nao pertence a empresa autenticada.');
+        }
+
+        $itemsRows = $this->orderItems->activeItemsByOrderIds($companyId, [$orderId]);
+        $orderItemIds = array_map(static fn (array $item): int => (int) ($item['id'] ?? 0), $itemsRows);
+        $additionalRows = $this->orderItems->additionalsByOrderItemIds($companyId, $orderItemIds);
+        $additionalsByOrderItemId = $this->indexAdditionalsByOrderItemId($additionalRows);
+        $itemsByOrderId = $this->indexItemsByOrderId($itemsRows, $additionalsByOrderItemId);
+
+        return [
+            'order' => $order,
+            'items' => is_array($itemsByOrderId[$orderId] ?? null) ? $itemsByOrderId[$orderId] : [],
+            'generated_at' => date('Y-m-d H:i:s'),
+        ];
     }
 
     public function updateStatus(int $companyId, int $userId, array $input): void
@@ -580,6 +621,68 @@ final class OrderService
     {
         $text = trim((string) ($value ?? ''));
         return $text !== '' ? $text : null;
+    }
+
+    private function indexAdditionalsByOrderItemId(array $rows): array
+    {
+        $indexed = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $orderItemId = (int) ($row['order_item_id'] ?? 0);
+            if ($orderItemId <= 0) {
+                continue;
+            }
+
+            if (!isset($indexed[$orderItemId])) {
+                $indexed[$orderItemId] = [];
+            }
+
+            $indexed[$orderItemId][] = [
+                'name' => (string) ($row['additional_name_snapshot'] ?? ''),
+                'quantity' => (int) ($row['quantity'] ?? 0),
+                'unit_price' => (float) ($row['unit_price'] ?? 0),
+                'line_subtotal' => (float) ($row['line_subtotal'] ?? 0),
+            ];
+        }
+
+        return $indexed;
+    }
+
+    private function indexItemsByOrderId(array $rows, array $additionalsByOrderItemId): array
+    {
+        $indexed = [];
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $orderId = (int) ($row['order_id'] ?? 0);
+            $orderItemId = (int) ($row['id'] ?? 0);
+            if ($orderId <= 0 || $orderItemId <= 0) {
+                continue;
+            }
+
+            if (!isset($indexed[$orderId])) {
+                $indexed[$orderId] = [];
+            }
+
+            $indexed[$orderId][] = [
+                'id' => $orderItemId,
+                'name' => (string) ($row['product_name_snapshot'] ?? ''),
+                'quantity' => (int) ($row['quantity'] ?? 0),
+                'unit_price' => (float) ($row['unit_price'] ?? 0),
+                'line_subtotal' => (float) ($row['line_subtotal'] ?? 0),
+                'notes' => $this->normalizeNullableText($row['notes'] ?? null),
+                'additionals' => is_array($additionalsByOrderItemId[$orderItemId] ?? null) ? $additionalsByOrderItemId[$orderItemId] : [],
+            ];
+        }
+
+        return $indexed;
     }
 
     private function nextStatusesFor(string $status, string $paymentStatus): array
