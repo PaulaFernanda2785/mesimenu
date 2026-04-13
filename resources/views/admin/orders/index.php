@@ -1,136 +1,180 @@
 <?php
 $panelSummary = is_array($panelSummary ?? null) ? $panelSummary : [];
 $ordersByTable = is_array($ordersByTable ?? null) ? $ordersByTable : [];
+$canUpdateStatus = !empty($canUpdateStatus);
+$canCancelOrder = !empty($canCancelOrder);
+$canSendKitchen = !empty($canSendKitchen);
+
+$operationalSummary = [
+    'pending' => (int) ($panelSummary['pending'] ?? 0),
+    'received' => (int) ($panelSummary['received'] ?? 0),
+    'preparing' => (int) ($panelSummary['preparing'] ?? 0),
+    'ready' => (int) ($panelSummary['ready'] ?? 0),
+    'delivered' => (int) ($panelSummary['delivered'] ?? 0),
+];
+$paymentSummary = ['pending' => 0, 'partial' => 0, 'paid' => 0];
+$ordersWithCommand = 0;
+$ordersWithoutCommand = 0;
+$ordersWaitingKitchen = 0;
+
+foreach ($ordersByTable as $tablePanel) {
+    if (!is_array($tablePanel)) {
+        continue;
+    }
+    $orders = is_array($tablePanel['orders'] ?? null) ? $tablePanel['orders'] : [];
+    foreach ($orders as $order) {
+        if (!is_array($order)) {
+            continue;
+        }
+        if (($order['command_id'] ?? null) !== null) {
+            $ordersWithCommand++;
+        } else {
+            $ordersWithoutCommand++;
+        }
+        if (!empty($order['can_send_kitchen'])) {
+            $ordersWaitingKitchen++;
+        }
+        $paymentStatus = (string) ($order['payment_status'] ?? '');
+        if (isset($paymentSummary[$paymentStatus])) {
+            $paymentSummary[$paymentStatus]++;
+        }
+    }
+}
 ?>
 
-<div class="topbar">
-    <div>
-        <h1>Painel de Pedidos por Mesa</h1>
-        <p>Controle operacional de pedidos ativos para atendimento, cozinha e entrega.</p>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/kitchen')) ?>">Fila de cozinha</a>
-        <a class="btn" href="<?= htmlspecialchars(base_url('/admin/orders/create')) ?>">Novo pedido</a>
-    </div>
-</div>
+<style>
+    .orders-page{display:grid;gap:16px}
+    .kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(135px,1fr));gap:12px}
+    .kpi-item{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px}
+    .kpi-item strong{display:block;font-size:24px;line-height:1.1}
+    .kpi-item span{color:#64748b;font-size:12px}
+    .legend-panel{display:grid;gap:10px}
+    .legend-group{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc}
+    .legend-title{display:block;font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+    .legend-row{display:flex;gap:8px;flex-wrap:wrap}
+    .search-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+    .search-info{color:#64748b;font-size:12px;margin-top:6px}
+    .tables-stack{display:grid;gap:14px}
+    .table-panel{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px}
+    .table-panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .table-panel-title{margin:0}
+    .table-panel-subtitle{margin:6px 0 0;color:#64748b}
+    .orders-grid{display:grid;grid-template-columns:repeat(2,minmax(320px,1fr));gap:10px}
+    .order-card{background:#fff;border:2px solid #dbeafe;border-radius:12px;padding:12px;display:grid;gap:10px}
+    .order-card.status-op-pending{border-color:#f59e0b}
+    .order-card.status-op-received{border-color:#3b82f6}
+    .order-card.status-op-preparing{border-color:#6366f1}
+    .order-card.status-op-ready{border-color:#22c55e}
+    .order-card.status-op-delivered{border-color:#06b6d4}
+    .order-card.search-hit{outline:2px solid #60a5fa;outline-offset:1px}
+    .order-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+    .order-head p{margin:4px 0 0;color:#334155;font-size:13px}
+    .order-badges{display:flex;gap:6px;flex-wrap:wrap}
+    .order-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .order-meta-item{border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;padding:8px}
+    .order-meta-item strong{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+    .order-meta-item span{font-size:13px;color:#0f172a}
+    .order-items{border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:10px}
+    .order-items-title{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+    .order-items ul{margin:0;padding-left:18px;color:#334155;font-size:13px;display:grid;gap:4px}
+    .order-actions{display:grid;gap:8px}
+    .order-actions .row{display:flex;gap:8px;flex-wrap:wrap}
+    .order-actions select,.order-actions input[type="text"]{background:#fff}
+    .muted{color:#64748b}
+    .empty-card{background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:18px;color:#475569}
+    @media (max-width:1160px){.kpi-grid{grid-template-columns:repeat(3,minmax(130px,1fr))}.orders-grid{grid-template-columns:1fr}}
+    @media (max-width:700px){.kpi-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.order-meta{grid-template-columns:1fr}}
+</style>
 
-<div class="grid" style="grid-template-columns:repeat(4,minmax(180px,1fr));margin-bottom:16px">
-    <div class="card">
-        <strong><?= (int) ($panelSummary['active_orders'] ?? 0) ?></strong>
-        <p style="margin:6px 0 0">Pedidos ativos</p>
+<div class="orders-page">
+    <div class="topbar">
+        <div>
+            <h1>Pedidos</h1>
+            <p>Painel operacional no padrao visual atualizado para cozinha, atendimento e entrega.</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/kitchen')) ?>">Fila de cozinha</a>
+            <a class="btn" href="<?= htmlspecialchars(base_url('/admin/orders/create')) ?>">Novo pedido</a>
+        </div>
     </div>
-    <div class="card">
-        <strong><?= (int) ($panelSummary['tables_in_service'] ?? 0) ?></strong>
-        <p style="margin:6px 0 0">Mesas em atendimento</p>
-    </div>
-    <div class="card">
-        <strong><?= (int) ($panelSummary['items_total'] ?? 0) ?></strong>
-        <p style="margin:6px 0 0">Itens em andamento</p>
-    </div>
-    <div class="card">
-        <strong>R$ <?= number_format((float) ($panelSummary['amount_total'] ?? 0), 2, ',', '.') ?></strong>
-        <p style="margin:6px 0 0">Valor total em aberto</p>
-    </div>
-</div>
 
-<div class="card" style="margin-bottom:16px">
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Pendentes: <?= (int) ($panelSummary['pending'] ?? 0) ?></span>
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Recebidos: <?= (int) ($panelSummary['received'] ?? 0) ?></span>
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Em preparo: <?= (int) ($panelSummary['preparing'] ?? 0) ?></span>
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Prontos: <?= (int) ($panelSummary['ready'] ?? 0) ?></span>
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Entregues: <?= (int) ($panelSummary['delivered'] ?? 0) ?></span>
-        <span class="badge <?= htmlspecialchars(status_badge_class('order_operational_flag', 'paid_waiting_production')) ?>">
-            Pagos aguardando producao: <?= (int) ($panelSummary['paid_waiting_production'] ?? 0) ?>
-        </span>
+    <div class="kpi-grid">
+        <div class="kpi-item"><strong><?= (int) ($panelSummary['active_orders'] ?? 0) ?></strong><span>Pedidos ativos</span></div>
+        <div class="kpi-item"><strong><?= (int) ($panelSummary['tables_in_service'] ?? 0) ?></strong><span>Mesas em atendimento</span></div>
+        <div class="kpi-item"><strong><?= (int) ($panelSummary['items_total'] ?? 0) ?></strong><span>Itens em andamento</span></div>
+        <div class="kpi-item"><strong>R$ <?= number_format((float) ($panelSummary['amount_total'] ?? 0), 2, ',', '.') ?></strong><span>Total em aberto</span></div>
+        <div class="kpi-item"><strong><?= $ordersWithCommand ?></strong><span>Com comanda</span></div>
+        <div class="kpi-item"><strong><?= $ordersWaitingKitchen ?></strong><span>Aguardando cozinha</span></div>
     </div>
-</div>
 
-<?php if (empty($ordersByTable)): ?>
-    <div class="card">
-        Nenhum pedido ativo no momento.
-    </div>
-<?php else: ?>
-    <?php foreach ($ordersByTable as $tablePanel): ?>
-        <?php
-        $orders = is_array($tablePanel['orders'] ?? null) ? $tablePanel['orders'] : [];
-        ?>
-        <div class="card" style="margin-bottom:16px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-                <div>
-                    <h3 style="margin:0"><?= htmlspecialchars((string) ($tablePanel['label'] ?? 'Mesa')) ?></h3>
-                    <p style="margin:6px 0 0;color:#64748b">
-                        Pedidos: <?= (int) ($tablePanel['orders_count'] ?? 0) ?>
-                        | Itens: <?= (int) ($tablePanel['items_total'] ?? 0) ?>
-                        | Total: R$ <?= number_format((float) ($tablePanel['amount_total'] ?? 0), 2, ',', '.') ?>
-                    </p>
-                </div>
+    <div class="card legend-panel">
+        <div class="legend-group">
+            <strong class="legend-title">Cor da Borda do Pedido</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Pedido pendente</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Pedido recebido</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Pedido em preparo</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Pedido pronto</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Pedido entregue</span>
             </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Contagem Operacional</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Pendentes: <?= (int) ($operationalSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Recebidos: <?= (int) ($operationalSummary['received'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Em preparo: <?= (int) ($operationalSummary['preparing'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Prontos: <?= (int) ($operationalSummary['ready'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Entregues: <?= (int) ($operationalSummary['delivered'] ?? 0) ?></span>
+            </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Pagamentos</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'pending')) ?>">Pendente: <?= (int) ($paymentSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'partial')) ?>">Parcial: <?= (int) ($paymentSummary['partial'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'paid')) ?>">Pago: <?= (int) ($paymentSummary['paid'] ?? 0) ?></span>
+                <span class="badge status-default">Sem comanda: <?= $ordersWithoutCommand ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_operational_flag', 'paid_waiting_production')) ?>">Pagos aguardando producao: <?= (int) ($panelSummary['paid_waiting_production'] ?? 0) ?></span>
+            </div>
+            <p class="search-info" style="margin:8px 0 0">Atualizacao automatica da pagina a cada 30 segundos.</p>
+        </div>
+    </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pedido</th>
-                        <th>Cliente</th>
-                        <th>Itens</th>
-                        <th>Status</th>
-                        <th>Pagamento</th>
-                        <th>Ultima mudanca</th>
-                        <th>Acoes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($orders as $order): ?>
-                    <tr>
-                        <td>
-                            <strong><?= htmlspecialchars((string) ($order['order_number'] ?? '-')) ?></strong><br>
-                            <small><?= htmlspecialchars((string) ($order['created_at'] ?? '-')) ?></small>
-                            <?php if ($order['command_id'] !== null): ?>
-                                <br><small>Comanda ativa</small>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars((string) ($order['customer_name'] ?? '-')) ?></td>
-                        <td><?= (int) ($order['items_count'] ?? 0) ?></td>
-                        <td>
-                            <span class="badge <?= htmlspecialchars(status_badge_class('order_status', $order['status'] ?? null)) ?>">
-                                <?= htmlspecialchars(status_label('order_status', $order['status'] ?? null)) ?>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', $order['payment_status'] ?? null)) ?>">
-                                <?= htmlspecialchars(status_label('order_payment_status', $order['payment_status'] ?? null)) ?>
-                            </span>
-                            <?php if (!empty($order['is_paid_waiting_production'])): ?>
-                                <br>
-                                <span class="badge <?= htmlspecialchars(status_badge_class('order_operational_flag', 'paid_waiting_production')) ?>" style="margin-top:4px">
-                                    <?= htmlspecialchars(status_label('order_operational_flag', 'paid_waiting_production')) ?>
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?= htmlspecialchars((string) ($order['latest_status_changed_at'] ?? '-')) ?>
-                            <?php if (!empty($order['latest_status_changed_by'])): ?>
-                                <br><small>por <?= htmlspecialchars((string) $order['latest_status_changed_by']) ?></small>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>" style="margin-bottom:6px">
-                                Imprimir ticket
-                            </a>
+    <div class="card">
+        <div class="search-row">
+            <input id="orderSearch" type="text" placeholder="Buscar pedido por mesa, numero, cliente, status, pagamento, valor ou horario">
+            <button id="clearOrderSearch" class="btn secondary" type="button">Limpar</button>
+        </div>
+        <div id="orderSearchInfo" class="search-info">Digite para filtrar os pedidos em tempo real.</div>
+    </div>
 
-                            <?php if (!empty($canSendKitchen) && !empty($order['can_send_kitchen'])): ?>
-                                <form method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/send-kitchen')) ?>" style="margin-bottom:6px">
-                                    <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
-                                    <button class="btn secondary" type="submit">Enviar para cozinha</button>
-                                </form>
-                            <?php endif; ?>
+    <?php if (empty($ordersByTable)): ?>
+        <div class="empty-card">Nenhum pedido ativo no momento.</div>
+    <?php else: ?>
+        <div class="tables-stack">
+            <?php foreach ($ordersByTable as $tablePanel): ?>
+                <?php $orders = is_array($tablePanel['orders'] ?? null) ? $tablePanel['orders'] : []; ?>
+                <section class="table-panel">
+                    <div class="table-panel-header">
+                        <div>
+                            <h3 class="table-panel-title"><?= htmlspecialchars((string) ($tablePanel['label'] ?? 'Mesa')) ?></h3>
+                            <p class="table-panel-subtitle">
+                                Pedidos: <?= (int) ($tablePanel['orders_count'] ?? 0) ?>
+                                | Itens: <?= (int) ($tablePanel['items_total'] ?? 0) ?>
+                                | Total: R$ <?= number_format((float) ($tablePanel['amount_total'] ?? 0), 2, ',', '.') ?>
+                            </p>
+                        </div>
+                    </div>
 
+                    <div class="orders-grid">
+                        <?php foreach ($orders as $order): ?>
                             <?php
                             $nextStatuses = $order['next_statuses'] ?? [];
                             if (!is_array($nextStatuses)) {
                                 $nextStatuses = [];
                             }
-                            if (empty($canCancelOrder)) {
+                            if (!$canCancelOrder) {
                                 $nextStatuses = array_values(array_filter(
                                     $nextStatuses,
                                     static fn (mixed $status): bool => (string) $status !== 'canceled'
@@ -142,30 +186,183 @@ $ordersByTable = is_array($ordersByTable ?? null) ? $ordersByTable : [];
                                     static fn (mixed $status): bool => (string) $status !== 'received'
                                 ));
                             }
-                            ?>
 
-                            <?php if (!empty($canUpdateStatus) && !empty($nextStatuses)): ?>
-                                <form method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/status')) ?>">
-                                    <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
-                                    <select name="new_status" required>
-                                        <option value="">Selecione</option>
-                                        <?php foreach ($nextStatuses as $status): ?>
-                                            <option value="<?= htmlspecialchars((string) $status) ?>">
-                                                <?= htmlspecialchars(status_label('order_status', $status)) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <input name="status_notes" type="text" placeholder="Observacao (opcional)" style="margin-top:6px">
-                                    <button class="btn secondary" type="submit" style="margin-top:6px">Atualizar status</button>
-                                </form>
-                            <?php elseif (empty($canSendKitchen) || empty($order['can_send_kitchen'])): ?>
-                                -
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+                            $statusValue = (string) ($order['status'] ?? 'pending');
+                            $orderBorderClass = in_array($statusValue, ['pending', 'received', 'preparing', 'ready', 'delivered'], true)
+                                ? 'status-op-' . $statusValue
+                                : 'status-op-pending';
+
+                            $orderItems = is_array($order['items'] ?? null) ? $order['items'] : [];
+                            $orderItemsPreview = array_slice($orderItems, 0, 3);
+                            $hasOperationalActions = ($canSendKitchen && !empty($order['can_send_kitchen'])) || ($canUpdateStatus && !empty($nextStatuses));
+
+                            $searchText = strtolower(trim(implode(' ', [
+                                (string) ($tablePanel['label'] ?? ''),
+                                (string) ($order['order_number'] ?? ''),
+                                (string) ($order['customer_name'] ?? ''),
+                                (string) ($order['status'] ?? ''),
+                                (string) status_label('order_status', $order['status'] ?? null),
+                                (string) ($order['payment_status'] ?? ''),
+                                (string) status_label('order_payment_status', $order['payment_status'] ?? null),
+                                (string) ($order['created_at'] ?? ''),
+                                (string) ($order['latest_status_changed_at'] ?? ''),
+                                number_format((float) ($order['total_amount'] ?? 0), 2, '.', ''),
+                            ])));
+                            ?>
+                            <article class="order-card <?= htmlspecialchars($orderBorderClass) ?>" data-search="<?= htmlspecialchars($searchText) ?>">
+                                <div class="order-head">
+                                    <div>
+                                        <strong><?= htmlspecialchars((string) ($order['order_number'] ?? '-')) ?></strong>
+                                        <p>
+                                            Criado em: <?= htmlspecialchars((string) ($order['created_at'] ?? '-')) ?><br>
+                                            <?= ($order['command_id'] ?? null) !== null ? 'Comanda ativa' : 'Pedido sem comanda' ?>
+                                        </p>
+                                    </div>
+                                    <div class="order-badges">
+                                        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', $order['status'] ?? null)) ?>">
+                                            <?= htmlspecialchars(status_label('order_status', $order['status'] ?? null)) ?>
+                                        </span>
+                                        <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', $order['payment_status'] ?? null)) ?>">
+                                            <?= htmlspecialchars(status_label('order_payment_status', $order['payment_status'] ?? null)) ?>
+                                        </span>
+                                        <?php if (!empty($order['is_paid_waiting_production'])): ?>
+                                            <span class="badge <?= htmlspecialchars(status_badge_class('order_operational_flag', 'paid_waiting_production')) ?>">
+                                                <?= htmlspecialchars(status_label('order_operational_flag', 'paid_waiting_production')) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="order-meta">
+                                    <div class="order-meta-item"><strong>Cliente</strong><span><?= htmlspecialchars((string) ($order['customer_name'] ?? '-')) ?></span></div>
+                                    <div class="order-meta-item"><strong>Itens</strong><span><?= (int) ($order['items_count'] ?? 0) ?></span></div>
+                                    <div class="order-meta-item"><strong>Total</strong><span>R$ <?= number_format((float) ($order['total_amount'] ?? 0), 2, ',', '.') ?></span></div>
+                                    <div class="order-meta-item"><strong>Ultima mudanca</strong><span><?= htmlspecialchars((string) ($order['latest_status_changed_at'] ?? '-')) ?></span></div>
+                                </div>
+
+                                <div class="order-items">
+                                    <span class="order-items-title">Produtos selecionados</span>
+                                    <?php if (empty($orderItemsPreview)): ?>
+                                        <span class="muted">Nenhum item detalhado para este pedido.</span>
+                                    <?php else: ?>
+                                        <ul>
+                                            <?php foreach ($orderItemsPreview as $item): ?>
+                                                <li><?= (int) ($item['quantity'] ?? 0) ?>x <?= htmlspecialchars((string) ($item['product_name_snapshot'] ?? 'Item')) ?></li>
+                                            <?php endforeach; ?>
+                                            <?php if (count($orderItems) > count($orderItemsPreview)): ?>
+                                                <li class="muted">+<?= count($orderItems) - count($orderItemsPreview) ?> item(ns)</li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="order-actions">
+                                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>">Imprimir ticket</a>
+
+                                    <?php if ($canSendKitchen && !empty($order['can_send_kitchen'])): ?>
+                                        <form method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/send-kitchen')) ?>">
+                                            <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                                            <button class="btn secondary" type="submit">Enviar para cozinha</button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <?php if ($canUpdateStatus && !empty($nextStatuses)): ?>
+                                        <form method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/status')) ?>">
+                                            <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                                            <div class="row">
+                                                <select name="new_status" required>
+                                                    <option value="">Selecione o novo status</option>
+                                                    <?php foreach ($nextStatuses as $status): ?>
+                                                        <option value="<?= htmlspecialchars((string) $status) ?>"><?= htmlspecialchars(status_label('order_status', $status)) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="row">
+                                                <input name="status_notes" type="text" placeholder="Observacao (opcional)">
+                                                <button class="btn secondary" type="submit">Atualizar status</button>
+                                            </div>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <?php if (!$hasOperationalActions): ?>
+                                        <span class="badge status-default">Sem acoes operacionais disponiveis</span>
+                                    <?php endif; ?>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endforeach; ?>
         </div>
-    <?php endforeach; ?>
-<?php endif; ?>
+    <?php endif; ?>
+</div>
+
+<script>
+(() => {
+    const cards = Array.from(document.querySelectorAll('.order-card[data-search]'));
+    const searchInput = document.getElementById('orderSearch');
+    const clearButton = document.getElementById('clearOrderSearch');
+    const searchInfo = document.getElementById('orderSearchInfo');
+    const pageRefreshMs = 30000;
+
+    const normalize = (value) => String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    const applyFilter = () => {
+        const rawQuery = searchInput ? searchInput.value : '';
+        const tokens = normalize(rawQuery).split(/\s+/).filter(Boolean);
+        let visibleCount = 0;
+        let firstVisibleCard = null;
+
+        cards.forEach((card) => {
+            card.classList.remove('search-hit');
+            const haystack = normalize(card.getAttribute('data-search') || '');
+            const match = tokens.every((token) => haystack.includes(token));
+            card.style.display = match ? '' : 'none';
+            if (match) {
+                visibleCount++;
+                if (firstVisibleCard === null) {
+                    firstVisibleCard = card;
+                }
+            }
+        });
+
+        if (firstVisibleCard) {
+            firstVisibleCard.classList.add('search-hit');
+        }
+
+        if (searchInfo) {
+            if (tokens.length === 0) {
+                searchInfo.textContent = 'Digite para filtrar os pedidos em tempo real.';
+            } else {
+                searchInfo.textContent = visibleCount > 0
+                    ? `Filtro ativo: ${visibleCount} pedido(s) encontrado(s).`
+                    : 'Nenhum pedido encontrado para o filtro informado.';
+            }
+        }
+    };
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilter);
+    }
+
+    if (clearButton && searchInput) {
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            applyFilter();
+            searchInput.focus();
+        });
+    }
+
+    window.setTimeout(() => {
+        if (document.hidden) {
+            return;
+        }
+        window.location.reload();
+    }, pageRefreshMs);
+
+    applyFilter();
+})();
+</script>
