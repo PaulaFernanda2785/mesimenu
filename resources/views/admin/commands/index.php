@@ -1,11 +1,24 @@
 <?php
 $commands = is_array($commands ?? null) ? $commands : [];
+$commandOperational = is_array($commandOperational ?? null) ? $commandOperational : [];
 
 $totalCommands = count($commands);
 $tablesInUse = [];
 $identifiedCustomers = 0;
 $commandsWithoutTable = 0;
 $openedByUsers = [];
+$operationalSummary = [
+    'pending' => 0,
+    'received' => 0,
+    'preparing' => 0,
+    'ready' => 0,
+    'delivered' => 0,
+];
+$paymentSummary = [
+    'pending' => 0,
+    'partial' => 0,
+    'paid' => 0,
+];
 
 foreach ($commands as $command) {
     $tableNumber = $command['table_number'] ?? null;
@@ -25,6 +38,21 @@ foreach ($commands as $command) {
         $openedByUsers[strtolower($openedByName)] = true;
     }
 }
+
+foreach ($commandOperational as $row) {
+    if (!is_array($row)) {
+        continue;
+    }
+    $statusCounts = is_array($row['status_counts'] ?? null) ? $row['status_counts'] : [];
+    foreach ($operationalSummary as $status => $_value) {
+        $operationalSummary[$status] += (int) ($statusCounts[$status] ?? 0);
+    }
+
+    $paymentCounts = is_array($row['payment_status_counts'] ?? null) ? $row['payment_status_counts'] : [];
+    foreach ($paymentSummary as $status => $_value) {
+        $paymentSummary[$status] += (int) ($paymentCounts[$status] ?? 0);
+    }
+}
 ?>
 
 <style>
@@ -36,7 +64,18 @@ foreach ($commands as $command) {
     .search-row{display:grid;grid-template-columns:1fr auto;gap:8px}
     .search-info{color:#64748b;font-size:12px;margin-top:6px}
     .commands-grid{display:grid;grid-template-columns:repeat(3,minmax(230px,1fr));gap:12px}
-    .command-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;display:grid;gap:10px}
+    .command-card{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:12px;display:grid;gap:10px}
+    .command-card.status-op-pending{border-color:#f59e0b}
+    .command-card.status-op-received{border-color:#3b82f6}
+    .command-card.status-op-preparing{border-color:#6366f1}
+    .command-card.status-op-ready{border-color:#22c55e}
+    .command-card.status-op-delivered{border-color:#06b6d4}
+    .command-card.status-op-active{border-color:#1d4ed8}
+    .command-card.status-op-table-livre{border-color:#16a34a}
+    .command-card.status-op-table-ocupada{border-color:#dc2626}
+    .command-card.status-op-table-aguardando_fechamento{border-color:#d97706}
+    .command-card.status-op-table-bloqueada{border-color:#64748b}
+    .command-card.status-op-table-sem_mesa{border-color:#94a3b8}
     .command-card.search-hit{outline:2px solid #60a5fa;outline-offset:1px}
     .command-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
     .command-title{font-size:16px;line-height:1.1}
@@ -47,6 +86,13 @@ foreach ($commands as $command) {
     .command-notes{border:1px solid #dbeafe;background:#eff6ff;border-radius:10px;padding:9px}
     .command-notes strong{display:block;font-size:11px;color:#1e3a8a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
     .command-notes p{margin:0;color:#334155;font-size:13px;line-height:1.35}
+    .command-strip{display:flex;gap:6px;flex-wrap:wrap}
+    .command-strip-title{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+    .command-border-hint{font-size:12px;color:#64748b}
+    .legend-panel{display:grid;gap:10px}
+    .legend-group{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc}
+    .legend-title{display:block;font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+    .legend-row{display:flex;gap:8px;flex-wrap:wrap}
     @media (max-width:1080px){
         .kpi-grid{grid-template-columns:repeat(3,minmax(120px,1fr))}
         .commands-grid{grid-template-columns:repeat(2,minmax(220px,1fr))}
@@ -74,6 +120,43 @@ foreach ($commands as $command) {
         <div class="kpi-item"><strong><?= count($openedByUsers) ?></strong><span>Atendentes ativos</span></div>
     </div>
 
+    <div class="card legend-panel">
+        <div class="legend-group">
+            <strong class="legend-title">Cor da Borda da Comanda (Status Vigente)</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Comanda Pendente</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Comanda Recebida</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Comanda em preparo</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Comanda pronta</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Comanda entregue</span>
+                <span class="badge status-default">Comanda ativa (mista)</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'livre')) ?>">Sem pedidos • Mesa Livre</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'ocupada')) ?>">Sem pedidos • Mesa Ocupada</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'aguardando_fechamento')) ?>">Sem pedidos • Aguardando fechamento</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'bloqueada')) ?>">Sem pedidos • Mesa Bloqueada</span>
+            </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Contagem Operacional das Comandas</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Pendentes: <?= (int) ($operationalSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Recebidos: <?= (int) ($operationalSummary['received'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Em preparo: <?= (int) ($operationalSummary['preparing'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Prontos: <?= (int) ($operationalSummary['ready'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Entregues: <?= (int) ($operationalSummary['delivered'] ?? 0) ?></span>
+            </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Contagem de Pagamentos</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'pending')) ?>">Pagamento Pendente: <?= (int) ($paymentSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'partial')) ?>">Pagamento Parcial: <?= (int) ($paymentSummary['partial'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'paid')) ?>">Pagamento Pago: <?= (int) ($paymentSummary['paid'] ?? 0) ?></span>
+            </div>
+        </div>
+        <p class="search-info" style="margin:0">Atualizacao automatica da pagina a cada 30 segundos.</p>
+    </div>
+
     <div class="card">
         <div class="search-row">
             <input id="commandSearch" type="text" placeholder="Buscar por mesa, cliente, atendente, status, numero da comanda ou observacoes">
@@ -94,8 +177,50 @@ foreach ($commands as $command) {
                 $openedBy = trim((string) ($command['opened_by_user_name'] ?? ''));
                 $statusValue = (string) ($command['status'] ?? '');
                 $statusLabel = status_label('command_status', $statusValue);
+                $tableStatusRaw = trim((string) ($command['table_status'] ?? ''));
+                $tableStatusValue = in_array($tableStatusRaw, ['livre', 'ocupada', 'aguardando_fechamento', 'bloqueada'], true)
+                    ? $tableStatusRaw
+                    : 'sem_mesa';
+                $tableStatusLabel = $tableStatusValue === 'sem_mesa'
+                    ? 'Sem mesa'
+                    : status_label('table_status', $tableStatusValue);
+                $tableStatusBadgeClass = $tableStatusValue === 'sem_mesa'
+                    ? 'status-default'
+                    : status_badge_class('table_status', $tableStatusValue);
                 $openedAt = (string) ($command['opened_at'] ?? '-');
                 $notes = trim((string) ($command['notes'] ?? ''));
+
+                $operational = is_array($commandOperational[$commandId] ?? null) ? $commandOperational[$commandId] : [];
+                $ordersCount = (int) ($operational['orders_count'] ?? 0);
+                $itemsTotal = (int) ($operational['items_total'] ?? 0);
+                $amountTotal = (float) ($operational['amount_total'] ?? 0);
+                $statusCounts = is_array($operational['status_counts'] ?? null) ? $operational['status_counts'] : [];
+                $paymentCounts = is_array($operational['payment_status_counts'] ?? null) ? $operational['payment_status_counts'] : [];
+
+                $borderStatusClass = 'status-op-table-' . $tableStatusValue;
+                $borderStatusLabel = 'Status vigente: Sem pedidos - Mesa ' . $tableStatusLabel;
+                if ($ordersCount > 0) {
+                    if ((int) ($statusCounts['pending'] ?? 0) > 0) {
+                        $borderStatusClass = 'status-op-pending';
+                        $borderStatusLabel = 'Status vigente: Comanda Pendente';
+                    } elseif ((int) ($statusCounts['received'] ?? 0) > 0) {
+                        $borderStatusClass = 'status-op-received';
+                        $borderStatusLabel = 'Status vigente: Comanda Recebida';
+                    } elseif ((int) ($statusCounts['preparing'] ?? 0) > 0) {
+                        $borderStatusClass = 'status-op-preparing';
+                        $borderStatusLabel = 'Status vigente: Comanda em preparo';
+                    } elseif ((int) ($statusCounts['ready'] ?? 0) > 0) {
+                        $borderStatusClass = 'status-op-ready';
+                        $borderStatusLabel = 'Status vigente: Comanda pronta';
+                    } elseif ((int) ($statusCounts['delivered'] ?? 0) > 0) {
+                        $borderStatusClass = 'status-op-delivered';
+                        $borderStatusLabel = 'Status vigente: Comanda entregue';
+                    } else {
+                        $borderStatusClass = 'status-op-active';
+                        $borderStatusLabel = 'Status vigente: Comanda ativa (mista)';
+                    }
+                }
+
                 $searchText = strtolower(trim(implode(' ', [
                     (string) $commandId,
                     $tableNumber !== null ? (string) $tableNumber : '',
@@ -103,19 +228,30 @@ foreach ($commands as $command) {
                     $openedBy,
                     $statusValue,
                     (string) $statusLabel,
+                    $tableStatusValue,
+                    (string) $tableStatusLabel,
+                    (string) $ordersCount,
+                    (string) $itemsTotal,
+                    number_format($amountTotal, 2, '.', ''),
                     $openedAt,
                     $notes,
                 ])));
                 ?>
-                <article class="command-card" data-search="<?= htmlspecialchars($searchText) ?>">
+                <article class="command-card <?= htmlspecialchars($borderStatusClass) ?>" data-search="<?= htmlspecialchars($searchText) ?>">
                     <div class="command-head">
                         <div class="command-title">
                             <strong>Comanda #<?= $commandId > 0 ? $commandId : '-' ?></strong><br>
-                            <small style="color:#64748b"><?= $tableNumber !== null ? 'Mesa ' . $tableNumber : 'Mesa nao vinculada' ?></small>
+                            <small style="color:#64748b"><?= $tableNumber !== null ? 'Mesa ' . $tableNumber : 'Mesa nao vinculada' ?></small><br>
+                            <small class="command-border-hint"><?= htmlspecialchars($borderStatusLabel) ?></small>
                         </div>
-                        <span class="badge <?= htmlspecialchars(status_badge_class('command_status', $statusValue)) ?>">
-                            <?= htmlspecialchars((string) $statusLabel) ?>
-                        </span>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                            <span class="badge <?= htmlspecialchars(status_badge_class('command_status', $statusValue)) ?>">
+                                <?= htmlspecialchars((string) $statusLabel) ?>
+                            </span>
+                            <span class="badge <?= htmlspecialchars($tableStatusBadgeClass) ?>">
+                                Mesa: <?= htmlspecialchars((string) $tableStatusLabel) ?>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="command-meta">
@@ -130,6 +266,46 @@ foreach ($commands as $command) {
                         <div class="command-meta-item" style="grid-column:1 / -1">
                             <strong>Abertura</strong>
                             <span><?= htmlspecialchars($openedAt) ?></span>
+                        </div>
+                    </div>
+
+                    <div class="command-strip">
+                        <span class="badge status-received">Pedidos ativos: <?= $ordersCount ?></span>
+                        <span class="badge status-default">Itens: <?= $itemsTotal ?></span>
+                        <span class="badge status-paid">R$ <?= number_format($amountTotal, 2, ',', '.') ?></span>
+                    </div>
+
+                    <div>
+                        <div class="command-strip-title">Status operacionais</div>
+                        <div class="command-strip" style="margin-top:4px">
+                            <?php if ($ordersCount <= 0): ?>
+                                <span class="badge status-default">Sem pedidos ativos</span>
+                            <?php else: ?>
+                                <?php foreach ($statusCounts as $statusKey => $count): ?>
+                                    <?php if ((int) $count > 0): ?>
+                                        <span class="badge <?= htmlspecialchars(status_badge_class('order_status', $statusKey)) ?>">
+                                            <?= htmlspecialchars(status_label('order_status', $statusKey)) ?>: <?= (int) $count ?>
+                                        </span>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="command-strip-title">Status de pagamento</div>
+                        <div class="command-strip" style="margin-top:4px">
+                            <?php if ($ordersCount <= 0): ?>
+                                <span class="badge status-default">Sem pagamentos pendentes</span>
+                            <?php else: ?>
+                                <?php foreach ($paymentCounts as $paymentStatusKey => $count): ?>
+                                    <?php if ((int) $count > 0): ?>
+                                        <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', $paymentStatusKey)) ?>">
+                                            <?= htmlspecialchars(status_label('order_payment_status', $paymentStatusKey)) ?>: <?= (int) $count ?>
+                                        </span>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -151,6 +327,7 @@ foreach ($commands as $command) {
     const searchInput = document.getElementById('commandSearch');
     const clearButton = document.getElementById('clearCommandSearch');
     const searchInfo = document.getElementById('commandSearchInfo');
+    const pageRefreshMs = 30000;
 
     const normalize = (value) => String(value || '')
         .toLowerCase()
@@ -202,6 +379,20 @@ foreach ($commands as $command) {
             searchInput.focus();
         });
     }
+
+    window.setInterval(() => {
+        if (document.hidden) {
+            return;
+        }
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) {
+            const tagName = activeElement.tagName;
+            if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
+                return;
+            }
+        }
+        window.location.reload();
+    }, pageRefreshMs);
 
     applyFilter();
 })();

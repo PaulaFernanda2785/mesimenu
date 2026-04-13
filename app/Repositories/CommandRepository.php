@@ -22,6 +22,7 @@ final class CommandRepository extends BaseRepository
                 c.closed_at,
                 c.notes,
                 t.number AS table_number,
+                t.status AS table_status,
                 u.name AS opened_by_user_name
             FROM commands c
             LEFT JOIN tables t ON t.id = c.table_id

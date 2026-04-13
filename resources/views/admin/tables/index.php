@@ -4,6 +4,41 @@ $tables = is_array($tables ?? null) ? $tables : [];
 $ordersByTableNumber = is_array($ordersByTableNumber ?? null) ? $ordersByTableNumber : [];
 $commandsByTableNumber = is_array($commandsByTableNumber ?? null) ? $commandsByTableNumber : [];
 $canManageTables = !empty($canManageTables);
+
+$operationalSummary = [
+    'pending' => 0,
+    'received' => 0,
+    'preparing' => 0,
+    'ready' => 0,
+    'delivered' => 0,
+];
+$paymentSummary = [
+    'pending' => 0,
+    'partial' => 0,
+    'paid' => 0,
+];
+
+foreach ($ordersByTableNumber as $tablePanel) {
+    if (!is_array($tablePanel)) {
+        continue;
+    }
+    $orders = is_array($tablePanel['orders'] ?? null) ? $tablePanel['orders'] : [];
+    foreach ($orders as $order) {
+        if (!is_array($order)) {
+            continue;
+        }
+
+        $status = (string) ($order['status'] ?? '');
+        if (isset($operationalSummary[$status])) {
+            $operationalSummary[$status]++;
+        }
+
+        $paymentStatus = (string) ($order['payment_status'] ?? '');
+        if (isset($paymentSummary[$paymentStatus])) {
+            $paymentSummary[$paymentStatus]++;
+        }
+    }
+}
 ?>
 
 <style>
@@ -35,6 +70,10 @@ $canManageTables = !empty($canManageTables);
     .table-meta-item span{font-size:14px;color:#0f172a}
 
     .table-service-strip{display:flex;gap:6px;flex-wrap:wrap}
+    .legend-panel{display:grid;gap:10px}
+    .legend-group{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc}
+    .legend-title{display:block;font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+    .legend-row{display:flex;gap:8px;flex-wrap:wrap}
 
     .table-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
     .btn-qr{background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff;border:1px solid #0f766e}
@@ -104,6 +143,37 @@ $canManageTables = !empty($canManageTables);
         <div class="kpi-item"><strong><?= (int) ($summary['ocupada'] ?? 0) ?></strong><span>Ocupadas</span></div>
         <div class="kpi-item"><strong><?= (int) ($summary['aguardando_fechamento'] ?? 0) ?></strong><span>Aguardando fechamento</span></div>
         <div class="kpi-item"><strong><?= (int) ($summary['bloqueada'] ?? 0) ?></strong><span>Bloqueadas</span></div>
+    </div>
+
+    <div class="card legend-panel">
+        <div class="legend-group">
+            <strong class="legend-title">Legenda de Cores - Status das Mesas</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'livre')) ?>">Mesa Livre</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'ocupada')) ?>">Mesa Ocupada</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'aguardando_fechamento')) ?>">Aguardando fechamento</span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('table_status', 'bloqueada')) ?>">Mesa Bloqueada</span>
+            </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Legenda de Cores - Status Operacional dos Pedidos</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'pending')) ?>">Pendentes: <?= (int) ($operationalSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'received')) ?>">Recebidos: <?= (int) ($operationalSummary['received'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'preparing')) ?>">Em preparo: <?= (int) ($operationalSummary['preparing'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'ready')) ?>">Prontos: <?= (int) ($operationalSummary['ready'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_status', 'delivered')) ?>">Entregues: <?= (int) ($operationalSummary['delivered'] ?? 0) ?></span>
+            </div>
+        </div>
+        <div class="legend-group">
+            <strong class="legend-title">Legenda de Cores - Status de Pagamento</strong>
+            <div class="legend-row">
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'pending')) ?>">Pagamento Pendente: <?= (int) ($paymentSummary['pending'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'partial')) ?>">Pagamento Parcial: <?= (int) ($paymentSummary['partial'] ?? 0) ?></span>
+                <span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', 'paid')) ?>">Pagamento Pago: <?= (int) ($paymentSummary['paid'] ?? 0) ?></span>
+            </div>
+        </div>
+        <p class="search-info" style="margin:0">Atualizacao automatica da pagina a cada 30 segundos (quando o modal estiver fechado).</p>
     </div>
 
     <div class="card">
@@ -227,6 +297,7 @@ $canManageTables = !empty($canManageTables);
     const modalTitle = document.getElementById('tableModalTitle');
     const modalNotice = document.getElementById('tableModalNotice');
     const modalRefreshMs = 30000;
+    const pageRefreshMs = 30000;
 
     let modalRefreshTimer = null;
     let activeTableId = null;
@@ -515,6 +586,25 @@ $canManageTables = !empty($canManageTables);
             searchInput.focus();
         });
     }
+
+    window.setInterval(() => {
+        if (document.hidden) {
+            return;
+        }
+        if (modalShell && !modalShell.hidden) {
+            return;
+        }
+
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) {
+            const tagName = activeElement.tagName;
+            if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
+                return;
+            }
+        }
+
+        window.location.reload();
+    }, pageRefreshMs);
 
     applyFilter();
 })();
