@@ -18,8 +18,12 @@ final class TableRepository extends BaseRepository
                 t.capacity,
                 t.qr_code_token,
                 t.status,
-                t.created_at
+                t.created_at,
+                c.name AS company_name,
+                ct.logo_path AS company_logo_path
             FROM tables t
+            INNER JOIN companies c ON c.id = t.company_id
+            LEFT JOIN company_themes ct ON ct.company_id = t.company_id
             WHERE t.company_id = :company_id
             ORDER BY t.number ASC
         ";
@@ -46,19 +50,28 @@ final class TableRepository extends BaseRepository
         return (int) $this->db()->lastInsertId();
     }
 
-    public function findByNumber(int $companyId, int $number): ?array
+    public function findByNumber(int $companyId, int $number, ?int $ignoreTableId = null): ?array
     {
-        $stmt = $this->db()->prepare("
+        $sql = "
             SELECT id, company_id, name, number, capacity, qr_code_token, status
             FROM tables
             WHERE company_id = :company_id
               AND number = :number
-            LIMIT 1
-        ");
-        $stmt->execute([
+        ";
+        $params = [
             'company_id' => $companyId,
             'number' => $number,
-        ]);
+        ];
+
+        if ($ignoreTableId !== null && $ignoreTableId > 0) {
+            $sql .= " AND id <> :ignore_table_id";
+            $params['ignore_table_id'] = $ignoreTableId;
+        }
+
+        $sql .= " LIMIT 1";
+
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute($params);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
@@ -110,5 +123,71 @@ final class TableRepository extends BaseRepository
             'company_id' => $companyId,
             'id' => $tableId,
         ]);
+    }
+
+    public function updateById(int $companyId, int $tableId, array $data): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE tables
+            SET name = :name,
+                number = :number,
+                capacity = :capacity,
+                status = :status,
+                updated_at = NOW()
+            WHERE company_id = :company_id
+              AND id = :id
+        ");
+        $stmt->execute([
+            'name' => $data['name'],
+            'number' => $data['number'],
+            'capacity' => $data['capacity'],
+            'status' => $data['status'],
+            'company_id' => $companyId,
+            'id' => $tableId,
+        ]);
+    }
+
+    public function deleteById(int $companyId, int $tableId): void
+    {
+        $stmt = $this->db()->prepare("
+            DELETE FROM tables
+            WHERE company_id = :company_id
+              AND id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $tableId,
+        ]);
+    }
+
+    public function findWithCompanyContextById(int $companyId, int $tableId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                t.id,
+                t.company_id,
+                t.name,
+                t.number,
+                t.capacity,
+                t.qr_code_token,
+                t.status,
+                c.name AS company_name,
+                c.slug AS company_slug,
+                ct.logo_path AS company_logo_path
+            FROM tables t
+            INNER JOIN companies c ON c.id = t.company_id
+            LEFT JOIN company_themes ct ON ct.company_id = t.company_id
+            WHERE t.company_id = :company_id
+              AND t.id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'id' => $tableId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 }

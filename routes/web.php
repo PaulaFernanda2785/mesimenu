@@ -38,6 +38,7 @@ $router->get('/login', [LoginController::class, 'show']);
 $router->post('/login', [LoginController::class, 'store']);
 $router->get('/logout', [LoginController::class, 'logout']);
 $router->get('/media/product', [MediaController::class, 'product']);
+$router->get('/media/table-qr', [MediaController::class, 'tableQr']);
 
 $router->get('/admin/dashboard', [DashboardController::class, 'index'], $companyAccess('dashboard.view'));
 
@@ -59,6 +60,10 @@ $router->post('/admin/products/additionals/remove', [ProductController::class, '
 $router->get('/admin/tables', [TableController::class, 'index'], $companyAccess('tables.view'));
 $router->get('/admin/tables/create', [TableController::class, 'create'], $companyAccess('tables.manage'));
 $router->post('/admin/tables/store', [TableController::class, 'store'], $companyAccess('tables.manage'));
+$router->get('/admin/tables/edit', [TableController::class, 'edit'], $companyAccess('tables.manage'));
+$router->post('/admin/tables/update', [TableController::class, 'update'], $companyAccess('tables.manage'));
+$router->post('/admin/tables/delete', [TableController::class, 'delete'], $companyAccess('tables.manage'));
+$router->get('/admin/tables/print-qr', [TableController::class, 'printQr'], $companyAccess('tables.view'));
 
 $router->get('/admin/commands', [CommandController::class, 'index'], $companyAccess('commands.view'));
 $router->get('/admin/commands/create', [CommandController::class, 'create'], $companyAccess('commands.create'));

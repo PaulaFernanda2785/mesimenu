@@ -1,0 +1,27 @@
+{
+  "name": "comanda360",
+  "version": "1.0.0",
+  "description": "Projeto base do Comanda360 em PHP puro com arquitetura MVC modular.",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PaulaFernanda2785/comanda360.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PaulaFernanda2785/comanda360/issues"
+  },
+  "homepage": "https://github.com/PaulaFernanda2785/comanda360#readme",
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "qrcode-generator": "^2.0.4"
+  }
+}
