@@ -33,6 +33,7 @@ $qrImageUrl = $qrPayload !== ''
     .qr-wrapper{display:grid;justify-items:center;gap:10px}
     .qr-image-box{width:min(430px,100%);aspect-ratio:1;border:1px solid #cbd5e1;border-radius:14px;background:#fff;padding:14px;display:flex;align-items:center;justify-content:center}
     .qr-image-box img{width:100%;height:100%;object-fit:contain}
+    .qr-fallback-hint{color:#9a3412;background:#ffedd5;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;font-size:12px;max-width:430px;text-align:center}
     .qr-token{font-size:12px;color:#334155;word-break:break-word;text-align:center}
     .qr-caption{font-size:13px;color:#475569;text-align:center;max-width:430px}
     .screen-only{display:block}
@@ -102,6 +103,7 @@ $qrImageUrl = $qrPayload !== ''
                     <span>Nao foi possivel gerar a imagem do QR.</span>
                 <?php endif; ?>
             </div>
+            <div class="qr-fallback-hint">Se a geracao PNG falhar, o endpoint retorna SVG automaticamente no servidor.</div>
             <div class="qr-token">Token QR: <?= htmlspecialchars($token !== '' ? $token : '-') ?></div>
             <div class="qr-caption">Este QR identifica a mesa para o fluxo de atendimento. Imprima e fixe em local visivel.</div>
         </div>

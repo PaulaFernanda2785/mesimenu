@@ -18,7 +18,11 @@ const getArgValue = (name) => {
 const outPath = getArgValue('--out');
 const dataBase64 = getArgValue('--data-base64');
 const sizeRaw = getArgValue('--size');
+const formatRaw = getArgValue('--format');
 const size = Number.parseInt(sizeRaw || '760', 10);
+const format = String(formatRaw || '').trim().toLowerCase() || (
+  String(outPath || '').toLowerCase().endsWith('.svg') ? 'svg' : 'png'
+);
 
 if (!outPath) {
   console.error('Parametro obrigatorio ausente: --out');
@@ -32,6 +36,10 @@ if (!dataBase64) {
 
 if (!Number.isFinite(size) || size < 200 || size > 1200) {
   console.error('Parametro invalido: --size precisa estar entre 200 e 1200');
+  process.exit(2);
+}
+if (format !== 'png' && format !== 'svg') {
+  console.error('Parametro invalido: --format precisa ser png ou svg');
   process.exit(2);
 }
 
@@ -54,8 +62,7 @@ if (!payload) {
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  await QRCode.toFile(absoluteOutPath, payload, {
-    type: 'png',
+  const options = {
     width: size,
     margin: 2,
     errorCorrectionLevel: 'M',
@@ -63,6 +70,20 @@ if (!payload) {
       dark: '#000000',
       light: '#FFFFFF',
     },
+  };
+
+  if (format === 'svg') {
+    const svg = await QRCode.toString(payload, {
+      ...options,
+      type: 'svg',
+    });
+    fs.writeFileSync(absoluteOutPath, svg, 'utf8');
+    return;
+  }
+
+  await QRCode.toFile(absoluteOutPath, payload, {
+    ...options,
+    type: 'png',
   });
 })()
   .then(() => {
