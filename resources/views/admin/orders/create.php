@@ -19,20 +19,43 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
     .kpi-item{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px}
     .kpi-item strong{display:block;font-size:24px;line-height:1.1}
     .kpi-item span{color:#64748b;font-size:12px}
-    .order-form-layout{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+    .order-form-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(300px,.7fr);gap:16px}
     .order-form-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px}
     .steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
     .step-pill{padding:4px 10px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:12px}
     .warning-strip{border:1px solid #fcd34d;background:#fffbeb;border-radius:10px;padding:10px;color:#92400e}
     .items-header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
     .items-table-wrap{border:1px solid #e2e8f0;border-radius:12px;overflow:auto;background:#f8fafc}
-    .items-table{width:100%;border-collapse:separate;border-spacing:0;margin:0;min-width:820px}
+    .items-table{width:100%;border-collapse:separate;border-spacing:0;margin:0;min-width:760px}
     .items-table th{background:#e2e8f0;color:#334155;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
     .items-table th,.items-table td{border-bottom:1px solid #e2e8f0;padding:10px;vertical-align:top}
     .items-table tbody tr:last-child td{border-bottom:0}
-    .additionals-container{max-height:170px;overflow:auto;border:1px solid #e2e8f0;border-radius:8px;padding:8px;background:#fff}
-    .additional-choice{display:block;font-weight:normal;margin-bottom:4px;color:#334155;font-size:13px}
-    .additional-hint{margin-bottom:6px;font-size:12px;color:#64748b}
+    .product-picker{display:grid;gap:6px;position:relative}
+    .product-suggestions{position:relative;border:1px solid #dbeafe;border-radius:10px;background:#fff;max-height:170px;overflow:auto}
+    .product-suggestions[hidden]{display:none}
+    .product-suggestion{width:100%;border:0;border-bottom:1px solid #e2e8f0;background:#fff;text-align:left;padding:8px;display:grid;gap:3px;cursor:pointer}
+    .product-suggestion:last-child{border-bottom:0}
+    .product-suggestion:hover,.product-suggestion:focus{background:#eff6ff;outline:none}
+    .product-suggestion-name{font-size:12px;color:#0f172a;font-weight:600}
+    .product-suggestion-meta{font-size:11px;color:#64748b}
+    .product-selected-meta{font-size:11px;color:#1e40af}
+    .notes-textarea{width:100%;resize:vertical;min-height:48px;max-height:180px;line-height:1.3}
+    .notes-textarea.compact{min-height:44px;max-height:130px}
+    .additionals-container{border:1px solid #cbd5e1;border-radius:10px;padding:8px;background:#fff}
+    .additionals-shell{display:grid;gap:8px}
+    .additionals-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .additionals-rules{display:flex;gap:6px;flex-wrap:wrap}
+    .additional-rule-chip{display:inline-block;padding:3px 8px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:11px}
+    .additional-rule-chip.required{background:#fef3c7;color:#92400e}
+    .additionals-counter{font-size:11px;color:#1e40af;background:#dbeafe;padding:3px 8px;border-radius:999px}
+    .additionals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-height:175px;overflow-y:auto;overflow-x:hidden;padding-right:2px}
+    .additional-card{position:relative;display:grid;gap:4px;padding:8px;border:1px solid #dbeafe;border-radius:10px;background:#f8fafc;cursor:pointer;transition:all .15s ease}
+    .additional-card:hover{border-color:#93c5fd;background:#eff6ff}
+    .additional-card.is-selected{border-color:#1d4ed8;background:#dbeafe;box-shadow:inset 0 0 0 1px #1d4ed8}
+    .additional-card input{position:absolute;opacity:0;pointer-events:none}
+    .additional-card-name{font-size:12px;color:#0f172a;font-weight:600;line-height:1.25;word-break:break-word}
+    .additional-card-price{font-size:11px;color:#475569}
+    .additionals-placeholder{display:block;padding:8px 10px;border-radius:8px;background:#f8fafc;color:#64748b;font-size:12px}
     .line-total{display:inline-block;padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e3a8a;font-size:12px;white-space:nowrap}
     .summary-list{display:grid;gap:8px;margin-top:10px}
     .summary-item{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc}
@@ -44,7 +67,7 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
     @media (max-width:1080px){
         .kpi-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}
         .order-form-layout{grid-template-columns:1fr}
-        .items-table{min-width:720px}
+        .items-table{min-width:680px}
     }
 </style>
 
@@ -102,7 +125,7 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
 
                     <div class="field">
                         <label for="notes">Observacoes gerais</label>
-                        <input id="notes" name="notes" type="text" placeholder="Opcional" <?= $canCreateOrder ? '' : 'disabled' ?>>
+                        <textarea id="notes" name="notes" class="notes-textarea" rows="2" placeholder="Opcional" <?= $canCreateOrder ? '' : 'disabled' ?>></textarea>
                     </div>
                 </div>
 
@@ -130,10 +153,10 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
                     <table class="items-table" id="itemsTable">
                         <thead>
                             <tr>
-                                <th style="width:28%">Produto</th>
+                                <th style="width:24%">Produto</th>
                                 <th style="width:9%">Qtd</th>
-                                <th style="width:34%">Adicionais</th>
-                                <th style="width:17%">Observacao</th>
+                                <th style="width:40%">Adicionais</th>
+                                <th style="width:15%">Observacao</th>
                                 <th style="width:8%">Total linha</th>
                                 <th style="width:4%">Acao</th>
                             </tr>
@@ -224,6 +247,11 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    const normalizeSearchText = (value) => String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
 
     const effectivePrice = (product) => {
         if (!product || typeof product !== 'object') {
@@ -241,6 +269,21 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
             productsById[productId] = product;
         }
     });
+    const productSearchIndex = products
+        .map((product) => {
+            const productId = Number(product.id || 0);
+            if (productId <= 0) {
+                return null;
+            }
+
+            const name = String(product.name || 'Produto');
+            const category = String(product.category_name || '');
+            const label = category !== '' ? `${name} (${category})` : name;
+            const searchText = normalizeSearchText(`${name} ${category}`);
+            const searchName = normalizeSearchText(name);
+            return { productId, label, searchText, searchName };
+        })
+        .filter(Boolean);
 
     const additionalPrice = (product, additionalId) => {
         if (!product || !Array.isArray(product.additionals)) {
@@ -250,18 +293,186 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         return found ? Number(found.price || 0) : 0;
     };
 
-    const productOptions = () => {
-        let options = '<option value="">Selecione</option>';
-        products.forEach((product) => {
+    const isSubsequence = (needle, haystack) => {
+        if (!needle || !haystack) {
+            return false;
+        }
+        let index = 0;
+        for (let i = 0; i < haystack.length && index < needle.length; i++) {
+            if (haystack[i] === needle[index]) {
+                index++;
+            }
+        }
+        return index === needle.length;
+    };
+
+    const findProductMatches = (queryRaw) => {
+        const query = normalizeSearchText(queryRaw);
+        if (query === '') {
+            return productSearchIndex.slice(0, 10).map((entry) => productsById[entry.productId]).filter(Boolean);
+        }
+
+        const tokens = query.split(/\s+/).filter(Boolean);
+        const scored = [];
+
+        productSearchIndex.forEach((entry) => {
+            if (!entry) {
+                return;
+            }
+
+            let score = 0;
+            const startsWithName = entry.searchName.startsWith(query);
+            const includesName = entry.searchName.includes(query);
+            const includesAllTokens = tokens.every((token) => entry.searchText.includes(token));
+            const fuzzyByLetters = isSubsequence(query, entry.searchText.replace(/\s+/g, ''));
+
+            if (startsWithName) score += 120;
+            if (includesName) score += 70;
+            if (includesAllTokens) score += 50;
+            if (fuzzyByLetters) score += 25;
+
+            if (score <= 0) {
+                return;
+            }
+
+            scored.push({
+                productId: entry.productId,
+                score,
+            });
+        });
+
+        scored.sort((left, right) => {
+            if (right.score !== left.score) {
+                return right.score - left.score;
+            }
+            const leftName = String(productsById[left.productId]?.name || '');
+            const rightName = String(productsById[right.productId]?.name || '');
+            return leftName.localeCompare(rightName, 'pt-BR');
+        });
+
+        return scored.slice(0, 12)
+            .map((entry) => productsById[entry.productId])
+            .filter(Boolean);
+    };
+
+    const productDisplayLabel = (product) => {
+        if (!product) {
+            return '';
+        }
+        const safeName = String(product.name || 'Produto');
+        const category = String(product.category_name || '');
+        return category !== '' ? `${safeName} (${category})` : safeName;
+    };
+
+    const setupProductPicker = (row) => {
+        const picker = row.querySelector('.product-picker');
+        const searchInput = row.querySelector('.product-search-input');
+        const hiddenInput = row.querySelector('input[name="product_id[]"]');
+        const suggestions = row.querySelector('.product-suggestions');
+        const selectedMeta = row.querySelector('.product-selected-meta');
+
+        if (!picker || !searchInput || !hiddenInput || !suggestions || !selectedMeta) {
+            return;
+        }
+
+        const closeSuggestions = () => {
+            suggestions.hidden = true;
+        };
+
+        const setSelectedProduct = (product) => {
+            if (!product) {
+                hiddenInput.value = '';
+                searchInput.value = '';
+                selectedMeta.textContent = '';
+                renderAdditionals(row);
+                refreshSummary();
+                return;
+            }
+
             const productId = Number(product.id || 0);
             if (productId <= 0) {
                 return;
             }
-            const safeName = escapeHtml(product.name || 'Produto');
-            const category = product.category_name ? ` (${escapeHtml(product.category_name)})` : '';
-            options += `<option value="${productId}">${safeName}${category} - ${money(effectivePrice(product))}</option>`;
+
+            hiddenInput.value = String(productId);
+            searchInput.value = productDisplayLabel(product);
+            selectedMeta.textContent = `Selecionado: ${productDisplayLabel(product)} - ${money(effectivePrice(product))}`;
+            closeSuggestions();
+            renderAdditionals(row);
+            refreshSummary();
+        };
+
+        const renderSuggestions = (query) => {
+            const matches = findProductMatches(query);
+            if (matches.length === 0) {
+                suggestions.innerHTML = '<div class="product-suggestion"><span class="product-suggestion-meta">Nenhum produto encontrado.</span></div>';
+                suggestions.hidden = false;
+                return;
+            }
+
+            suggestions.innerHTML = matches.map((product) => {
+                const productId = Number(product.id || 0);
+                const label = escapeHtml(productDisplayLabel(product));
+                const category = String(product.category_name || '').trim();
+                const categoryText = category !== '' ? `Categoria: ${escapeHtml(category)} | ` : '';
+                const meta = `${categoryText}Preco: ${escapeHtml(money(effectivePrice(product)))}`;
+                return `
+                    <button class="product-suggestion" type="button" data-product-id="${productId}">
+                        <span class="product-suggestion-name">${label}</span>
+                        <span class="product-suggestion-meta">${meta}</span>
+                    </button>
+                `;
+            }).join('');
+            suggestions.hidden = false;
+        };
+
+        searchInput.addEventListener('input', () => {
+            const query = String(searchInput.value || '').trim();
+            hiddenInput.value = '';
+            selectedMeta.textContent = '';
+            renderAdditionals(row);
+            refreshSummary();
+
+            if (query === '') {
+                closeSuggestions();
+                return;
+            }
+            renderSuggestions(query);
         });
-        return options;
+
+        searchInput.addEventListener('focus', () => {
+            const query = String(searchInput.value || '').trim();
+            if (query !== '') {
+                renderSuggestions(query);
+            }
+        });
+
+        searchInput.addEventListener('blur', () => {
+            window.setTimeout(closeSuggestions, 120);
+        });
+
+        suggestions.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+        });
+
+        suggestions.addEventListener('click', (event) => {
+            const target = event.target instanceof HTMLElement ? event.target.closest('[data-product-id]') : null;
+            if (!(target instanceof HTMLElement)) {
+                return;
+            }
+
+            const productId = Number(target.getAttribute('data-product-id') || 0);
+            const product = productsById[productId] || null;
+            if (!product) {
+                return;
+            }
+            setSelectedProduct(product);
+        });
+
+        const initialProductId = Number(hiddenInput.value || 0);
+        if (initialProductId > 0 && productsById[initialProductId]) {
+            setSelectedProduct(productsById[initialProductId]);
+        }
     };
 
     const checkedAdditionalIds = (container) => {
@@ -274,6 +485,23 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         return ids.filter((id) => Number(id) > 0);
     };
 
+    const syncAdditionalSelectionUi = (container) => {
+        const selectedCount = checkedAdditionalIds(container).length;
+        container.querySelectorAll('.additional-card').forEach((card) => {
+            const checkbox = card.querySelector('input[type="checkbox"][data-additional-id]');
+            if (checkbox && checkbox.checked) {
+                card.classList.add('is-selected');
+            } else {
+                card.classList.remove('is-selected');
+            }
+        });
+
+        const counter = container.querySelector('[data-selected-count]');
+        if (counter) {
+            counter.textContent = `${selectedCount} selecionado(s)`;
+        }
+    };
+
     const syncAdditionalHidden = (row) => {
         const hidden = row.querySelector('input[name="additional_item_ids[]"]');
         const container = row.querySelector('.additionals-container');
@@ -284,10 +512,10 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
     };
 
     const lineTotals = (row) => {
-        const select = row.querySelector('select[name="product_id[]"]');
+        const productIdInput = row.querySelector('input[name="product_id[]"]');
         const qtyInput = row.querySelector('input[name="quantity[]"]');
         const hidden = row.querySelector('input[name="additional_item_ids[]"]');
-        const productId = Number(select ? select.value || 0 : 0);
+        const productId = Number(productIdInput ? productIdInput.value || 0 : 0);
         const quantity = Math.max(1, Number(qtyInput ? qtyInput.value || 1 : 1));
         const product = productsById[productId] || null;
         const base = product ? effectivePrice(product) * quantity : 0;
@@ -351,22 +579,23 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
             }
             alert(`Este produto permite no maximo ${maxSelection} adicional(is) por item.`);
         }
+        syncAdditionalSelectionUi(container);
     };
 
     const renderAdditionals = (row) => {
-        const productSelect = row.querySelector('select[name="product_id[]"]');
+        const productInput = row.querySelector('input[name="product_id[]"]');
         const additionalsContainer = row.querySelector('.additionals-container');
         const hidden = row.querySelector('input[name="additional_item_ids[]"]');
-        if (!productSelect || !additionalsContainer || !hidden) {
+        if (!productInput || !additionalsContainer || !hidden) {
             return;
         }
 
         hidden.value = '';
-        const productId = Number(productSelect.value || 0);
+        const productId = Number(productInput.value || 0);
         const product = productsById[productId] || null;
 
         if (!product || !Array.isArray(product.additionals) || product.additionals.length === 0) {
-            additionalsContainer.innerHTML = '<span style="color:#64748b">Sem adicionais disponiveis.</span>';
+            additionalsContainer.innerHTML = '<span class="additionals-placeholder">Sem adicionais disponiveis.</span>';
             refreshSummary();
             return;
         }
@@ -375,27 +604,37 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         const minSelection = product.additionals_min_selection !== null ? Number(product.additionals_min_selection) : 0;
         const isRequired = Boolean(product.additionals_is_required);
 
-        let html = '';
-        if (maxSelection !== null) {
-            html += `<div class="additional-hint">Maximo por item: ${maxSelection}</div>`;
-        }
+        let rulesHtml = '';
+        const maxLabel = maxSelection !== null ? String(maxSelection) : 'Sem limite';
+        rulesHtml += `<span class="additional-rule-chip">Max: ${maxLabel}</span>`;
+        rulesHtml += `<span class="additional-rule-chip">Min: ${minSelection}</span>`;
         if (isRequired) {
-            html += `<div class="additional-hint" style="color:#92400e">Selecao obrigatoria${minSelection > 0 ? ` (min ${minSelection})` : ''}.</div>`;
+            rulesHtml += '<span class="additional-rule-chip required">Obrigatorio</span>';
         }
 
+        let cardsHtml = '';
         product.additionals.forEach((additional) => {
             const additionalId = Number(additional.id || 0);
             const additionalName = escapeHtml(additional.name || 'Adicional');
             const additionalPriceText = money(Number(additional.price || 0));
-            html += `
-                <label class="additional-choice">
+            cardsHtml += `
+                <label class="additional-card">
                     <input type="checkbox" data-additional-id="${additionalId}">
-                    ${additionalName} - ${additionalPriceText}
+                    <span class="additional-card-name">${additionalName}</span>
+                    <span class="additional-card-price">+ ${additionalPriceText}</span>
                 </label>
             `;
         });
 
-        additionalsContainer.innerHTML = html;
+        additionalsContainer.innerHTML = `
+            <div class="additionals-shell">
+                <div class="additionals-meta">
+                    <div class="additionals-rules">${rulesHtml}</div>
+                    <span class="additionals-counter" data-selected-count>0 selecionado(s)</span>
+                </div>
+                <div class="additionals-grid">${cardsHtml}</div>
+            </div>
+        `;
 
         additionalsContainer.querySelectorAll('input[type="checkbox"][data-additional-id]').forEach((checkbox) => {
             checkbox.addEventListener('change', () => {
@@ -403,10 +642,12 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
                 checkbox.setAttribute('data-last-change', '1');
                 enforceMaxSelection(additionalsContainer, maxSelection);
                 syncAdditionalHidden(row);
+                syncAdditionalSelectionUi(additionalsContainer);
                 refreshSummary();
             });
         });
 
+        syncAdditionalSelectionUi(additionalsContainer);
         refreshSummary();
     };
 
@@ -418,19 +659,24 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
-                <select name="product_id[]" required>${productOptions()}</select>
+                <div class="product-picker">
+                    <input class="product-search-input" type="text" placeholder="Digite nome/categoria do produto" autocomplete="off">
+                    <input name="product_id[]" type="hidden" value="">
+                    <small class="product-selected-meta"></small>
+                    <div class="product-suggestions" hidden></div>
+                </div>
             </td>
             <td>
                 <input name="quantity[]" type="number" min="1" step="1" value="1" required>
             </td>
             <td>
                 <div class="additionals-container">
-                    <span style="color:#64748b">Selecione um produto para ver os adicionais.</span>
+                    <span class="additionals-placeholder">Selecione um produto para ver os adicionais.</span>
                 </div>
                 <input type="hidden" name="additional_item_ids[]" value="">
             </td>
             <td>
-                <input name="item_notes[]" type="text" placeholder="Opcional">
+                <textarea name="item_notes[]" class="notes-textarea compact" rows="2" placeholder="Opcional"></textarea>
             </td>
             <td>
                 <span class="line-total item-line-total">R$ 0,00</span>
@@ -441,15 +687,8 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         `;
         tbody.appendChild(tr);
 
-        const select = tr.querySelector('select[name="product_id[]"]');
         const quantity = tr.querySelector('input[name="quantity[]"]');
-
-        if (select) {
-            select.addEventListener('change', () => {
-                renderAdditionals(tr);
-                refreshSummary();
-            });
-        }
+        setupProductPicker(tr);
 
         if (quantity) {
             quantity.addEventListener('input', refreshSummary);
@@ -490,9 +729,14 @@ $canCreateOrder = $totalCommands > 0 && $totalProducts > 0;
         form.addEventListener('submit', (event) => {
             const rows = Array.from(tbody.querySelectorAll('tr'));
             for (const row of rows) {
-                const select = row.querySelector('select[name="product_id[]"]');
+                const productIdInput = row.querySelector('input[name="product_id[]"]');
                 const hidden = row.querySelector('input[name="additional_item_ids[]"]');
-                const productId = Number(select ? select.value || 0 : 0);
+                const productId = Number(productIdInput ? productIdInput.value || 0 : 0);
+                if (productId <= 0) {
+                    event.preventDefault();
+                    alert('Selecione um produto valido em todas as linhas do pedido.');
+                    return;
+                }
                 const product = productsById[productId] || null;
                 if (!product || !hidden) {
                     continue;

@@ -16,6 +16,7 @@ $paymentSummary = ['pending' => 0, 'partial' => 0, 'paid' => 0];
 $ordersWithCommand = 0;
 $ordersWithoutCommand = 0;
 $ordersWaitingKitchen = 0;
+$formatMoney = static fn ($value): string => 'R$ ' . number_format((float) $value, 2, ',', '.');
 
 foreach ($ordersByTable as $tablePanel) {
     if (!is_array($tablePanel)) {
@@ -74,9 +75,18 @@ foreach ($ordersByTable as $tablePanel) {
     .order-meta-item{border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;padding:8px}
     .order-meta-item strong{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
     .order-meta-item span{font-size:13px;color:#0f172a}
-    .order-items{border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:10px}
+    .order-items{border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:10px;display:grid;gap:8px}
     .order-items-title{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
-    .order-items ul{margin:0;padding-left:18px;color:#334155;font-size:13px;display:grid;gap:4px}
+    .order-items-list{display:grid;gap:8px;max-height:240px;overflow:auto;padding-right:2px}
+    .order-item-entry{border:1px solid #dbeafe;border-radius:10px;background:#fff;padding:8px}
+    .order-item-main{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .order-item-name{font-size:13px;color:#0f172a;font-weight:600}
+    .order-item-prices{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+    .order-price-pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:11px}
+    .order-item-additionals{margin-top:6px;display:grid;gap:4px}
+    .order-item-additional{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:6px;border-radius:8px;background:#f8fafc}
+    .order-item-additional strong{font-size:12px;color:#334155;font-weight:600}
+    .order-item-note{margin-top:6px;font-size:12px;color:#475569}
     .order-actions{display:grid;gap:8px}
     .order-actions .row{display:flex;gap:8px;flex-wrap:wrap}
     .order-actions select,.order-actions input[type="text"]{background:#fff}
@@ -193,7 +203,21 @@ foreach ($ordersByTable as $tablePanel) {
                                 : 'status-op-pending';
 
                             $orderItems = is_array($order['items'] ?? null) ? $order['items'] : [];
-                            $orderItemsPreview = array_slice($orderItems, 0, 3);
+                            $orderItemsSearchParts = [];
+                            foreach ($orderItems as $searchItem) {
+                                if (!is_array($searchItem)) {
+                                    continue;
+                                }
+                                $orderItemsSearchParts[] = (string) ($searchItem['name'] ?? $searchItem['product_name_snapshot'] ?? '');
+                                $orderItemsSearchParts[] = (string) ($searchItem['notes'] ?? '');
+                                $searchAdditionals = is_array($searchItem['additionals'] ?? null) ? $searchItem['additionals'] : [];
+                                foreach ($searchAdditionals as $searchAdditional) {
+                                    if (!is_array($searchAdditional)) {
+                                        continue;
+                                    }
+                                    $orderItemsSearchParts[] = (string) ($searchAdditional['name'] ?? '');
+                                }
+                            }
                             $hasOperationalActions = ($canSendKitchen && !empty($order['can_send_kitchen'])) || ($canUpdateStatus && !empty($nextStatuses));
 
                             $searchText = strtolower(trim(implode(' ', [
@@ -207,6 +231,7 @@ foreach ($ordersByTable as $tablePanel) {
                                 (string) ($order['created_at'] ?? ''),
                                 (string) ($order['latest_status_changed_at'] ?? ''),
                                 number_format((float) ($order['total_amount'] ?? 0), 2, '.', ''),
+                                implode(' ', $orderItemsSearchParts),
                             ])));
                             ?>
                             <article class="order-card <?= htmlspecialchars($orderBorderClass) ?>" data-search="<?= htmlspecialchars($searchText) ?>">
@@ -242,17 +267,50 @@ foreach ($ordersByTable as $tablePanel) {
 
                                 <div class="order-items">
                                     <span class="order-items-title">Produtos selecionados</span>
-                                    <?php if (empty($orderItemsPreview)): ?>
+                                    <?php if (empty($orderItems)): ?>
                                         <span class="muted">Nenhum item detalhado para este pedido.</span>
                                     <?php else: ?>
-                                        <ul>
-                                            <?php foreach ($orderItemsPreview as $item): ?>
-                                                <li><?= (int) ($item['quantity'] ?? 0) ?>x <?= htmlspecialchars((string) ($item['product_name_snapshot'] ?? 'Item')) ?></li>
+                                        <div class="order-items-list">
+                                            <?php foreach ($orderItems as $item): ?>
+                                                <?php
+                                                $itemName = (string) ($item['name'] ?? $item['product_name_snapshot'] ?? 'Item');
+                                                $itemQuantity = (int) ($item['quantity'] ?? 0);
+                                                $itemUnitPrice = (float) ($item['unit_price'] ?? 0);
+                                                $itemLineSubtotal = (float) ($item['line_subtotal'] ?? 0);
+                                                $itemNotes = trim((string) ($item['notes'] ?? ''));
+                                                $itemAdditionals = is_array($item['additionals'] ?? null) ? $item['additionals'] : [];
+                                                ?>
+                                                <div class="order-item-entry">
+                                                    <div class="order-item-main">
+                                                        <span class="order-item-name"><?= $itemQuantity ?>x <?= htmlspecialchars($itemName) ?></span>
+                                                        <span class="order-item-prices">
+                                                            <span class="order-price-pill">Unit: <?= htmlspecialchars($formatMoney($itemUnitPrice)) ?></span>
+                                                            <span class="order-price-pill">Total: <?= htmlspecialchars($formatMoney($itemLineSubtotal)) ?></span>
+                                                        </span>
+                                                    </div>
+
+                                                    <?php if ($itemAdditionals !== []): ?>
+                                                        <div class="order-item-additionals">
+                                                            <?php foreach ($itemAdditionals as $additional): ?>
+                                                                <div class="order-item-additional">
+                                                                    <strong>
+                                                                        + <?= (int) ($additional['quantity'] ?? 0) ?>x <?= htmlspecialchars((string) ($additional['name'] ?? 'Adicional')) ?>
+                                                                    </strong>
+                                                                    <span class="order-item-prices">
+                                                                        <span class="order-price-pill">Unit: <?= htmlspecialchars($formatMoney((float) ($additional['unit_price'] ?? 0))) ?></span>
+                                                                        <span class="order-price-pill">Total: <?= htmlspecialchars($formatMoney((float) ($additional['line_subtotal'] ?? 0))) ?></span>
+                                                                    </span>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    <?php endif; ?>
+
+                                                    <?php if ($itemNotes !== ''): ?>
+                                                        <div class="order-item-note">Obs.: <?= htmlspecialchars($itemNotes) ?></div>
+                                                    <?php endif; ?>
+                                                </div>
                                             <?php endforeach; ?>
-                                            <?php if (count($orderItems) > count($orderItemsPreview)): ?>
-                                                <li class="muted">+<?= count($orderItems) - count($orderItemsPreview) ?> item(ns)</li>
-                                            <?php endif; ?>
-                                        </ul>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
 
