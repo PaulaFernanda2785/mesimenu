@@ -16,6 +16,10 @@ $createdAt = (string) ($order['created_at'] ?? '-');
 $statusValue = (string) ($order['status'] ?? '');
 $paymentStatusValue = (string) ($order['payment_status'] ?? '');
 $notes = trim((string) ($order['notes'] ?? ''));
+$returnOrderId = isset($_GET['return_order_id']) ? (int) $_GET['return_order_id'] : 0;
+$backToOrdersUrl = $returnOrderId > 0
+    ? base_url('/admin/orders?open_order_id=' . $returnOrderId)
+    : base_url('/admin/orders');
 
 $subtotal = (float) ($order['subtotal_amount'] ?? 0);
 $discount = (float) ($order['discount_amount'] ?? 0);
@@ -57,7 +61,7 @@ $total = (float) ($order['total_amount'] ?? 0);
         <h1 style="margin:0">Ticket do pedido</h1>
         <p style="margin:6px 0 8px;color:#64748b">Modelo otimizado para impressora termica 80mm.</p>
         <div class="ticket-actions">
-            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Voltar</a>
+            <a class="btn secondary" href="<?= htmlspecialchars($backToOrdersUrl) ?>">Voltar</a>
             <button class="btn" type="button" onclick="window.print()">Imprimir ticket</button>
         </div>
     </div>
