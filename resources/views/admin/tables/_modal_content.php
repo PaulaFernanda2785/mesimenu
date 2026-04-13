@@ -157,7 +157,7 @@ $canSendKitchen = !empty($canSendKitchen);
                         </div>
 
                         <div class="order-actions">
-                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>" target="_blank" rel="noopener">
+                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>">
                                 Imprimir ticket
                             </a>
 

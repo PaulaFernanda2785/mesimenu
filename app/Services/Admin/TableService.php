@@ -26,6 +26,16 @@ final class TableService
         return $this->tables->allByCompany($companyId);
     }
 
+    public function listSelectableForCommand(int $companyId): array
+    {
+        $tables = $this->list($companyId);
+
+        return array_values(array_filter(
+            $tables,
+            static fn (array $table): bool => (string) ($table['status'] ?? '') !== 'bloqueada'
+        ));
+    }
+
     public function panel(int $companyId): array
     {
         $tables = $this->list($companyId);

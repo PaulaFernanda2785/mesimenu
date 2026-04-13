@@ -21,7 +21,6 @@ $subtotal = (float) ($order['subtotal_amount'] ?? 0);
 $discount = (float) ($order['discount_amount'] ?? 0);
 $deliveryFee = (float) ($order['delivery_fee'] ?? 0);
 $total = (float) ($order['total_amount'] ?? 0);
-$autoPrint = !empty($autoPrint);
 ?>
 
 <style>
@@ -132,11 +131,3 @@ $autoPrint = !empty($autoPrint);
         <div class="ticket-center ticket-muted">Gerado em <?= htmlspecialchars($generatedAt) ?></div>
     </section>
 </div>
-
-<?php if ($autoPrint): ?>
-<script>
-window.addEventListener('load', () => {
-    window.setTimeout(() => window.print(), 150);
-});
-</script>
-<?php endif; ?>

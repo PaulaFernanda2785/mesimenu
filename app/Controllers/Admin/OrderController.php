@@ -57,14 +57,12 @@ final class OrderController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $orderId = (int) ($request->input('order_id', 0));
-        $autoPrint = $request->input('autoprint', '0') === '1';
 
         try {
             return $this->view('admin/orders/print_ticket', [
                 'title' => 'Imprimir Ticket do Pedido',
                 'user' => $user,
                 'context' => $this->service->ticketPrintContext($companyId, $orderId),
-                'autoPrint' => $autoPrint,
             ]);
         } catch (ValidationException $e) {
             return $this->backWithError($e->getMessage(), '/admin/orders');

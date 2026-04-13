@@ -34,6 +34,10 @@ final class CommandService
             throw new ValidationException('Mesa nao encontrada para esta empresa.');
         }
 
+        if ((string) ($table['status'] ?? '') === 'bloqueada') {
+            throw new ValidationException('Mesa bloqueada nao pode receber abertura de comanda.');
+        }
+
         if ($customerName === '') {
             throw new ValidationException('Informe o nome do cliente.');
         }

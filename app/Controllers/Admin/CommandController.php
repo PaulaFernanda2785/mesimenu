@@ -38,7 +38,7 @@ final class CommandController extends Controller
         return $this->view('admin/commands/create', [
             'title' => 'Abrir Comanda',
             'user' => $user,
-            'tables' => $this->tableService->list($companyId),
+            'tables' => $this->tableService->listSelectableForCommand($companyId),
         ]);
     }
 

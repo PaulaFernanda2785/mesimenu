@@ -144,7 +144,7 @@ $statusOptions = [
 
             <?php if ($isEdit): ?>
                 <div class="actions-stack">
-                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables/print-qr?table_id=' . (int) ($tableData['id'] ?? 0))) ?>" target="_blank" rel="noopener">QR para imprimir</a>
+                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables/print-qr?table_id=' . (int) ($tableData['id'] ?? 0))) ?>">QR para imprimir</a>
                 </div>
             <?php endif; ?>
         </div>

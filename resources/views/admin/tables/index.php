@@ -185,7 +185,7 @@ $canManageTables = !empty($canManageTables);
                     </div>
 
                     <div class="table-actions">
-                        <a class="btn btn-qr" href="<?= htmlspecialchars(base_url('/admin/tables/print-qr?table_id=' . $tableId)) ?>" target="_blank" rel="noopener">QR para imprimir</a>
+                        <a class="btn btn-qr" href="<?= htmlspecialchars(base_url('/admin/tables/print-qr?table_id=' . $tableId)) ?>">QR para imprimir</a>
 
                         <?php if ($canManageTables): ?>
                             <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables/edit?table_id=' . $tableId)) ?>">Editar</a>

@@ -114,7 +114,7 @@ $ordersByTable = is_array($ordersByTable ?? null) ? $ordersByTable : [];
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>" target="_blank" rel="noopener" style="margin-bottom:6px">
+                            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders/print-ticket?order_id=' . (int) $order['id'])) ?>" style="margin-bottom:6px">
                                 Imprimir ticket
                             </a>
 

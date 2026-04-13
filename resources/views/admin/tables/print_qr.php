@@ -64,7 +64,7 @@ $qrImageUrl = $qrPayload !== ''
             <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables')) ?>">Voltar</a>
             <button class="btn" type="button" onclick="window.print()">Imprimir</button>
             <?php if ($qrImageUrl !== ''): ?>
-                <a class="btn secondary" href="<?= htmlspecialchars($qrImageUrl) ?>" target="_blank" rel="noopener">Abrir imagem do QR</a>
+                <a class="btn secondary" href="<?= htmlspecialchars($qrImageUrl) ?>">Abrir imagem do QR</a>
             <?php endif; ?>
         </div>
     </div>
