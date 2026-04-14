@@ -413,6 +413,15 @@ final class OrderService
             $orders[] = $order;
         }
 
+        $deliveriesByOrderId = $this->deliveries->findByOrderIdsForCompany($companyId, $orderIds);
+        foreach ($orders as &$orderRow) {
+            $rowOrderId = (int) ($orderRow['id'] ?? 0);
+            $orderRow['delivery'] = is_array($deliveriesByOrderId[$rowOrderId] ?? null)
+                ? $deliveriesByOrderId[$rowOrderId]
+                : null;
+        }
+        unset($orderRow);
+
         $itemsRows = $this->orderItems->activeItemsByOrderIds($companyId, $orderIds);
         $orderItemIds = array_map(static fn (array $item): int => (int) ($item['id'] ?? 0), $itemsRows);
         $additionalRows = $this->orderItems->additionalsByOrderItemIds($companyId, $orderItemIds);
@@ -490,10 +499,13 @@ final class OrderService
         $groupPaymentStatus = $this->resolveGroupPaymentStatus($paymentStatuses);
         $groupChannel = $this->resolveGroupChannel($channels);
         $groupNotes = $notesList !== [] ? implode(' | ', $notesList) : null;
+        $firstOrderId = (int) ($firstOrder['id'] ?? 0);
+        $groupDelivery = is_array($deliveriesByOrderId[$firstOrderId] ?? null) ? $deliveriesByOrderId[$firstOrderId] : null;
 
         return [
             'order' => $firstOrder,
             'items' => is_array($itemsByOrderId[(int) ($firstOrder['id'] ?? 0)] ?? null) ? $itemsByOrderId[(int) ($firstOrder['id'] ?? 0)] : [],
+            'delivery' => $groupDelivery,
             'orders' => $ordersWithItems,
             'is_grouped' => $isGrouped,
             'group' => [

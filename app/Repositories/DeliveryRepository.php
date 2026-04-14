@@ -153,5 +153,66 @@ final class DeliveryRepository extends BaseRepository
         ");
         $stmt->execute($data);
     }
-}
 
+    public function findByOrderIdsForCompany(int $companyId, array $orderIds): array
+    {
+        $orderIds = array_values(array_unique(array_map(static fn (mixed $id): int => (int) $id, $orderIds)));
+        $orderIds = array_values(array_filter($orderIds, static fn (int $id): bool => $id > 0));
+        if ($orderIds === []) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+        $sql = "
+            SELECT
+                d.order_id,
+                d.delivery_user_id,
+                d.status,
+                d.delivery_fee,
+                d.notes,
+                d.assigned_at,
+                d.left_at,
+                d.delivered_at,
+                da.label AS address_label,
+                da.street,
+                da.number,
+                da.complement,
+                da.neighborhood,
+                da.city,
+                da.state,
+                da.zip_code,
+                da.reference,
+                dz.name AS zone_name,
+                u.name AS delivery_user_name,
+                c.phone AS customer_phone
+            FROM deliveries d
+            INNER JOIN delivery_addresses da ON da.id = d.delivery_address_id
+            LEFT JOIN delivery_zones dz ON dz.id = da.delivery_zone_id
+            LEFT JOIN users u ON u.id = d.delivery_user_id
+            LEFT JOIN customers c ON c.id = da.customer_id
+            WHERE d.company_id = ?
+              AND d.order_id IN (" . $placeholders . ")
+            ORDER BY d.id DESC
+        ";
+
+        $params = array_merge([$companyId], $orderIds);
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        $indexed = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $orderId = (int) ($row['order_id'] ?? 0);
+            if ($orderId <= 0 || isset($indexed[$orderId])) {
+                continue;
+            }
+            $indexed[$orderId] = $row;
+        }
+
+        return $indexed;
+    }
+}

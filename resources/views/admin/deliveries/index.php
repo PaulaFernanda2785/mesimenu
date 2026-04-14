@@ -330,6 +330,20 @@ ksort($channelsSummary);
     const paginationControls = document.getElementById('deliveriesPaginationControls');
     const refreshMs = 30000;
 
+    window.setInterval(() => {
+        if (document.hidden) {
+            return;
+        }
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) {
+            const tagName = activeElement.tagName;
+            if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
+                return;
+            }
+        }
+        window.location.reload();
+    }, refreshMs);
+
     if (!board || cards.length === 0 || !searchInput || !statusFilter || !channelFilter || !courierFilter || !periodFilter || !clearButton) {
         return;
     }
@@ -503,21 +517,6 @@ ksort($channelsSummary);
         searchInput.focus();
     });
 
-    window.setInterval(() => {
-        if (document.hidden) {
-            return;
-        }
-        const activeElement = document.activeElement;
-        if (activeElement instanceof HTMLElement) {
-            const tagName = activeElement.tagName;
-            if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
-                return;
-            }
-        }
-        window.location.reload();
-    }, refreshMs);
-
     applyFilter(true);
 })();
 </script>
-

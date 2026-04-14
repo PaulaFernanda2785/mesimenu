@@ -4,6 +4,7 @@ $order = is_array($context['order'] ?? null) ? $context['order'] : [];
 $items = is_array($context['items'] ?? null) ? $context['items'] : [];
 $ordersContext = is_array($context['orders'] ?? null) ? $context['orders'] : [];
 $group = is_array($context['group'] ?? null) ? $context['group'] : [];
+$delivery = is_array($context['delivery'] ?? null) ? $context['delivery'] : [];
 $isGrouped = !empty($context['is_grouped']);
 $generatedAt = (string) ($context['generated_at'] ?? date('Y-m-d H:i:s'));
 
@@ -32,6 +33,25 @@ $statusValue = (string) ($group['status'] ?? ($order['status'] ?? ''));
 $paymentStatusValue = (string) ($group['payment_status'] ?? ($order['payment_status'] ?? ''));
 $channelValue = (string) ($group['channel'] ?? ($order['channel'] ?? 'table'));
 $notes = trim((string) ($group['notes'] ?? ($order['notes'] ?? '')));
+$deliveryFromOrder = is_array($order['delivery'] ?? null) ? $order['delivery'] : [];
+if ($delivery === [] && $deliveryFromOrder !== []) {
+    $delivery = $deliveryFromOrder;
+}
+
+$deliveryPhone = trim((string) ($delivery['customer_phone'] ?? ''));
+$deliveryCourierName = trim((string) ($delivery['delivery_user_name'] ?? ''));
+$deliveryReference = trim((string) ($delivery['reference'] ?? ''));
+$deliveryAddressParts = array_filter([
+    trim((string) ($delivery['street'] ?? '')),
+    trim((string) ($delivery['number'] ?? '')),
+    trim((string) ($delivery['complement'] ?? '')),
+    trim((string) ($delivery['neighborhood'] ?? '')),
+    trim((string) ($delivery['city'] ?? '')),
+    trim((string) ($delivery['state'] ?? '')),
+    trim((string) ($delivery['zip_code'] ?? '')),
+], static fn (string $value): bool => $value !== '');
+$deliveryAddressFull = implode(', ', $deliveryAddressParts);
+$hasDeliveryDetails = $channelValue === 'delivery' && ($deliveryAddressFull !== '' || $deliveryReference !== '' || $deliveryPhone !== '' || $deliveryCourierName !== '');
 $returnOrderId = isset($_GET['return_order_id']) ? (int) $_GET['return_order_id'] : 0;
 $returnTo = strtolower(trim((string) ($_GET['return_to'] ?? 'orders')));
 $backToOrdersUrl = match ($returnTo) {
@@ -143,6 +163,15 @@ $total = (float) ($group['total_amount'] ?? ($order['total_amount'] ?? 0));
                 <div class="ticket-meta-item"><strong>Total</strong><span>R$ <?= number_format($total, 2, ',', '.') ?></span></div>
             </div>
 
+            <?php if ($hasDeliveryDetails): ?>
+                <div class="ticket-summary-meta">
+                    <div class="ticket-meta-item" style="grid-column:1 / -1"><strong>Endereço entrega</strong><span><?= htmlspecialchars($deliveryAddressFull !== '' ? $deliveryAddressFull : '-') ?></span></div>
+                    <div class="ticket-meta-item"><strong>Referência</strong><span><?= htmlspecialchars($deliveryReference !== '' ? $deliveryReference : '-') ?></span></div>
+                    <div class="ticket-meta-item"><strong>Telefone</strong><span><?= htmlspecialchars($deliveryPhone !== '' ? $deliveryPhone : '-') ?></span></div>
+                    <div class="ticket-meta-item"><strong>Motoboy</strong><span><?= htmlspecialchars($deliveryCourierName !== '' ? $deliveryCourierName : 'Não atribuído') ?></span></div>
+                </div>
+            <?php endif; ?>
+
             <?php if ($isGrouped && $groupOrderNumbers !== []): ?>
                 <div class="ticket-order-notes">
                     <strong>Pedidos agrupados</strong>
@@ -185,6 +214,15 @@ $total = (float) ($group['total_amount'] ?? ($order['total_amount'] ?? 0));
                     <div class="ticket-row"><span>Pagamento</span><span><?= htmlspecialchars(status_label('order_payment_status', $paymentStatusValue)) ?></span></div>
                     <div class="ticket-row"><span>Canal</span><span><?= htmlspecialchars(status_label('order_channel', $channelValue)) ?></span></div>
                     <div class="ticket-row"><span>Pedidos no ticket</span><span><?= count($ordersContext) ?></span></div>
+
+                    <?php if ($hasDeliveryDetails): ?>
+                        <div class="ticket-divider"></div>
+                        <div><strong>Dados da entrega</strong></div>
+                        <div class="ticket-row"><span>Endereço</span><span><?= htmlspecialchars($deliveryAddressFull !== '' ? $deliveryAddressFull : '-') ?></span></div>
+                        <div class="ticket-row"><span>Referência</span><span><?= htmlspecialchars($deliveryReference !== '' ? $deliveryReference : '-') ?></span></div>
+                        <div class="ticket-row"><span>Telefone</span><span><?= htmlspecialchars($deliveryPhone !== '' ? $deliveryPhone : '-') ?></span></div>
+                        <div class="ticket-row"><span>Motoboy</span><span><?= htmlspecialchars($deliveryCourierName !== '' ? $deliveryCourierName : 'Não atribuído') ?></span></div>
+                    <?php endif; ?>
 
                     <div class="ticket-divider"></div>
 
