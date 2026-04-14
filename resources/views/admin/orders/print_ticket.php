@@ -32,9 +32,12 @@ $statusValue = (string) ($group['status'] ?? ($order['status'] ?? ''));
 $paymentStatusValue = (string) ($group['payment_status'] ?? ($order['payment_status'] ?? ''));
 $notes = trim((string) ($group['notes'] ?? ($order['notes'] ?? '')));
 $returnOrderId = isset($_GET['return_order_id']) ? (int) $_GET['return_order_id'] : 0;
-$backToOrdersUrl = $returnOrderId > 0
-    ? base_url('/admin/orders?open_order_id=' . $returnOrderId)
-    : base_url('/admin/orders');
+$returnTo = strtolower(trim((string) ($_GET['return_to'] ?? 'orders')));
+$backToOrdersUrl = $returnTo === 'kitchen'
+    ? base_url('/admin/kitchen')
+    : ($returnOrderId > 0
+        ? base_url('/admin/orders?open_order_id=' . $returnOrderId)
+        : base_url('/admin/orders'));
 
 $subtotal = (float) ($group['subtotal_amount'] ?? ($order['subtotal_amount'] ?? 0));
 $discount = (float) ($group['discount_amount'] ?? ($order['discount_amount'] ?? 0));

@@ -112,8 +112,8 @@ final class KitchenService
         }
 
         $status = (string) ($order['status'] ?? '');
-        if (!in_array($status, ['received', 'preparing', 'ready'], true)) {
-            throw new ValidationException('A emissao de ticket e permitida apenas para pedidos na fila da cozinha.');
+        if ($status !== 'ready') {
+            throw new ValidationException('A emissao de ticket e permitida apenas para pedidos prontos.');
         }
 
         return $this->printLogs->createKitchenTicket(
@@ -136,4 +136,3 @@ final class KitchenService
         return in_array($newStatus, $allowed, true);
     }
 }
-

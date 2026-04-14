@@ -25,7 +25,6 @@ final class KitchenController extends Controller
             'title' => 'Producao / Cozinha',
             'user' => $user,
             'queue' => $this->service->queue($companyId),
-            'recentPrints' => $this->service->recentPrints($companyId),
         ]);
     }
 
@@ -48,13 +47,20 @@ final class KitchenController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
+        $orderId = (int) ($request->input('order_id', 0));
+        $redirectToPreviewRaw = strtolower(trim((string) ($request->input('redirect_to_preview', ''))));
+        $redirectToPreview = in_array($redirectToPreviewRaw, ['1', 'true', 'on', 'yes'], true);
 
         try {
             $this->service->emitKitchenTicket($companyId, $userId, $request->all());
+
+            if ($redirectToPreview && $orderId > 0) {
+                return $this->redirect('/admin/orders/print-ticket?order_id=' . $orderId . '&return_to=kitchen');
+            }
+
             return $this->backWithSuccess('Ticket de cozinha registrado com sucesso.', '/admin/kitchen');
         } catch (ValidationException $e) {
             return $this->backWithError($e->getMessage(), '/admin/kitchen');
         }
     }
 }
-
