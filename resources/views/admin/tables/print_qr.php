@@ -10,7 +10,7 @@ $tableCapacity = array_key_exists('table_capacity', $context) && $context['table
 $qrPayload = trim((string) ($context['qr_payload'] ?? ''));
 $token = trim((string) ($tableData['qr_code_token'] ?? ''));
 $logoPath = trim((string) ($context['company_logo_path'] ?? ''));
-$logoUrl = $logoPath !== '' ? asset_url($logoPath) : '';
+$logoUrl = $logoPath !== '' ? company_image_url($logoPath) : '';
 $qrImageUrl = $qrPayload !== ''
     ? base_url('/media/table-qr?size=760&data=' . rawurlencode($qrPayload))
     : '';

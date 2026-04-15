@@ -54,6 +54,10 @@ final class DashboardService
     ];
 
     private const MAX_IMAGE_SIZE_BYTES = 10485760; // 10MB
+    private const DEFAULT_PRIMARY_COLOR = '#1d4ed8';
+    private const DEFAULT_SECONDARY_COLOR = '#0f172a';
+    private const DEFAULT_ACCENT_COLOR = '#0ea5e9';
+    private const DEFAULT_FOOTER_TEXT = 'Comanda360 - Sistema de gestao de atendimento e vendas.';
 
     public function __construct(
         private readonly DashboardRepository $repository = new DashboardRepository()
@@ -316,9 +320,9 @@ final class DashboardService
         $description = trim((string) ($input['description'] ?? ''));
         $footerText = trim((string) ($input['footer_text'] ?? ''));
 
-        $primaryColor = $this->normalizeHexColor($input['primary_color'] ?? null, '#1d4ed8');
-        $secondaryColor = $this->normalizeHexColor($input['secondary_color'] ?? null, '#0f172a');
-        $accentColor = $this->normalizeHexColor($input['accent_color'] ?? null, '#0ea5e9');
+        $primaryColor = $this->normalizeHexColor($input['primary_color'] ?? null, self::DEFAULT_PRIMARY_COLOR);
+        $secondaryColor = $this->normalizeHexColor($input['secondary_color'] ?? null, self::DEFAULT_SECONDARY_COLOR);
+        $accentColor = $this->normalizeHexColor($input['accent_color'] ?? null, self::DEFAULT_ACCENT_COLOR);
 
         $currentLogoPath = $this->normalizeStoredAssetPath((string) ($companyProfile['logo_path'] ?? ''));
         $currentBannerPath = $this->normalizeStoredAssetPath((string) ($companyProfile['banner_path'] ?? ''));
@@ -326,8 +330,18 @@ final class DashboardService
         $removeLogo = isset($input['remove_logo']);
         $removeBanner = isset($input['remove_banner']);
 
-        $uploadedLogo = $this->storeCompanyImage($companyId, $files['logo_file'] ?? null, 'logo');
-        $uploadedBanner = $this->storeCompanyImage($companyId, $files['banner_file'] ?? null, 'banner');
+        $uploadedLogo = $this->storeCompanyImage(
+            $companyId,
+            'logo',
+            $files['logo_file'] ?? null,
+            (string) ($input['logo_data_base64'] ?? '')
+        );
+        $uploadedBanner = $this->storeCompanyImage(
+            $companyId,
+            'banner',
+            $files['banner_file'] ?? null,
+            (string) ($input['banner_data_base64'] ?? '')
+        );
 
         $logoPath = $currentLogoPath;
         if ($uploadedLogo !== null) {
@@ -364,7 +378,7 @@ final class DashboardService
                 'banner_path' => $bannerPath,
                 'title' => $title !== '' ? $title : $companyName,
                 'description' => $description !== '' ? $description : null,
-                'footer_text' => $footerText !== '' ? $footerText : null,
+                'footer_text' => $footerText !== '' ? $footerText : self::DEFAULT_FOOTER_TEXT,
             ]);
         });
 
@@ -373,6 +387,44 @@ final class DashboardService
         }
 
         if ($currentBannerPath !== null && $bannerPath !== $currentBannerPath) {
+            $this->deleteCompanyImage($currentBannerPath);
+        }
+    }
+
+    public function restoreFactoryStyle(int $companyId): void
+    {
+        if ($companyId <= 0) {
+            throw new ValidationException('Empresa invalida para restaurar estilo.');
+        }
+
+        $companyProfile = $this->repository->findCompanyProfileWithTheme($companyId);
+        if ($companyProfile === null) {
+            throw new ValidationException('Empresa nao encontrada para restaurar estilo.');
+        }
+
+        $companyName = trim((string) ($companyProfile['name'] ?? ''));
+        if ($companyName === '') {
+            $companyName = 'Estabelecimento';
+        }
+
+        $currentLogoPath = $this->normalizeStoredAssetPath((string) ($companyProfile['logo_path'] ?? ''));
+        $currentBannerPath = $this->normalizeStoredAssetPath((string) ($companyProfile['banner_path'] ?? ''));
+
+        $this->repository->upsertCompanyTheme($companyId, [
+            'primary_color' => self::DEFAULT_PRIMARY_COLOR,
+            'secondary_color' => self::DEFAULT_SECONDARY_COLOR,
+            'accent_color' => self::DEFAULT_ACCENT_COLOR,
+            'logo_path' => null,
+            'banner_path' => null,
+            'title' => $companyName,
+            'description' => null,
+            'footer_text' => self::DEFAULT_FOOTER_TEXT,
+        ]);
+
+        if ($currentLogoPath !== null) {
+            $this->deleteCompanyImage($currentLogoPath);
+        }
+        if ($currentBannerPath !== null) {
             $this->deleteCompanyImage($currentBannerPath);
         }
     }
@@ -742,7 +794,32 @@ final class DashboardService
         return checkdate($month, $day, $year);
     }
 
-    private function storeCompanyImage(int $companyId, mixed $file, string $type): ?string
+    private function storeCompanyImage(int $companyId, string $type, mixed $file, string $base64Image): ?string
+    {
+        $uploadedPath = $this->storeCompanyImageFromUpload($companyId, $type, $file);
+        if ($uploadedPath !== null) {
+            return $uploadedPath;
+        }
+
+        return $this->storeCompanyImageFromBase64($companyId, $type, $base64Image);
+    }
+
+    private function normalizeStoredAssetPath(string $path): ?string
+    {
+        $value = trim($path);
+        if ($value === '') {
+            return null;
+        }
+
+        $normalized = '/' . ltrim(str_replace('\\', '/', $value), '/');
+        if (!str_starts_with($normalized, '/uploads/company/')) {
+            return $normalized;
+        }
+
+        return $normalized;
+    }
+
+    private function storeCompanyImageFromUpload(int $companyId, string $type, mixed $file): ?string
     {
         if (!is_array($file)) {
             return null;
@@ -752,7 +829,6 @@ final class DashboardService
         if ($error === UPLOAD_ERR_NO_FILE) {
             return null;
         }
-
         if ($error !== UPLOAD_ERR_OK) {
             throw new ValidationException($this->uploadErrorMessage($error));
         }
@@ -774,31 +850,14 @@ final class DashboardService
             throw new ValidationException('Arquivo enviado nao e uma imagem valida.');
         }
 
-        $mime = strtolower((string) $imageInfo['mime']);
-        $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            'image/gif' => 'gif',
-        ];
-        if (!isset($extensions[$mime])) {
-            throw new ValidationException('Formato de imagem nao suportado. Use JPG, PNG, WEBP ou GIF.');
-        }
+        $extension = $this->imageExtensionFromMime((string) $imageInfo['mime']);
+        $targetPath = $this->prepareCompanyImageTargetPath($companyId, $type, $extension);
 
-        $baseDir = BASE_PATH . '/public/uploads/company/' . $companyId;
-        if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
-            throw new ValidationException('Nao foi possivel preparar pasta de upload da empresa.');
-        }
-
-        $prefix = $type === 'banner' ? 'banner_' : 'logo_';
-        $filename = $prefix . date('YmdHis') . '_' . bin2hex(random_bytes(5)) . '.' . $extensions[$mime];
-        $targetPath = $baseDir . '/' . $filename;
-
-        $moved = move_uploaded_file($tmpName, $targetPath);
+        $moved = move_uploaded_file($tmpName, $targetPath['absolute']);
         if (!$moved && $isLocalEnv && is_file($tmpName)) {
-            $moved = @rename($tmpName, $targetPath);
+            $moved = @rename($tmpName, $targetPath['absolute']);
             if (!$moved) {
-                $moved = @copy($tmpName, $targetPath);
+                $moved = @copy($tmpName, $targetPath['absolute']);
                 if ($moved) {
                     @unlink($tmpName);
                 }
@@ -809,22 +868,77 @@ final class DashboardService
             throw new ValidationException('Nao foi possivel salvar a imagem da empresa.');
         }
 
-        return '/uploads/company/' . $companyId . '/' . $filename;
+        return $targetPath['relative'];
     }
 
-    private function normalizeStoredAssetPath(string $path): ?string
+    private function storeCompanyImageFromBase64(int $companyId, string $type, string $base64Image): ?string
     {
-        $value = trim($path);
-        if ($value === '') {
+        $base64 = trim($base64Image);
+        if ($base64 === '') {
             return null;
         }
 
-        $normalized = '/' . ltrim(str_replace('\\', '/', $value), '/');
-        if (!str_starts_with($normalized, '/uploads/company/')) {
-            return $normalized;
+        if (!preg_match('#^data:image/([a-zA-Z0-9.+-]+);base64,#', $base64)) {
+            throw new ValidationException('Formato de imagem invalido enviado pelo formulario.');
         }
 
-        return $normalized;
+        $payload = substr($base64, (int) strpos($base64, ',') + 1);
+        $binary = base64_decode($payload, true);
+        if ($binary === false || $binary === '') {
+            throw new ValidationException('Falha ao decodificar a imagem enviada.');
+        }
+
+        $size = strlen($binary);
+        if ($size <= 0 || $size > self::MAX_IMAGE_SIZE_BYTES) {
+            throw new ValidationException('A imagem deve ter ate 10MB.');
+        }
+
+        $imageInfo = @getimagesizefromstring($binary);
+        if (!is_array($imageInfo) || empty($imageInfo['mime'])) {
+            throw new ValidationException('Conteudo enviado nao e uma imagem valida.');
+        }
+
+        $extension = $this->imageExtensionFromMime((string) $imageInfo['mime']);
+        $targetPath = $this->prepareCompanyImageTargetPath($companyId, $type, $extension);
+
+        if (@file_put_contents($targetPath['absolute'], $binary) === false) {
+            throw new ValidationException('Nao foi possivel salvar a imagem enviada.');
+        }
+
+        return $targetPath['relative'];
+    }
+
+    private function imageExtensionFromMime(string $mime): string
+    {
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'image/gif' => 'gif',
+        ];
+
+        $normalized = strtolower(trim($mime));
+        if (!isset($extensions[$normalized])) {
+            throw new ValidationException('Formato de imagem nao suportado. Use JPG, PNG, WEBP ou GIF.');
+        }
+
+        return $extensions[$normalized];
+    }
+
+    private function prepareCompanyImageTargetPath(int $companyId, string $type, string $extension): array
+    {
+        $baseDir = BASE_PATH . '/public/uploads/company/' . $companyId . '/branding';
+        if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
+            throw new ValidationException('Nao foi possivel preparar pasta de upload da empresa.');
+        }
+
+        $prefix = $type === 'banner' ? 'banner_' : 'logo_';
+        $filename = $prefix . date('YmdHis') . '_' . bin2hex(random_bytes(5)) . '.' . $extension;
+
+        return [
+            'absolute' => $baseDir . '/' . $filename,
+            'relative' => '/uploads/company/' . $companyId . '/branding/' . $filename,
+        ];
     }
 
     private function deleteCompanyImage(string $path): void

@@ -13,8 +13,8 @@ $footerText = trim((string) ($appShellTheme['footer_text'] ?? 'Comanda360 - Sist
 
 $logoPath = trim((string) ($appShellTheme['logo_path'] ?? ''));
 $bannerPath = trim((string) ($appShellTheme['banner_path'] ?? ''));
-$logoUrl = $logoPath !== '' ? asset_url($logoPath) : '';
-$bannerUrl = $bannerPath !== '' ? asset_url($bannerPath) : '';
+$logoUrl = $logoPath !== '' ? company_image_url($logoPath) : '';
+$bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
 
 $userName = trim((string) ($user['name'] ?? 'Usuario'));
 $userRole = trim((string) ($user['role_name'] ?? 'Perfil'));

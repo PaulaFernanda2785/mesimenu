@@ -81,6 +81,30 @@ final class DashboardController extends Controller
         }
     }
 
+    public function restoreTheme(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return $this->redirect('/login');
+        }
+
+        $guard = $this->guardSingleSubmit($request, 'dashboard.theme.restore', '/admin/dashboard?section=branding');
+        if ($guard !== null) {
+            return $guard;
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+
+        $companyId = (int) ($user['company_id'] ?? 0);
+
+        try {
+            $this->service->restoreFactoryStyle($companyId);
+            return $this->backWithSuccess('Estilo de fabrica restaurado com sucesso.', '/admin/dashboard?section=branding');
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), '/admin/dashboard?section=branding');
+        }
+    }
+
     public function storeUser(Request $request): Response
     {
         if (!Auth::check()) {

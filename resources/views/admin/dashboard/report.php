@@ -36,7 +36,7 @@ $companyName = trim((string) ($company['name'] ?? 'Estabelecimento'));
 $companyTitle = trim((string) ($company['title'] ?? $companyName));
 $companyDescription = trim((string) ($company['description'] ?? ''));
 $logoPath = trim((string) ($company['logo_path'] ?? ''));
-$logoUrl = $logoPath !== '' ? asset_url($logoPath) : '';
+$logoUrl = $logoPath !== '' ? company_image_url($logoPath) : '';
 
 $generatedAt = trim((string) ($report['generated_at'] ?? date('Y-m-d H:i:s')));
 $generatedBy = trim((string) ($report['generated_by'] ?? '-'));
@@ -65,8 +65,14 @@ $paymentLabel = $paymentStatusFilter !== '' ? status_label('order_payment_status
     .report-cover h2{margin:0}
     .report-cover p{margin:6px 0 0;color:#475569}
     .report-index{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .report-index ul{margin:0;padding-left:18px}
-    .report-index li{margin:6px 0;color:#334155}
+    .report-index-card{border:1px solid #c7d2fe;border-radius:14px;padding:12px;background:linear-gradient(125deg,#eef2ff 0%,#f8fafc 100%)}
+    .report-index-card h3{margin:0 0 10px;color:#1e1b4b}
+    .report-index-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+    .report-index-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 10px;background:#fff;border:1px solid #c7d2fe;border-radius:10px}
+    .report-index-order{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:999px;background:#1d4ed8;color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em}
+    .report-index-link{color:#1f2937;text-decoration:none;font-size:13px;font-weight:600}
+    .report-index-link:hover{text-decoration:underline}
+    .report-index-tag{padding:4px 8px;border-radius:999px;background:#e0e7ff;color:#312e81;font-size:11px;font-weight:600;white-space:nowrap}
     .report-params{display:flex;flex-wrap:wrap;gap:8px}
     .report-chip{padding:7px 10px;border-radius:999px;border:1px solid #bfdbfe;background:#eff6ff;font-size:12px;color:#1e3a8a}
     .report-kpis{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px}
@@ -112,6 +118,9 @@ $paymentLabel = $paymentStatusFilter !== '' ? status_label('order_payment_status
         .report-paper{border:none;box-shadow:none;border-radius:0}
         .report-body{padding:8mm 7mm 10mm}
         .report-section{break-inside:avoid-page}
+        .report-index-card{background:#fff}
+        .report-index-item{background:#fff}
+        .report-index-tag{background:#eef2ff}
         .report-footer{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #d1d5db;padding:4mm 8mm}
     }
 </style>
@@ -154,24 +163,56 @@ $paymentLabel = $paymentStatusFilter !== '' ? status_label('order_payment_status
                 </div>
             </section>
 
-            <section class="report-index report-section" id="sec-indice">
-                <div class="report-card">
-                    <h3>Índice do relatório</h3>
-                    <ul>
-                        <li><a href="#sec-capa">Capa</a></li>
-                        <li><a href="#sec-filtros">Parâmetros aplicados</a></li>
-                        <li><a href="#sec-kpis">Índices executivos</a></li>
-                        <li><a href="#sec-analitico">Análises por status/canal</a></li>
-                    </ul>
+                        <section class="report-index report-section" id="sec-indice">
+                <div class="report-index-card">
+                    <h3>Indice do relatorio</h3>
+                    <ol class="report-index-list">
+                        <li class="report-index-item">
+                            <span class="report-index-order">01</span>
+                            <a class="report-index-link" href="#sec-capa">Capa e identificacao do documento</a>
+                            <span class="report-index-tag">Resumo</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">02</span>
+                            <a class="report-index-link" href="#sec-filtros">Parametros de filtros aplicados</a>
+                            <span class="report-index-tag">Filtros</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">03</span>
+                            <a class="report-index-link" href="#sec-kpis">Indices executivos principais</a>
+                            <span class="report-index-tag">KPIs</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">04</span>
+                            <a class="report-index-link" href="#sec-analitico">Analises por status e canal</a>
+                            <span class="report-index-tag">Analitico</span>
+                        </li>
+                    </ol>
                 </div>
-                <div class="report-card">
-                    <h3>Índice operacional</h3>
-                    <ul>
-                        <li><a href="#sec-diario">Série diária de vendas</a></li>
-                        <li><a href="#sec-produtos">Top produtos</a></li>
-                        <li><a href="#sec-detalhado">Pedidos detalhados</a></li>
-                        <li><a href="#sec-rodape">Rodapé técnico</a></li>
-                    </ul>
+                <div class="report-index-card">
+                    <h3>Indice operacional</h3>
+                    <ol class="report-index-list">
+                        <li class="report-index-item">
+                            <span class="report-index-order">05</span>
+                            <a class="report-index-link" href="#sec-diario">Serie diaria de vendas</a>
+                            <span class="report-index-tag">Evolucao</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">06</span>
+                            <a class="report-index-link" href="#sec-produtos">Ranking de top produtos</a>
+                            <span class="report-index-tag">Produtos</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">07</span>
+                            <a class="report-index-link" href="#sec-detalhado">Pedidos detalhados</a>
+                            <span class="report-index-tag">Operacao</span>
+                        </li>
+                        <li class="report-index-item">
+                            <span class="report-index-order">08</span>
+                            <a class="report-index-link" href="#sec-rodape">Rodape tecnico</a>
+                            <span class="report-index-tag">Controle</span>
+                        </li>
+                    </ol>
                 </div>
             </section>
 

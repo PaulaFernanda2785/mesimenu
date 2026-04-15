@@ -601,30 +601,14 @@ final class ProductService
             throw new ValidationException('Arquivo enviado nao e uma imagem valida.');
         }
 
-        $mime = strtolower((string) $imageInfo['mime']);
-        $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            'image/gif' => 'gif',
-        ];
-        if (!isset($extensions[$mime])) {
-            throw new ValidationException('Formato de imagem nao suportado. Use JPG, PNG, WEBP ou GIF.');
-        }
+        $extension = $this->imageExtensionFromMime((string) $imageInfo['mime']);
+        $target = $this->prepareProductImageTargetPath($companyId, $extension);
 
-        $baseDir = BASE_PATH . '/public/uploads/products/' . $companyId;
-        if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
-            throw new ValidationException('Nao foi possivel preparar pasta de upload.');
-        }
-
-        $filename = 'prd_' . date('YmdHis') . '_' . bin2hex(random_bytes(5)) . '.' . $extensions[$mime];
-        $targetPath = $baseDir . '/' . $filename;
-
-        $moved = move_uploaded_file($tmpName, $targetPath);
+        $moved = move_uploaded_file($tmpName, $target['absolute']);
         if (!$moved && $isLocalEnv && is_file($tmpName)) {
-            $moved = @rename($tmpName, $targetPath);
+            $moved = @rename($tmpName, $target['absolute']);
             if (!$moved) {
-                $moved = @copy($tmpName, $targetPath);
+                $moved = @copy($tmpName, $target['absolute']);
                 if ($moved && is_file($tmpName)) {
                     @unlink($tmpName);
                 }
@@ -635,7 +619,7 @@ final class ProductService
             throw new ValidationException('Nao foi possivel salvar a imagem enviada.');
         }
 
-        return '/uploads/products/' . $companyId . '/' . $filename;
+        return $target['relative'];
     }
 
     private function storeProductImageFromBase64(int $companyId, array $input): ?string
@@ -665,29 +649,13 @@ final class ProductService
             throw new ValidationException('Conteudo enviado nao e uma imagem valida.');
         }
 
-        $mime = strtolower((string) $imageInfo['mime']);
-        $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            'image/gif' => 'gif',
-        ];
-        if (!isset($extensions[$mime])) {
-            throw new ValidationException('Formato de imagem nao suportado. Use JPG, PNG, WEBP ou GIF.');
-        }
-
-        $baseDir = BASE_PATH . '/public/uploads/products/' . $companyId;
-        if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
-            throw new ValidationException('Nao foi possivel preparar pasta de upload.');
-        }
-
-        $filename = 'prd_' . date('YmdHis') . '_' . bin2hex(random_bytes(5)) . '.' . $extensions[$mime];
-        $targetPath = $baseDir . '/' . $filename;
-        if (@file_put_contents($targetPath, $binary) === false) {
+        $extension = $this->imageExtensionFromMime((string) $imageInfo['mime']);
+        $target = $this->prepareProductImageTargetPath($companyId, $extension);
+        if (@file_put_contents($target['absolute'], $binary) === false) {
             throw new ValidationException('Nao foi possivel salvar a imagem enviada.');
         }
 
-        return '/uploads/products/' . $companyId . '/' . $filename;
+        return $target['relative'];
     }
 
     private function deleteLocalUploadedImage(string $imagePath): void
@@ -697,7 +665,7 @@ final class ProductService
             $normalizedPath = '/' . ltrim(substr($normalizedPath, strlen('/public/')), '/');
         }
 
-        if (!str_starts_with($normalizedPath, '/uploads/products/')) {
+        if (!$this->isAllowedProductImagePath($normalizedPath)) {
             return;
         }
 
@@ -705,6 +673,47 @@ final class ProductService
         if (is_file($absolutePath)) {
             @unlink($absolutePath);
         }
+    }
+
+    private function imageExtensionFromMime(string $mime): string
+    {
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'image/gif' => 'gif',
+        ];
+
+        $normalizedMime = strtolower(trim($mime));
+        if (!isset($extensions[$normalizedMime])) {
+            throw new ValidationException('Formato de imagem nao suportado. Use JPG, PNG, WEBP ou GIF.');
+        }
+
+        return $extensions[$normalizedMime];
+    }
+
+    private function prepareProductImageTargetPath(int $companyId, string $extension): array
+    {
+        $baseDir = BASE_PATH . '/public/uploads/company/' . $companyId . '/products';
+        if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
+            throw new ValidationException('Nao foi possivel preparar pasta de upload.');
+        }
+
+        $filename = 'prd_' . date('YmdHis') . '_' . bin2hex(random_bytes(5)) . '.' . $extension;
+
+        return [
+            'absolute' => $baseDir . '/' . $filename,
+            'relative' => '/uploads/company/' . $companyId . '/products/' . $filename,
+        ];
+    }
+
+    private function isAllowedProductImagePath(string $path): bool
+    {
+        if (str_starts_with($path, '/uploads/products/')) {
+            return true;
+        }
+
+        return preg_match('#^/uploads/company/\d+/products/#', $path) === 1;
     }
 
     private function normalizeImagePathForStorage(?string $path): ?string

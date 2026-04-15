@@ -5,7 +5,7 @@ $generatedAt = (string) ($context['generated_at'] ?? date('Y-m-d H:i:s'));
 
 $companyName = trim((string) ($cashRegister['company_name'] ?? 'Empresa'));
 $companyLogoPath = trim((string) ($cashRegister['company_logo_path'] ?? ''));
-$companyLogoUrl = $companyLogoPath !== '' ? asset_url($companyLogoPath) : '';
+$companyLogoUrl = $companyLogoPath !== '' ? company_image_url($companyLogoPath) : '';
 
 $cashId = (int) ($cashRegister['id'] ?? 0);
 $status = (string) ($cashRegister['status'] ?? 'closed');

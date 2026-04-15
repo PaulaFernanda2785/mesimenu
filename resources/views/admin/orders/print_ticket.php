@@ -17,7 +17,7 @@ if ($ordersContext === [] && $order !== []) {
 
 $companyName = trim((string) ($order['company_name'] ?? 'Empresa'));
 $companyLogoPath = trim((string) ($order['company_logo_path'] ?? ''));
-$companyLogoUrl = $companyLogoPath !== '' ? asset_url($companyLogoPath) : '';
+$companyLogoUrl = $companyLogoPath !== '' ? company_image_url($companyLogoPath) : '';
 
 $groupOrderNumbers = is_array($group['order_numbers'] ?? null) ? $group['order_numbers'] : [];
 $orderNumber = $isGrouped

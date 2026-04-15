@@ -79,11 +79,38 @@ if (!function_exists('product_image_url')) {
             $normalizedPath = ltrim(substr($normalizedPath, strlen('public/')), '/');
         }
 
-        if (!str_starts_with($normalizedPath, 'uploads/products/')) {
+        $isLegacyProductPath = str_starts_with($normalizedPath, 'uploads/products/');
+        $isCompanyProductPath = preg_match('#^uploads/company/\d+/products/#', $normalizedPath) === 1;
+        if (!$isLegacyProductPath && !$isCompanyProductPath) {
             return asset_url($value);
         }
 
         return base_url('/media/product?path=' . rawurlencode($normalizedPath));
+    }
+}
+
+if (!function_exists('company_image_url')) {
+    function company_image_url(?string $path): string
+    {
+        $value = trim((string) ($path ?? ''));
+        if ($value === '') {
+            return '';
+        }
+
+        if (preg_match('#^(https?:)?//#i', $value) === 1) {
+            return $value;
+        }
+
+        $normalizedPath = ltrim(str_replace('\\', '/', $value), '/');
+        if (str_starts_with($normalizedPath, 'public/')) {
+            $normalizedPath = ltrim(substr($normalizedPath, strlen('public/')), '/');
+        }
+
+        if (!str_starts_with($normalizedPath, 'uploads/company/')) {
+            return asset_url($value);
+        }
+
+        return base_url('/media/company?path=' . rawurlencode($normalizedPath));
     }
 }
 

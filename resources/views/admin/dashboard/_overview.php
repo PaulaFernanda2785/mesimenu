@@ -163,13 +163,17 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
                         $dayOrders = (int) ($row['total_orders'] ?? 0);
                         $pct = $maxDaySales > 0 ? max(2, ($dayValue / $maxDaySales) * 100) : 2;
                         ?>
-                        <div class="dash-bar-row">
+                        <div class="dash-bar-row" data-dash-sales-day-row>
                             <span class="dash-label"><?= htmlspecialchars($shortDate) ?></span>
                             <div class="dash-bar-track"><span class="dash-bar-fill" style="width:<?= number_format($pct, 2, '.', '') ?>%"></span></div>
                             <span class="dash-value"><?= htmlspecialchars($formatMoney($dayValue)) ?> / <?= $dayOrders ?> ped.</span>
                         </div>
                     <?php endforeach; ?>
                 </div>
+                <section class="dash-pagination" id="dashSalesDayPagination" hidden>
+                    <span class="dash-pagination-info" id="dashSalesDayPaginationInfo"></span>
+                    <div class="dash-pagination-controls" id="dashSalesDayPaginationControls"></div>
+                </section>
             <?php endif; ?>
         </div>
 
@@ -211,7 +215,7 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
                     <thead><tr><th>Canal</th><th>Pedidos</th><th>Total vendido</th></tr></thead>
                     <tbody>
                         <?php foreach ($salesByChannel as $row): ?>
-                            <tr>
+                            <tr data-dash-sales-channel-row>
                                 <td><?= htmlspecialchars(status_label('order_channel', (string) ($row['channel'] ?? ''))) ?></td>
                                 <td><?= (int) ($row['total_orders'] ?? 0) ?></td>
                                 <td><?= htmlspecialchars($formatMoney((float) ($row['total_sales'] ?? 0))) ?></td>
@@ -219,6 +223,10 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <section class="dash-pagination" id="dashSalesChannelPagination" hidden>
+                    <span class="dash-pagination-info" id="dashSalesChannelPaginationInfo"></span>
+                    <div class="dash-pagination-controls" id="dashSalesChannelPaginationControls"></div>
+                </section>
             <?php endif; ?>
         </div>
 
@@ -232,7 +240,7 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
                     <tbody>
                         <?php foreach ($paymentSummary as $row): ?>
                             <?php $status = strtolower(trim((string) ($row['payment_status'] ?? 'pending'))); ?>
-                            <tr>
+                            <tr data-dash-payment-summary-row>
                                 <td><span class="badge <?= htmlspecialchars(status_badge_class('order_payment_status', $status)) ?>"><?= htmlspecialchars(status_label('order_payment_status', $status)) ?></span></td>
                                 <td><?= (int) ($row['total_orders'] ?? 0) ?></td>
                                 <td><?= htmlspecialchars($formatMoney((float) ($row['total_amount'] ?? 0))) ?></td>
@@ -240,6 +248,10 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <section class="dash-pagination" id="dashPaymentSummaryPagination" hidden>
+                    <span class="dash-pagination-info" id="dashPaymentSummaryPaginationInfo"></span>
+                    <div class="dash-pagination-controls" id="dashPaymentSummaryPaginationControls"></div>
+                </section>
             <?php endif; ?>
         </div>
 
@@ -264,3 +276,78 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
         </div>
     </div>
 </section>
+
+<script>
+(() => {
+    const pageSize = 10;
+
+    const setupPagination = (rowsSelector, paginationId, infoId, controlsId) => {
+        const rows = Array.from(document.querySelectorAll(rowsSelector));
+        const pagination = document.getElementById(paginationId);
+        const info = document.getElementById(infoId);
+        const controls = document.getElementById(controlsId);
+
+        if (!(pagination instanceof HTMLElement) || !(info instanceof HTMLElement) || !(controls instanceof HTMLElement) || rows.length === 0) {
+            if (pagination instanceof HTMLElement) {
+                pagination.hidden = true;
+            }
+            return;
+        }
+
+        let currentPage = 1;
+
+        const addButton = (label, page, disabled, active = false) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `dash-page-btn${active ? ' is-active' : ''}`;
+            button.textContent = label;
+            button.disabled = disabled;
+            button.addEventListener('click', () => {
+                if (!disabled && page !== currentPage) {
+                    currentPage = page;
+                    render();
+                }
+            });
+            controls.appendChild(button);
+        };
+
+        const render = () => {
+            const total = rows.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, total);
+            rows.forEach((row, index) => {
+                row.style.display = index >= startIndex && index < endIndex ? '' : 'none';
+            });
+
+            info.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${total} registro(s).`;
+            controls.innerHTML = '';
+
+            addButton('Anterior', Math.max(1, currentPage - 1), currentPage <= 1);
+
+            const maxButtons = 5;
+            const half = Math.floor(maxButtons / 2);
+            let first = Math.max(1, currentPage - half);
+            let last = Math.min(totalPages, first + maxButtons - 1);
+            first = Math.max(1, last - maxButtons + 1);
+
+            for (let page = first; page <= last; page += 1) {
+                addButton(String(page), page, false, page === currentPage);
+            }
+
+            addButton('Proxima', Math.min(totalPages, currentPage + 1), currentPage >= totalPages);
+            pagination.hidden = false;
+        };
+
+        render();
+    };
+
+    setupPagination('[data-dash-sales-day-row]', 'dashSalesDayPagination', 'dashSalesDayPaginationInfo', 'dashSalesDayPaginationControls');
+    setupPagination('[data-dash-sales-channel-row]', 'dashSalesChannelPagination', 'dashSalesChannelPaginationInfo', 'dashSalesChannelPaginationControls');
+    setupPagination('[data-dash-payment-summary-row]', 'dashPaymentSummaryPagination', 'dashPaymentSummaryPaginationInfo', 'dashPaymentSummaryPaginationControls');
+})();
+</script>

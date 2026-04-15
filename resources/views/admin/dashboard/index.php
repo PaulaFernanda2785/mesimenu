@@ -118,6 +118,11 @@ $supportStatusLabels = [
     .dash-table{width:100%;border-collapse:collapse}
     .dash-table th,.dash-table td{padding:10px;border-bottom:1px solid #e2e8f0;font-size:13px;text-align:left;vertical-align:top}
     .dash-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
+    .dash-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+    .dash-pagination-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .dash-page-btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:8px;padding:7px 10px;cursor:pointer;min-width:36px}
+    .dash-page-btn.is-active{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+    .dash-pagination-info{font-size:12px;color:#475569}
     .brand-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
     .brand-preview{display:grid;gap:10px}
     .brand-media{border:1px solid #dbeafe;border-radius:12px;background:#f8fafc;padding:10px}

@@ -39,12 +39,14 @@ $router->get('/', [LoginController::class, 'show']);
 $router->get('/login', [LoginController::class, 'show']);
 $router->post('/login', [LoginController::class, 'store']);
 $router->get('/logout', [LoginController::class, 'logout']);
+$router->get('/media/company', [MediaController::class, 'company']);
 $router->get('/media/product', [MediaController::class, 'product']);
 $router->get('/media/table-qr', [MediaController::class, 'tableQr']);
 
 $router->get('/admin/dashboard', [DashboardController::class, 'index'], $companyAccess('dashboard.view'));
 $router->get('/admin/dashboard/report', [DashboardController::class, 'report'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/theme', [DashboardController::class, 'updateTheme'], $companyAccess('dashboard.view'));
+$router->post('/admin/dashboard/theme/restore', [DashboardController::class, 'restoreTheme'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/store', [DashboardController::class, 'storeUser'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/update', [DashboardController::class, 'updateUser'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/support/store', [DashboardController::class, 'storeSupportTicket'], $companyAccess('dashboard.view'));
