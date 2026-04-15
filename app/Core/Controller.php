@@ -3,10 +3,22 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Services\Shared\AppShellService;
+use Throwable;
+
 abstract class Controller
 {
     protected function view(string $template, array $data = [], string $layout = 'layouts/app'): Response
     {
+        if ($layout === 'layouts/app' && !array_key_exists('appShellTheme', $data)) {
+            try {
+                $user = is_array($data['user'] ?? null) ? $data['user'] : Auth::user();
+                $data['appShellTheme'] = (new AppShellService())->resolveForUser($user);
+            } catch (Throwable) {
+                $data['appShellTheme'] = [];
+            }
+        }
+
         $data['flashSuccess'] = Session::getFlash('success');
         $data['flashError'] = Session::getFlash('error');
 
