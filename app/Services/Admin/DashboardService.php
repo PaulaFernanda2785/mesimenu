@@ -513,6 +513,31 @@ final class DashboardService
         });
     }
 
+    public function deleteInternalRole(int $companyId, int $roleId): void
+    {
+        if ($companyId <= 0 || $roleId <= 0) {
+            throw new ValidationException('Perfil invalido para exclusao.');
+        }
+
+        $role = $this->repository->findCompanyRoleById($companyId, $roleId);
+        if ($role === null) {
+            throw new ValidationException('Perfil nao encontrado para a empresa autenticada.');
+        }
+
+        if ((int) ($role['is_custom'] ?? 0) !== 1) {
+            throw new ValidationException('Perfis de fabrica do sistema nao podem ser excluidos.');
+        }
+
+        $usersCount = $this->repository->countUsersByRoleForCompany($companyId, $roleId);
+        if ($usersCount > 0) {
+            throw new ValidationException('Nao e possivel excluir perfil com usuarios vinculados. Realoque os usuarios para outro perfil antes.');
+        }
+
+        $this->repository->transaction(function () use ($roleId): void {
+            $this->repository->deleteCompanyRole($roleId);
+        });
+    }
+
     public function createInternalUser(int $companyId, array $input): int
     {
         if ($companyId <= 0) {

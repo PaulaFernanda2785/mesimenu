@@ -222,7 +222,7 @@ $routeMatches = static function (string $path, array $routes): bool {
             border-bottom:1px solid var(--line);
             background:
                 linear-gradient(110deg, rgba(15,23,42,.84) 0%, rgba(15,23,42,.56) 48%, rgba(15,23,42,.66) 100%),
-                linear-gradient(122deg, var(--theme-accent) 0%, #0f172a 100%);
+                linear-gradient(122deg, var(--theme-accent) 0%, var(--theme-secondary) 100%);
             color:#fff;
             display:flex;
             justify-content:space-between;
@@ -253,7 +253,9 @@ $routeMatches = static function (string $path, array $routes): bool {
         main{padding:22px;overflow:auto}
         .shell-footer{
             padding:10px 22px;
-            background:linear-gradient(120deg, rgba(15,23,42,.9) 0%, rgba(15,23,42,.75) 100%);
+            background:
+                linear-gradient(120deg, rgba(15,23,42,.9) 0%, rgba(15,23,42,.75) 100%),
+                linear-gradient(122deg, var(--theme-accent) 0%, var(--theme-secondary) 100%);
             color:#cbd5e1;
             font-size:12px;
             border-top:1px solid rgba(148,163,184,.25);

@@ -29,6 +29,12 @@ final class LoginService
             throw new RuntimeException('E-mail ou senha invalidos.');
         }
 
+        $userId = (int) ($user['id'] ?? 0);
+        if ($userId > 0) {
+            $this->users->touchLastLogin($userId);
+            $user['last_login_at'] = date('Y-m-d H:i:s');
+        }
+
         unset($user['password_hash']);
 
         return $user;

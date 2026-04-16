@@ -133,36 +133,69 @@ $supportStatusLabels = [
     .brand-media{border:1px solid #dbeafe;border-radius:12px;background:#f8fafc;padding:10px}
     .brand-media img{display:block;width:100%;max-height:210px;object-fit:cover;border-radius:10px;border:1px solid #cbd5e1}
     .brand-media small{display:block;margin-top:6px;color:#64748b}
-    .users-layout{display:grid;grid-template-columns:1.1fr 1.6fr;gap:14px}
-    .users-panel{display:grid;gap:12px}
-    .users-panel .card h3{margin:0 0 6px}
-    .users-panel-note{margin:0;color:#475569;font-size:13px;line-height:1.4}
-    .profile-cards{display:grid;gap:10px;max-height:580px;overflow:auto;padding-right:4px}
-    .profile-card{border:1px solid #dbeafe;border-radius:12px;padding:10px;background:#f8fafc}
-    .profile-card[open]{background:#fff}
-    .profile-card summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}
-    .profile-title{display:grid;gap:2px}
-    .profile-title strong{font-size:14px}
-    .profile-title small{font-size:12px;color:#64748b}
-    .profile-meta{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-    .profile-lock{font-size:11px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:999px;padding:3px 8px}
-    .permission-grid{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:10px}
-    .permission-group{border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#fff}
-    .permission-group strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#0f172a;margin-bottom:8px}
-    .permission-check{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;font-size:12px;color:#334155}
-    .permission-check:last-child{margin-bottom:0}
+    .users-shell{display:grid;gap:14px}
+    .users-intro{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .users-grid-main{display:grid;grid-template-columns:minmax(340px,1fr) minmax(580px,1.45fr);gap:14px}
+    .users-stack{display:grid;gap:14px}
+    .users-card{display:grid;gap:12px}
+    .users-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+    .users-card-header h3{margin:0}
+    .users-card-note{margin:0;color:#475569;font-size:13px;line-height:1.45;max-width:720px}
+
+    .users-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .users-form-grid .field{margin:0}
+    .users-form-grid.full{grid-template-columns:1fr}
+
+    .permission-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .permission-toolbar p{margin:0;font-size:12px;color:#64748b}
+    .permission-builder-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:10px}
+    .permission-module{border:1px solid #dbeafe;border-radius:12px;background:#f8fafc;padding:10px;display:grid;gap:8px}
+    .permission-module-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .permission-module-head strong{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#0f172a}
+    .permission-module-count{font-size:11px;color:#475569;background:#e2e8f0;border-radius:999px;padding:3px 8px}
+    .permission-module-body{display:grid;gap:6px;max-height:168px;overflow:auto;padding-right:4px}
+    .permission-check{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#334155}
     .permission-check input{margin-top:2px}
-    .users-filter-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 130px auto;gap:10px;align-items:end}
-    .users-table-wrap{overflow:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff}
-    .users-table{width:100%;border-collapse:collapse;min-width:960px}
-    .users-table th,.users-table td{padding:10px;border-bottom:1px solid #e2e8f0;font-size:13px;text-align:left;vertical-align:top}
-    .users-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc}
-    .users-actions{display:grid;gap:8px;min-width:250px}
-    .users-actions form{display:grid;gap:8px}
-    .users-actions .btn{width:100%}
-    .users-inline-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .users-inline-fields.one{grid-template-columns:1fr}
-    .users-query-badge{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .permission-check span{line-height:1.32}
+
+    .profiles-list{display:grid;gap:10px}
+    .profile-row{border:1px solid #dbeafe;border-radius:12px;background:#f8fafc;padding:10px;display:grid;gap:10px}
+    .profile-row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+    .profile-title{display:grid;gap:3px}
+    .profile-title strong{font-size:15px}
+    .profile-title small{font-size:12px;color:#64748b}
+    .profile-meta{display:flex;gap:6px;flex-wrap:wrap}
+    .profile-lock{font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:999px;padding:3px 8px}
+    .profile-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .profile-edit-panel{display:none;border-top:1px dashed #cbd5e1;padding-top:10px}
+    .profile-edit-panel.is-open{display:grid;gap:10px}
+    .profile-system-note{font-size:12px;color:#475569;margin:0}
+
+    .users-filter-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 140px auto;gap:10px;align-items:end}
+    .users-filter-grid .field{margin:0}
+    .users-query-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+
+    .users-list{display:grid;gap:10px}
+    .user-item{border:1px solid #dbeafe;border-radius:12px;background:#fff;padding:10px;display:grid;gap:10px}
+    .user-item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+    .user-identity strong{font-size:14px}
+    .user-identity small{display:block;color:#64748b}
+    .user-meta{display:flex;gap:6px;flex-wrap:wrap}
+    .user-manage{border-top:1px dashed #cbd5e1;padding-top:10px}
+    .user-manage summary{cursor:pointer;font-weight:600;color:#0f172a}
+    .user-manage-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:10px;margin-top:10px}
+    .user-manage-card{border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:10px;display:grid;gap:8px}
+    .user-manage-card h4{margin:0;font-size:13px}
+    .user-manage-card .field{margin:0}
+    .user-manage-card .btn{width:100%}
+
+    .btn.outline{background:#fff;border:1px solid #cbd5e1;color:#0f172a}
+    .btn.outline:hover{background:#f8fafc}
+    .btn.danger{background:#dc2626}
+    .btn.danger:hover{background:#b91c1c}
+    .btn.text{background:transparent;color:#0f172a;border:1px dashed #cbd5e1}
+    .btn.text:hover{background:#f8fafc}
+    .btn.small{padding:7px 10px;font-size:12px}
     .pagination-ellipsis{padding:0 2px;color:#64748b}
     .support-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}
     .ticket-note{margin:0;color:#475569;font-size:13px;line-height:1.4}
@@ -172,22 +205,21 @@ $supportStatusLabels = [
         .dash-kpi-grid{grid-template-columns:repeat(3,minmax(120px,1fr))}
         .dash-filter-grid{grid-template-columns:repeat(3,minmax(140px,1fr))}
         .dash-grid-3{grid-template-columns:1fr 1fr}
-        .brand-grid,.users-layout,.support-grid{grid-template-columns:1fr}
-        .users-filter-row{grid-template-columns:1fr 1fr 1fr}
-        .users-filter-row .btn{width:100%}
+        .brand-grid,.users-grid-main,.support-grid{grid-template-columns:1fr}
+        .users-filter-grid{grid-template-columns:1fr 1fr 1fr}
     }
     @media (max-width:820px){
         .dash-grid-2,.dash-grid-3{grid-template-columns:1fr}
         .dash-filter-grid{grid-template-columns:1fr 1fr}
         .dash-kpi-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}
         .dash-bar-row{grid-template-columns:60px 1fr 90px}
-        .permission-grid,.users-inline-fields{grid-template-columns:1fr}
-        .users-filter-row{grid-template-columns:1fr 1fr}
+        .permission-builder-grid,.users-form-grid,.user-manage-grid{grid-template-columns:1fr}
+        .users-filter-grid{grid-template-columns:1fr 1fr}
     }
     @media (max-width:620px){
         .dash-filter-grid,.dash-kpi-grid{grid-template-columns:1fr}
         .dash-bar-row{grid-template-columns:52px 1fr 80px}
-        .users-filter-row{grid-template-columns:1fr}
+        .users-filter-grid{grid-template-columns:1fr}
     }
 </style>
 

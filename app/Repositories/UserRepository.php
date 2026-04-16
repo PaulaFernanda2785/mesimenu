@@ -38,6 +38,22 @@ final class UserRepository
         return $user ?: null;
     }
 
+    public function touchLastLogin(int $userId): void
+    {
+        if ($userId <= 0) {
+            return;
+        }
+
+        $stmt = Database::connection()->prepare("
+            UPDATE users
+            SET last_login_at = NOW(),
+                updated_at = NOW()
+            WHERE id = :id
+              AND deleted_at IS NULL
+        ");
+        $stmt->execute(['id' => $userId]);
+    }
+
     public function deliveryUsersByCompany(int $companyId): array
     {
         $sql = "

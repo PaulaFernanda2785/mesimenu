@@ -49,6 +49,7 @@ $router->post('/admin/dashboard/theme', [DashboardController::class, 'updateThem
 $router->post('/admin/dashboard/theme/restore', [DashboardController::class, 'restoreTheme'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/roles/store', [DashboardController::class, 'storeRole'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/roles/update', [DashboardController::class, 'updateRole'], $companyAccess('dashboard.view'));
+$router->post('/admin/dashboard/roles/delete', [DashboardController::class, 'deleteRole'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/store', [DashboardController::class, 'storeUser'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/update', [DashboardController::class, 'updateUser'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/status', [DashboardController::class, 'updateUserStatus'], $companyAccess('dashboard.view'));

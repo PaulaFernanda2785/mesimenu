@@ -680,7 +680,12 @@ $canCreateOrder = $totalProducts > 0;
             : `Taxa ${money(fee)} | Sem pedido minimo`;
     };
 
-    const isTableChannelAvailable = () => Array.isArray(commandSelect?.options) && commandSelect.options.length > 1;
+    const isTableChannelAvailable = () => {
+        if (!commandSelect || !commandSelect.options) {
+            return false;
+        }
+        return commandSelect.options.length > 1;
+    };
 
     const setElementRequired = (element, required) => {
         if (!element) {

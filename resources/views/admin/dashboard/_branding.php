@@ -16,12 +16,17 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
 <section class="dash-section<?= $activeSection === 'branding' ? ' active' : '' ?>" data-section="branding">
     <style>
         .branding-layout{display:grid;gap:14px;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
-        .branding-hero{border:1px solid #bfdbfe;background:linear-gradient(120deg,#eff6ff 0%,#f8fafc 100%);border-radius:14px;padding:14px}
-        .branding-hero h3{margin:0 0 6px;font-size:20px;color:#0f172a}
-        .branding-hero p{margin:0;color:#334155;line-height:1.5}
+        .branding-hero{border:1px solid #bfdbfe;background:linear-gradient(118deg,#0f172a 0%,#1e3a8a 58%,#0ea5e9 100%);border-radius:14px;padding:16px;position:relative;overflow:hidden;color:#fff}
+        .branding-hero:before{content:"";position:absolute;top:-60px;right:-48px;width:210px;height:210px;border-radius:999px;background:rgba(255,255,255,.12)}
+        .branding-hero:after{content:"";position:absolute;bottom:-70px;left:-34px;width:180px;height:180px;border-radius:999px;background:rgba(255,255,255,.1)}
+        .branding-hero-body{position:relative;z-index:1;display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+        .branding-hero h3{margin:0 0 6px;font-size:20px;color:#fff}
+        .branding-hero p{margin:0;color:#dbeafe;line-height:1.5;max-width:760px}
         .branding-hero-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-        .btn-outline-danger{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #dc2626;background:#fff;color:#b91c1c;text-decoration:none;font-weight:600;cursor:pointer}
-        .btn-outline-danger:hover{background:#fee2e2}
+        .branding-hero-pills{display:flex;gap:8px;flex-wrap:wrap}
+        .branding-hero-pill{border:1px solid rgba(255,255,255,.3);background:rgba(15,23,42,.38);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;white-space:nowrap}
+        .btn-outline-danger{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid rgba(248,113,113,.75);background:rgba(127,29,29,.35);color:#fee2e2;text-decoration:none;font-weight:600;cursor:pointer}
+        .btn-outline-danger:hover{background:rgba(220,38,38,.35)}
         .btn-modern-danger{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid #b91c1c;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-weight:600;cursor:pointer}
         .btn-modern-danger:hover{filter:brightness(1.03)}
         .branding-main{display:grid;gap:14px}
@@ -74,12 +79,21 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
     <div class="branding-layout">
         <div class="branding-main">
             <div class="branding-hero">
-                <h3>Personalizacao visual por estabelecimento</h3>
-                <p>Defina nome comercial, cores do sistema, logo no menu/tickets e banner do cabecalho. O upload abaixo aceita selecionar, arrastar e colar imagem (Ctrl+V).</p>
-                <div class="branding-hero-actions">
-                    <button class="btn-outline-danger" type="submit" form="restoreFactoryThemeForm" onclick="return confirm('Restaurar o estilo de fabrica e remover logo/banner atuais?');">
-                        Restaurar estilo de fabrica
-                    </button>
+                <div class="branding-hero-body">
+                    <div>
+                        <h3>Personalizacao visual por estabelecimento</h3>
+                        <p>Defina nome comercial, cores do sistema, logo no menu/tickets e banner do cabecalho. O upload abaixo aceita selecionar, arrastar e colar imagem (Ctrl+V).</p>
+                        <div class="branding-hero-actions">
+                            <button class="btn-outline-danger" type="submit" form="restoreFactoryThemeForm" onclick="return confirm('Restaurar o estilo de fabrica e remover logo/banner atuais?');">
+                                Restaurar estilo de fabrica
+                            </button>
+                        </div>
+                    </div>
+                    <div class="branding-hero-pills">
+                        <span class="branding-hero-pill">Tema do painel</span>
+                        <span class="branding-hero-pill">Logo e banner</span>
+                        <span class="branding-hero-pill">Paleta personalizada</span>
+                    </div>
                 </div>
             </div>
 

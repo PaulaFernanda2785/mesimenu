@@ -181,6 +181,32 @@ final class DashboardController extends Controller
         }
     }
 
+    public function deleteRole(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return $this->redirect('/login');
+        }
+
+        $roleId = (int) ($request->input('role_id', 0));
+        $redirectTo = $this->resolveUsersRedirect($request);
+        $guard = $this->guardSingleSubmit($request, 'dashboard.roles.delete.' . $roleId, $redirectTo);
+        if ($guard !== null) {
+            return $guard;
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+
+        $companyId = (int) ($user['company_id'] ?? 0);
+
+        try {
+            $this->service->deleteInternalRole($companyId, $roleId);
+            return $this->backWithSuccess('Perfil interno excluido com sucesso.', $redirectTo);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), $redirectTo);
+        }
+    }
+
     public function updateUser(Request $request): Response
     {
         if (!Auth::check()) {

@@ -640,6 +640,17 @@ final class DashboardRepository extends BaseRepository
         ]);
     }
 
+    public function deleteCompanyRole(int $roleId): void
+    {
+        $stmt = $this->db()->prepare("
+            DELETE FROM roles
+            WHERE id = :id
+              AND context = 'company'
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $roleId]);
+    }
+
     public function roleSlugExists(string $slug): bool
     {
         $stmt = $this->db()->prepare("
