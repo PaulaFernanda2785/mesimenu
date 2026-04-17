@@ -49,6 +49,11 @@ final class CommandController extends Controller
 
     public function store(Request $request): Response
     {
+        $guard = $this->guardSingleSubmit($request, 'commands.store', '/admin/commands/create');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
@@ -66,6 +71,10 @@ final class CommandController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $commandId = (int) ($request->input('command_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'commands.update.' . $commandId, '/admin/commands');
+        if ($guard !== null) {
+            return $guard;
+        }
 
         try {
             $this->service->update($companyId, $commandId, $request->all());
@@ -80,6 +89,10 @@ final class CommandController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $commandId = (int) ($request->input('command_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'commands.cancel.' . $commandId, '/admin/commands');
+        if ($guard !== null) {
+            return $guard;
+        }
 
         try {
             $this->service->cancel($companyId, $commandId);

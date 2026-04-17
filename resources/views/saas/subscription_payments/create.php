@@ -8,6 +8,7 @@
 
 <div class="card">
     <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/store')) ?>">
+        <?= form_security_fields('saas.subscription_payments.store') ?>
         <div class="field">
             <label for="subscription_id">Assinatura</label>
             <select id="subscription_id" name="subscription_id" required>

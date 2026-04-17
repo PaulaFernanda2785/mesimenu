@@ -61,6 +61,7 @@
                     <td>
                         <?php if ((string) $charge['status'] !== 'pago' && (string) $charge['status'] !== 'cancelado'): ?>
                             <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/mark-paid')) ?>" style="margin-bottom:6px">
+                                <?= form_security_fields('saas.subscription_payments.mark_paid.' . (int) $charge['id']) ?>
                                 <input type="hidden" name="subscription_payment_id" value="<?= (int) $charge['id'] ?>">
                                 <input type="text" name="payment_method" placeholder="Metodo (opcional)">
                                 <input type="text" name="transaction_reference" placeholder="Referencia (opcional)" style="margin-top:6px">
@@ -68,11 +69,13 @@
                             </form>
 
                             <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/mark-overdue')) ?>" style="display:inline-block">
+                                <?= form_security_fields('saas.subscription_payments.mark_overdue.' . (int) $charge['id']) ?>
                                 <input type="hidden" name="subscription_payment_id" value="<?= (int) $charge['id'] ?>">
                                 <button class="btn secondary" type="submit">Marcar vencido</button>
                             </form>
 
                             <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/cancel')) ?>" style="display:inline-block">
+                                <?= form_security_fields('saas.subscription_payments.cancel.' . (int) $charge['id']) ?>
                                 <input type="hidden" name="subscription_payment_id" value="<?= (int) $charge['id'] ?>">
                                 <button class="btn secondary" type="submit">Cancelar</button>
                             </form>

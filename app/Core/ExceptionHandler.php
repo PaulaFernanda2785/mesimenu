@@ -38,7 +38,7 @@ final class ExceptionHandler
         $dir = BASE_PATH . '/storage/logs';
 
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0755, true);
         }
 
         $line = sprintf(
@@ -51,6 +51,6 @@ final class ExceptionHandler
             PHP_EOL
         );
 
-        file_put_contents($dir . '/app.log', $line, FILE_APPEND);
+        file_put_contents($dir . '/app.log', $line, FILE_APPEND | LOCK_EX);
     }
 }

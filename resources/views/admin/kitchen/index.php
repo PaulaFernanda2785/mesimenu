@@ -355,6 +355,7 @@ $elapsedSince = static function (?string $value): string {
                                 <div class="ticket-actions">
                                     <?php if ($status === 'received'): ?>
                                         <form method="POST" action="<?= htmlspecialchars(base_url('/admin/kitchen/status')) ?>">
+                                            <?= form_security_fields('kitchen.status.' . $orderId) ?>
                                             <input type="hidden" name="order_id" value="<?= $orderId ?>">
                                             <input type="hidden" name="new_status" value="preparing">
                                             <button class="btn secondary" type="submit">Iniciar preparo</button>
@@ -362,6 +363,7 @@ $elapsedSince = static function (?string $value): string {
                                         <p class="ticket-note">Impressao liberada somente na etapa de pedidos prontos.</p>
                                     <?php elseif ($status === 'preparing'): ?>
                                         <form method="POST" action="<?= htmlspecialchars(base_url('/admin/kitchen/status')) ?>">
+                                            <?= form_security_fields('kitchen.status.' . $orderId) ?>
                                             <input type="hidden" name="order_id" value="<?= $orderId ?>">
                                             <input type="hidden" name="new_status" value="ready">
                                             <button class="btn secondary" type="submit">Mover para prontos</button>
@@ -369,6 +371,7 @@ $elapsedSince = static function (?string $value): string {
                                         <p class="ticket-note">Finalize o preparo para liberar a emissao do ticket.</p>
                                     <?php elseif ($status === 'ready'): ?>
                                         <form method="POST" action="<?= htmlspecialchars(base_url('/admin/kitchen/emit-ticket')) ?>">
+                                            <?= form_security_fields('kitchen.emit_ticket.' . $orderId) ?>
                                             <input type="hidden" name="order_id" value="<?= $orderId ?>">
                                             <input type="hidden" name="redirect_to_preview" value="1">
                                             <input name="print_notes" type="text" placeholder="Observacao de impressao (opcional)">

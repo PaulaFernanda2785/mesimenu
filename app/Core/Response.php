@@ -24,7 +24,15 @@ final class Response
     public function send(): void
     {
         http_response_code($this->status);
-        foreach ($this->headers as $name => $value) {
+        $headers = $this->headers + [
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
+            'Content-Security-Policy' => "base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
+        ];
+
+        foreach ($headers as $name => $value) {
             header($name . ': ' . $value);
         }
         echo $this->content;

@@ -113,8 +113,20 @@ final class OrderController extends Controller
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
         $roleId = (int) ($user['role_id'] ?? 0);
+        $orderId = (int) ($request->input('order_id', 0));
         $targetStatus = trim((string) ($request->input('new_status', '')));
         $expectsJson = $this->expectsJson($request);
+        $guard = validate_form_submission($request->all(), 'orders.status.' . $orderId, 5);
+        if (($guard['ok'] ?? false) !== true) {
+            $message = (string) ($guard['message'] ?? 'Nao foi possivel validar a requisicao.');
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => false,
+                    'message' => $message,
+                ], 419);
+            }
+            return $this->backWithError($message, '/admin/orders');
+        }
 
         if ($targetStatus === 'canceled' && !$this->permissions->roleHasPermission($roleId, 'orders.cancel')) {
             if ($expectsJson) {
@@ -151,7 +163,19 @@ final class OrderController extends Controller
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
+        $orderId = (int) ($request->input('order_id', 0));
         $expectsJson = $this->expectsJson($request);
+        $guard = validate_form_submission($request->all(), 'orders.send_kitchen.' . $orderId, 5);
+        if (($guard['ok'] ?? false) !== true) {
+            $message = (string) ($guard['message'] ?? 'Nao foi possivel validar a requisicao.');
+            if ($expectsJson) {
+                return $this->jsonResponse([
+                    'ok' => false,
+                    'message' => $message,
+                ], 419);
+            }
+            return $this->backWithError($message, '/admin/orders');
+        }
 
         try {
             $this->service->sendToKitchen($companyId, $userId, $request->all());

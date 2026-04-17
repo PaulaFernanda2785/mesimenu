@@ -125,7 +125,7 @@ final class MediaController extends Controller
                 ]);
             } catch (RuntimeException $svgError) {
                 return Response::make(
-                    $this->buildFailureSvg('Falha ao gerar QR em SVG.', $svgError->getMessage()),
+                    $this->buildFailureSvg('Falha ao gerar QR em SVG.'),
                     200,
                     [
                         'Content-Type' => 'image/svg+xml; charset=UTF-8',
@@ -159,9 +159,8 @@ final class MediaController extends Controller
                     'X-QR-Fallback' => 'svg',
                 ]);
             } catch (RuntimeException $svgError) {
-                $errorMessage = $pngError->getMessage() . ' | ' . $svgError->getMessage();
                 return Response::make(
-                    $this->buildFailureSvg('Falha ao gerar QR (PNG e SVG).', $errorMessage),
+                    $this->buildFailureSvg('Falha ao gerar QR (PNG e SVG).'),
                     200,
                     [
                         'Content-Type' => 'image/svg+xml; charset=UTF-8',
@@ -196,10 +195,9 @@ final class MediaController extends Controller
         return $svgContent;
     }
 
-    private function buildFailureSvg(string $title, string $details): string
+    private function buildFailureSvg(string $title): string
     {
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $safeDetails = htmlspecialchars($details, ENT_QUOTES, 'UTF-8');
 
         return <<<SVG
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760" role="img" aria-label="Falha ao gerar QR">
@@ -207,10 +205,8 @@ final class MediaController extends Controller
   <rect x="24" y="24" width="712" height="712" fill="#fff7ed" stroke="#fdba74" stroke-width="2" rx="16" />
   <text x="48" y="96" fill="#9a3412" font-size="34" font-family="Arial, sans-serif" font-weight="700">{$safeTitle}</text>
   <text x="48" y="142" fill="#7c2d12" font-size="20" font-family="Arial, sans-serif">Tente novamente em instantes.</text>
-  <text x="48" y="184" fill="#7c2d12" font-size="14" font-family="Arial, sans-serif">Detalhes tecnicos:</text>
-  <foreignObject x="48" y="198" width="664" height="500">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:13px;color:#7c2d12;line-height:1.35;white-space:pre-wrap;word-break:break-word;">{$safeDetails}</div>
-  </foreignObject>
+  <text x="48" y="192" fill="#7c2d12" font-size="15" font-family="Arial, sans-serif">A emissao do QR nao conseguiu ser concluida.</text>
+  <text x="48" y="224" fill="#7c2d12" font-size="15" font-family="Arial, sans-serif">Se o problema persistir, consulte os logs do servidor.</text>
 </svg>
 SVG;
     }

@@ -572,6 +572,7 @@ foreach ($ordersByTable as $tablePanel) {
                                                     <?php if ($canSendKitchen && !empty($orderRow['can_send_kitchen'])): ?>
                                                         <div class="modal-action-block">
                                                             <form class="js-modal-action-form" method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/send-kitchen')) ?>">
+                                                                <?= form_security_fields('orders.send_kitchen.' . $rowOrderId) ?>
                                                                 <input type="hidden" name="order_id" value="<?= $rowOrderId ?>">
                                                                 <button class="btn secondary" type="submit">Enviar para cozinha</button>
                                                             </form>
@@ -581,6 +582,7 @@ foreach ($ordersByTable as $tablePanel) {
                                                     <?php if ($canUpdateStatus && !empty($rowNextStatuses)): ?>
                                                         <div class="modal-action-block">
                                                             <form class="js-modal-action-form" method="POST" action="<?= htmlspecialchars(base_url('/admin/orders/status')) ?>">
+                                                                <?= form_security_fields('orders.status.' . $rowOrderId) ?>
                                                                 <input type="hidden" name="order_id" value="<?= $rowOrderId ?>">
                                                                 <div class="modal-actions-row modal-actions-row-status-select">
                                                                     <select name="new_status" required>

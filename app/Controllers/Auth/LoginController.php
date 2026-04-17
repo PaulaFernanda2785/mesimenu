@@ -39,6 +39,7 @@ final class LoginController extends Controller
 
         $email = trim((string) $request->input('email', ''));
         $password = (string) $request->input('password', '');
+        $clientIp = trim((string) ($request->server['REMOTE_ADDR'] ?? ''));
 
         try {
             if ($email === '' || $password === '') {
@@ -46,7 +47,7 @@ final class LoginController extends Controller
             }
 
             $service = new LoginService();
-            $user = $service->attempt($email, $password);
+            $user = $service->attempt($email, $password, $clientIp);
 
             Auth::login($user);
 

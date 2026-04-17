@@ -30,6 +30,12 @@ final class KitchenController extends Controller
 
     public function updateStatus(Request $request): Response
     {
+        $orderId = (int) ($request->input('order_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'kitchen.status.' . $orderId, '/admin/kitchen');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
@@ -44,10 +50,15 @@ final class KitchenController extends Controller
 
     public function emitTicket(Request $request): Response
     {
+        $orderId = (int) ($request->input('order_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'kitchen.emit_ticket.' . $orderId, '/admin/kitchen');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         $user = Auth::user();
         $companyId = (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
-        $orderId = (int) ($request->input('order_id', 0));
         $redirectToPreviewRaw = strtolower(trim((string) ($request->input('redirect_to_preview', ''))));
         $redirectToPreview = in_array($redirectToPreviewRaw, ['1', 'true', 'on', 'yes'], true);
 

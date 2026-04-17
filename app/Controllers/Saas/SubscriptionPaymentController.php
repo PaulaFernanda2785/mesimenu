@@ -41,6 +41,11 @@ final class SubscriptionPaymentController extends Controller
 
     public function store(Request $request): Response
     {
+        $guard = $this->guardSingleSubmit($request, 'saas.subscription_payments.store', '/saas/subscription-payments/create');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         try {
             $this->service->createCharge($request->all());
             return $this->backWithSuccess('Cobranca criada com sucesso.', '/saas/subscription-payments');
@@ -51,6 +56,12 @@ final class SubscriptionPaymentController extends Controller
 
     public function markPaid(Request $request): Response
     {
+        $paymentId = (int) ($request->input('subscription_payment_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'saas.subscription_payments.mark_paid.' . $paymentId, '/saas/subscription-payments');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         try {
             $this->service->markPaid($request->all());
             return $this->backWithSuccess('Cobranca marcada como paga.', '/saas/subscription-payments');
@@ -61,6 +72,12 @@ final class SubscriptionPaymentController extends Controller
 
     public function markOverdue(Request $request): Response
     {
+        $paymentId = (int) ($request->input('subscription_payment_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'saas.subscription_payments.mark_overdue.' . $paymentId, '/saas/subscription-payments');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         try {
             $this->service->markOverdue($request->all());
             return $this->backWithSuccess('Cobranca marcada como vencida.', '/saas/subscription-payments');
@@ -71,6 +88,12 @@ final class SubscriptionPaymentController extends Controller
 
     public function cancel(Request $request): Response
     {
+        $paymentId = (int) ($request->input('subscription_payment_id', 0));
+        $guard = $this->guardSingleSubmit($request, 'saas.subscription_payments.cancel.' . $paymentId, '/saas/subscription-payments');
+        if ($guard !== null) {
+            return $guard;
+        }
+
         try {
             $this->service->cancel($request->all());
             return $this->backWithSuccess('Cobranca cancelada com sucesso.', '/saas/subscription-payments');
@@ -79,4 +102,3 @@ final class SubscriptionPaymentController extends Controller
         }
     }
 }
-

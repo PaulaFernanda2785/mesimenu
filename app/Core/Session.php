@@ -12,7 +12,24 @@ final class Session
         }
 
         $app = require BASE_PATH . '/config/app.php';
+        $secure = self::shouldUseSecureCookie($app);
+        $sameSite = self::normalizeSameSite((string) ($app['session_same_site'] ?? 'Lax'));
+
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.cookie_secure', $secure ? '1' : '0');
+        ini_set('session.cookie_samesite', $sameSite);
+
         session_name($app['session_name']);
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => $sameSite,
+        ]);
         session_start();
     }
 
@@ -58,15 +75,43 @@ final class Session
                 setcookie(
                     session_name(),
                     '',
-                    time() - 42000,
-                    $params['path'] ?? '/',
-                    $params['domain'] ?? '',
-                    (bool) ($params['secure'] ?? false),
-                    (bool) ($params['httponly'] ?? true)
+                    [
+                        'expires' => time() - 42000,
+                        'path' => $params['path'] ?? '/',
+                        'domain' => $params['domain'] ?? '',
+                        'secure' => (bool) ($params['secure'] ?? false),
+                        'httponly' => (bool) ($params['httponly'] ?? true),
+                        'samesite' => self::normalizeSameSite((string) ($params['samesite'] ?? 'Lax')),
+                    ]
                 );
             }
 
             session_destroy();
         }
+    }
+
+    private static function shouldUseSecureCookie(array $app): bool
+    {
+        $configured = $app['session_secure'] ?? null;
+        if (is_bool($configured)) {
+            return $configured;
+        }
+
+        $https = strtolower((string) ($_SERVER['HTTPS'] ?? ''));
+        if ($https !== '' && $https !== 'off') {
+            return true;
+        }
+
+        $forwardedProto = strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+        return $forwardedProto === 'https';
+    }
+
+    private static function normalizeSameSite(string $value): string
+    {
+        return match (strtolower(trim($value))) {
+            'strict' => 'Strict',
+            'none' => 'None',
+            default => 'Lax',
+        };
     }
 }
