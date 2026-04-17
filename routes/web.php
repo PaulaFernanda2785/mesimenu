@@ -123,6 +123,9 @@ $router->get('/saas/dashboard', [SaasDashboardController::class, 'index'], $saas
 $router->get('/saas/support', [SaasSupportController::class, 'index'], $saasAccess('support.view'));
 $router->post('/saas/support/reply', [SaasSupportController::class, 'reply'], $saasAccess('support.manage'));
 $router->get('/saas/companies', [SaasCompanyController::class, 'index'], $saasAccess('companies.view'));
+$router->post('/saas/companies/store', [SaasCompanyController::class, 'store'], $saasAccess('companies.manage'));
+$router->post('/saas/companies/update', [SaasCompanyController::class, 'update'], $saasAccess('companies.manage'));
+$router->post('/saas/companies/cancel', [SaasCompanyController::class, 'cancel'], $saasAccess('companies.manage'));
 $router->get('/saas/plans', [SaasPlanController::class, 'index'], $saasAccess('plans.view'));
 $router->get('/saas/subscriptions', [SaasSubscriptionController::class, 'index'], $saasAccess('subscriptions.view'));
 $router->get('/saas/subscription-payments', [SaasSubscriptionPaymentController::class, 'index'], $saasAccess('subscriptions.view'));
