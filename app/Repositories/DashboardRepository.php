@@ -1050,13 +1050,40 @@ final class DashboardRepository extends BaseRepository
         return (int) ($stmt->fetchColumn() ?: 0);
     }
 
-    public function supportTicketsByCompany(int $companyId, int $limit = 30): array
+    public function listSupportTicketsByCompanyPaginated(int $companyId, array $filters, int $page, int $perPage): array
     {
-        $limit = max(1, min(100, $limit));
+        $page = max(1, $page);
+        $perPage = max(1, min(10, $perPage));
 
-        $stmt = $this->db()->prepare("
+        ['where_sql' => $whereSql, 'params' => $params] = $this->buildSupportTicketsWhereClause($companyId, $filters);
+
+        $countStmt = $this->db()->prepare("
+            SELECT COUNT(*) AS total
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE {$whereSql}
+        ");
+        $countStmt->execute($params);
+        $total = (int) ($countStmt->fetchColumn() ?: 0);
+
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        if ($page > $lastPage) {
+            $page = $lastPage;
+        }
+
+        $offset = ($page - 1) * $perPage;
+
+        $listStmt = $this->db()->prepare("
             SELECT
                 st.id,
+                st.company_id,
+                st.opened_by_user_id,
+                st.assigned_to_user_id,
                 st.subject,
                 st.description,
                 st.status,
@@ -1064,20 +1091,150 @@ final class DashboardRepository extends BaseRepository
                 st.created_at,
                 st.updated_at,
                 st.closed_at,
+                c.name AS company_name,
+                c.slug AS company_slug,
                 uo.name AS opened_by_user_name,
                 ua.name AS assigned_to_user_name
             FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
             INNER JOIN users uo
                 ON uo.id = st.opened_by_user_id
             LEFT JOIN users ua
                 ON ua.id = st.assigned_to_user_id
-            WHERE st.company_id = :company_id
-            ORDER BY st.created_at DESC, st.id DESC
-            LIMIT {$limit}
+            WHERE {$whereSql}
+            ORDER BY
+                CASE st.status
+                    WHEN 'open' THEN 1
+                    WHEN 'in_progress' THEN 2
+                    WHEN 'resolved' THEN 3
+                    WHEN 'closed' THEN 4
+                    ELSE 9
+                END,
+                CASE st.priority
+                    WHEN 'urgent' THEN 1
+                    WHEN 'high' THEN 2
+                    WHEN 'medium' THEN 3
+                    WHEN 'low' THEN 4
+                    ELSE 9
+                END,
+                COALESCE(st.updated_at, st.created_at) DESC,
+                st.id DESC
+            LIMIT {$perPage}
+            OFFSET {$offset}
         ");
-        $stmt->execute(['company_id' => $companyId]);
+        $listStmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        return [
+            'items' => $listStmt->fetchAll(PDO::FETCH_ASSOC) ?: [],
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'last_page' => $lastPage,
+        ];
+    }
+
+    public function listSupportTicketsForSaasPaginated(array $filters, int $page, int $perPage): array
+    {
+        $page = max(1, $page);
+        $perPage = max(1, min(10, $perPage));
+
+        ['where_sql' => $whereSql, 'params' => $params] = $this->buildSupportTicketsWhereClause(null, $filters, true);
+
+        $countStmt = $this->db()->prepare("
+            SELECT COUNT(*) AS total
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE {$whereSql}
+        ");
+        $countStmt->execute($params);
+        $total = (int) ($countStmt->fetchColumn() ?: 0);
+
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        if ($page > $lastPage) {
+            $page = $lastPage;
+        }
+
+        $offset = ($page - 1) * $perPage;
+
+        $listStmt = $this->db()->prepare("
+            SELECT
+                st.id,
+                st.company_id,
+                st.opened_by_user_id,
+                st.assigned_to_user_id,
+                st.subject,
+                st.description,
+                st.status,
+                st.priority,
+                st.created_at,
+                st.updated_at,
+                st.closed_at,
+                c.name AS company_name,
+                c.slug AS company_slug,
+                c.email AS company_email,
+                uo.name AS opened_by_user_name,
+                ua.name AS assigned_to_user_name
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE {$whereSql}
+            ORDER BY
+                CASE st.status
+                    WHEN 'open' THEN 1
+                    WHEN 'in_progress' THEN 2
+                    WHEN 'resolved' THEN 3
+                    WHEN 'closed' THEN 4
+                    ELSE 9
+                END,
+                CASE st.priority
+                    WHEN 'urgent' THEN 1
+                    WHEN 'high' THEN 2
+                    WHEN 'medium' THEN 3
+                    WHEN 'low' THEN 4
+                    ELSE 9
+                END,
+                COALESCE(st.updated_at, st.created_at) DESC,
+                st.id DESC
+            LIMIT {$perPage}
+            OFFSET {$offset}
+        ");
+        $listStmt->execute($params);
+
+        return [
+            'items' => $listStmt->fetchAll(PDO::FETCH_ASSOC) ?: [],
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'last_page' => $lastPage,
+        ];
+    }
+
+    public function supportTicketMetricsByCompany(int $companyId, array $filters = []): array
+    {
+        ['where_sql' => $whereSql, 'params' => $params] = $this->buildSupportTicketsWhereClause($companyId, $filters);
+        return $this->supportTicketMetricsByWhereClause($whereSql, $params);
+    }
+
+    public function supportTicketMetricsForSaas(array $filters = []): array
+    {
+        ['where_sql' => $whereSql, 'params' => $params] = $this->buildSupportTicketsWhereClause(null, $filters, true);
+        return $this->supportTicketMetricsByWhereClause($whereSql, $params);
+    }
+
+    public function supportTicketsByCompany(int $companyId, int $limit = 30): array
+    {
+        $result = $this->listSupportTicketsByCompanyPaginated($companyId, [], 1, $limit);
+        return is_array($result['items'] ?? null) ? $result['items'] : [];
     }
 
     public function findDefaultSupportAssignee(): ?int
@@ -1109,6 +1266,81 @@ final class DashboardRepository extends BaseRepository
 
         $id = (int) ($row['id'] ?? 0);
         return $id > 0 ? $id : null;
+    }
+
+    public function findSupportTicketByIdForCompany(int $companyId, int $ticketId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                st.id,
+                st.company_id,
+                st.opened_by_user_id,
+                st.assigned_to_user_id,
+                st.subject,
+                st.description,
+                st.status,
+                st.priority,
+                st.created_at,
+                st.updated_at,
+                st.closed_at,
+                c.name AS company_name,
+                c.slug AS company_slug,
+                uo.name AS opened_by_user_name,
+                ua.name AS assigned_to_user_name
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE st.company_id = :company_id
+              AND st.id = :ticket_id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'ticket_id' => $ticketId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function findSupportTicketById(int $ticketId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                st.id,
+                st.company_id,
+                st.opened_by_user_id,
+                st.assigned_to_user_id,
+                st.subject,
+                st.description,
+                st.status,
+                st.priority,
+                st.created_at,
+                st.updated_at,
+                st.closed_at,
+                c.name AS company_name,
+                c.slug AS company_slug,
+                c.email AS company_email,
+                uo.name AS opened_by_user_name,
+                ua.name AS assigned_to_user_name
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE st.id = :ticket_id
+            LIMIT 1
+        ");
+        $stmt->execute(['ticket_id' => $ticketId]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 
     public function createSupportTicket(array $data): int
@@ -1147,6 +1379,240 @@ final class DashboardRepository extends BaseRepository
         ]);
 
         return (int) $this->db()->lastInsertId();
+    }
+
+    public function createSupportTicketMessage(array $data): int
+    {
+        $stmt = $this->db()->prepare("
+            INSERT INTO support_ticket_messages (
+                ticket_id,
+                sender_user_id,
+                sender_context,
+                message,
+                created_at,
+                updated_at
+            ) VALUES (
+                :ticket_id,
+                :sender_user_id,
+                :sender_context,
+                :message,
+                NOW(),
+                NOW()
+            )
+        ");
+        $stmt->execute([
+            'ticket_id' => $data['ticket_id'],
+            'sender_user_id' => $data['sender_user_id'],
+            'sender_context' => $data['sender_context'],
+            'message' => $data['message'],
+        ]);
+
+        return (int) $this->db()->lastInsertId();
+    }
+
+    public function listSupportTicketMessagesByTicketIds(array $ticketIds): array
+    {
+        $normalizedIds = [];
+        foreach ($ticketIds as $ticketId) {
+            $value = (int) $ticketId;
+            if ($value > 0) {
+                $normalizedIds[$value] = true;
+            }
+        }
+
+        $ids = array_keys($normalizedIds);
+        if ($ids === []) {
+            return [];
+        }
+
+        $placeholders = [];
+        $params = [];
+        foreach ($ids as $index => $ticketId) {
+            $key = 'ticket_id_' . $index;
+            $placeholders[] = ':' . $key;
+            $params[$key] = $ticketId;
+        }
+
+        $stmt = $this->db()->prepare("
+            SELECT
+                stm.id,
+                stm.ticket_id,
+                stm.sender_user_id,
+                stm.sender_context,
+                stm.message,
+                stm.created_at,
+                stm.updated_at,
+                u.name AS sender_user_name,
+                r.name AS sender_role_name
+            FROM support_ticket_messages stm
+            INNER JOIN users u
+                ON u.id = stm.sender_user_id
+            LEFT JOIN roles r
+                ON r.id = u.role_id
+            WHERE stm.ticket_id IN (" . implode(', ', $placeholders) . ")
+            ORDER BY stm.created_at ASC, stm.id ASC
+        ");
+        $stmt->execute($params);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        $grouped = [];
+        foreach ($rows as $row) {
+            $ticketId = (int) ($row['ticket_id'] ?? 0);
+            if ($ticketId <= 0) {
+                continue;
+            }
+
+            if (!isset($grouped[$ticketId])) {
+                $grouped[$ticketId] = [];
+            }
+
+            $grouped[$ticketId][] = $row;
+        }
+
+        return $grouped;
+    }
+
+    public function updateSupportTicketConversationState(int $ticketId, array $data): void
+    {
+        $status = strtolower(trim((string) ($data['status'] ?? 'open')));
+        $assignedToUserId = isset($data['assigned_to_user_id']) && (int) $data['assigned_to_user_id'] > 0
+            ? (int) $data['assigned_to_user_id']
+            : null;
+        $closedAt = $data['closed_at'] ?? null;
+
+        $stmt = $this->db()->prepare("
+            UPDATE support_tickets
+            SET assigned_to_user_id = :assigned_to_user_id,
+                status = :status,
+                closed_at = :closed_at,
+                updated_at = NOW()
+            WHERE id = :ticket_id
+            LIMIT 1
+        ");
+        $stmt->bindValue(':ticket_id', $ticketId, PDO::PARAM_INT);
+        $stmt->bindValue(':status', $status, PDO::PARAM_STR);
+        if ($assignedToUserId === null) {
+            $stmt->bindValue(':assigned_to_user_id', null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindValue(':assigned_to_user_id', $assignedToUserId, PDO::PARAM_INT);
+        }
+        if ($closedAt === null) {
+            $stmt->bindValue(':closed_at', null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindValue(':closed_at', (string) $closedAt, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+    }
+
+    private function buildSupportTicketsWhereClause(?int $companyId, array $filters, bool $includeCompanySearch = false): array
+    {
+        $search = trim((string) ($filters['search'] ?? ''));
+        $status = strtolower(trim((string) ($filters['status'] ?? '')));
+        $priority = strtolower(trim((string) ($filters['priority'] ?? '')));
+        $assignment = strtolower(trim((string) ($filters['assignment'] ?? '')));
+        $companySearch = trim((string) ($filters['company_search'] ?? ''));
+
+        $where = [
+            '1 = 1',
+        ];
+        $params = [];
+
+        if ($companyId !== null && $companyId > 0) {
+            $where[] = 'st.company_id = :company_id';
+            $params['company_id'] = $companyId;
+        }
+
+        if ($status !== '') {
+            $where[] = 'st.status = :support_status';
+            $params['support_status'] = $status;
+        }
+
+        if ($priority !== '') {
+            $where[] = 'st.priority = :support_priority';
+            $params['support_priority'] = $priority;
+        }
+
+        if ($assignment === 'assigned') {
+            $where[] = 'st.assigned_to_user_id IS NOT NULL';
+        } elseif ($assignment === 'unassigned') {
+            $where[] = 'st.assigned_to_user_id IS NULL';
+        }
+
+        if ($search !== '') {
+            $normalizedSearch = '%' . strtolower($search) . '%';
+            $where[] = "(
+                LOWER(COALESCE(st.subject, '')) LIKE :support_search
+                OR LOWER(COALESCE(st.description, '')) LIKE :support_search
+                OR LOWER(COALESCE(uo.name, '')) LIKE :support_search
+                OR LOWER(COALESCE(ua.name, '')) LIKE :support_search
+                OR EXISTS (
+                    SELECT 1
+                    FROM support_ticket_messages stm
+                    INNER JOIN users su
+                        ON su.id = stm.sender_user_id
+                    WHERE stm.ticket_id = st.id
+                      AND (
+                          LOWER(COALESCE(stm.message, '')) LIKE :support_search
+                          OR LOWER(COALESCE(su.name, '')) LIKE :support_search
+                      )
+                )
+                OR CAST(st.id AS CHAR) = :support_id_search
+            )";
+            $params['support_search'] = $normalizedSearch;
+            $params['support_id_search'] = $search;
+        }
+
+        if ($includeCompanySearch && $companySearch !== '') {
+            $normalizedCompanySearch = '%' . strtolower($companySearch) . '%';
+            $where[] = "(
+                LOWER(COALESCE(c.name, '')) LIKE :support_company_search
+                OR LOWER(COALESCE(c.slug, '')) LIKE :support_company_search
+                OR LOWER(COALESCE(c.email, '')) LIKE :support_company_search
+                OR CAST(c.id AS CHAR) = :support_company_id_search
+            )";
+            $params['support_company_search'] = $normalizedCompanySearch;
+            $params['support_company_id_search'] = $companySearch;
+        }
+
+        return [
+            'where_sql' => implode(' AND ', $where),
+            'params' => $params,
+        ];
+    }
+
+    private function supportTicketMetricsByWhereClause(string $whereSql, array $params): array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                COUNT(*) AS total,
+                SUM(CASE WHEN st.status = 'open' THEN 1 ELSE 0 END) AS open_count,
+                SUM(CASE WHEN st.status = 'in_progress' THEN 1 ELSE 0 END) AS in_progress_count,
+                SUM(CASE WHEN st.status IN ('resolved', 'closed') THEN 1 ELSE 0 END) AS resolved_count,
+                SUM(CASE WHEN st.priority = 'urgent' THEN 1 ELSE 0 END) AS urgent_count,
+                SUM(CASE WHEN st.assigned_to_user_id IS NOT NULL THEN 1 ELSE 0 END) AS assigned_count,
+                MAX(COALESCE(st.updated_at, st.created_at)) AS last_created_at
+            FROM support_tickets st
+            INNER JOIN companies c
+                ON c.id = st.company_id
+            INNER JOIN users uo
+                ON uo.id = st.opened_by_user_id
+            LEFT JOIN users ua
+                ON ua.id = st.assigned_to_user_id
+            WHERE {$whereSql}
+        ");
+        $stmt->execute($params);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+        return [
+            'total' => (int) ($row['total'] ?? 0),
+            'open_count' => (int) ($row['open_count'] ?? 0),
+            'in_progress_count' => (int) ($row['in_progress_count'] ?? 0),
+            'resolved_count' => (int) ($row['resolved_count'] ?? 0),
+            'urgent_count' => (int) ($row['urgent_count'] ?? 0),
+            'assigned_count' => (int) ($row['assigned_count'] ?? 0),
+            'last_created_at' => (string) ($row['last_created_at'] ?? ''),
+        ];
     }
 
     private function customCompanyRolePrefix(int $companyId): string

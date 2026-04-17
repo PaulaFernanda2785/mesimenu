@@ -52,10 +52,21 @@ final class DashboardService
         'high',
         'urgent',
     ];
+    private const ALLOWED_SUPPORT_STATUS = [
+        'open',
+        'in_progress',
+        'resolved',
+        'closed',
+    ];
+    private const ALLOWED_SUPPORT_ASSIGNMENT = [
+        'assigned',
+        'unassigned',
+    ];
     private const ALLOWED_PROFILE_SLUG_CHARS_PATTERN = '/[^a-z0-9]+/';
     private const PROFILE_NAME_MAX_LENGTH = 100;
     private const PROFILE_DESCRIPTION_MAX_LENGTH = 500;
     private const USER_LIST_PER_PAGE_OPTIONS = [10, 20, 50];
+    private const SUPPORT_LIST_PER_PAGE = 10;
 
     private const MAX_IMAGE_SIZE_BYTES = 10485760; // 10MB
     private const DEFAULT_PRIMARY_COLOR = '#1d4ed8';
@@ -163,6 +174,7 @@ final class DashboardService
         }
 
         $usersModule = $this->buildUsersModule($companyId, $filters);
+        $supportModule = $this->buildSupportModule($companyId, $filters);
 
         return [
             'filters' => [
@@ -185,7 +197,11 @@ final class DashboardService
             'users_filters' => $usersModule['filters'],
             'users_pagination' => $usersModule['pagination'],
             'users_module' => $usersModule,
-            'support_tickets' => $this->repository->supportTicketsByCompany($companyId),
+            'support_tickets' => $supportModule['tickets'],
+            'support_filters' => $supportModule['filters'],
+            'support_pagination' => $supportModule['pagination'],
+            'support_summary' => $supportModule['summary'],
+            'support_module' => $supportModule,
         ];
     }
 
@@ -725,14 +741,60 @@ final class DashboardService
             throw new ValidationException('Prioridade invalida para o chamado.');
         }
 
-        return $this->repository->createSupportTicket([
-            'company_id' => $companyId,
-            'opened_by_user_id' => $openedByUserId,
-            'assigned_to_user_id' => $this->repository->findDefaultSupportAssignee(),
-            'subject' => $subject,
-            'description' => $description,
-            'priority' => $priority,
-        ]);
+        return $this->repository->transaction(function () use ($companyId, $openedByUserId, $subject, $description, $priority): int {
+            $ticketId = $this->repository->createSupportTicket([
+                'company_id' => $companyId,
+                'opened_by_user_id' => $openedByUserId,
+                'assigned_to_user_id' => $this->repository->findDefaultSupportAssignee(),
+                'subject' => $subject,
+                'description' => $description,
+                'priority' => $priority,
+            ]);
+
+            $this->repository->createSupportTicketMessage([
+                'ticket_id' => $ticketId,
+                'sender_user_id' => $openedByUserId,
+                'sender_context' => 'company',
+                'message' => $description,
+            ]);
+
+            return $ticketId;
+        });
+    }
+
+    public function replySupportTicket(int $companyId, int $ticketId, int $userId, array $input): void
+    {
+        if ($companyId <= 0 || $ticketId <= 0 || $userId <= 0) {
+            throw new ValidationException('Contexto invalido para resposta do chamado.');
+        }
+
+        $ticket = $this->repository->findSupportTicketByIdForCompany($companyId, $ticketId);
+        if ($ticket === null) {
+            throw new ValidationException('Chamado nao encontrado para a empresa autenticada.');
+        }
+
+        $message = trim((string) ($input['message'] ?? ''));
+        if ($message === '') {
+            throw new ValidationException('Escreva a mensagem para continuar a conversa do chamado.');
+        }
+
+        $currentStatus = strtolower(trim((string) ($ticket['status'] ?? 'open')));
+        $nextStatus = in_array($currentStatus, ['resolved', 'closed'], true) ? 'open' : $currentStatus;
+
+        $this->repository->transaction(function () use ($ticketId, $userId, $message, $ticket, $nextStatus): void {
+            $this->repository->createSupportTicketMessage([
+                'ticket_id' => $ticketId,
+                'sender_user_id' => $userId,
+                'sender_context' => 'company',
+                'message' => $message,
+            ]);
+
+            $this->repository->updateSupportTicketConversationState($ticketId, [
+                'assigned_to_user_id' => (int) ($ticket['assigned_to_user_id'] ?? 0),
+                'status' => $nextStatus,
+                'closed_at' => $nextStatus === 'closed' ? date('Y-m-d H:i:s') : null,
+            ]);
+        });
     }
 
     private function resolveReportViewsStatus(): array
@@ -822,6 +884,92 @@ final class DashboardService
         ];
     }
 
+    private function buildSupportModule(int $companyId, array $filters): array
+    {
+        $normalizedFilters = $this->normalizeSupportFilters($filters);
+        $supportPage = $this->repository->listSupportTicketsByCompanyPaginated(
+            $companyId,
+            [
+                'search' => $normalizedFilters['search'],
+                'status' => $normalizedFilters['status'],
+                'priority' => $normalizedFilters['priority'],
+                'assignment' => $normalizedFilters['assignment'],
+            ],
+            $normalizedFilters['page'],
+            $normalizedFilters['per_page']
+        );
+
+        $items = is_array($supportPage['items'] ?? null) ? $supportPage['items'] : [];
+        $total = (int) ($supportPage['total'] ?? 0);
+        $page = (int) ($supportPage['page'] ?? 1);
+        $perPage = (int) ($supportPage['per_page'] ?? $normalizedFilters['per_page']);
+        $lastPage = (int) ($supportPage['last_page'] ?? 1);
+        $from = $total > 0 ? (($page - 1) * $perPage) + 1 : 0;
+        $to = $total > 0 ? min($total, $page * $perPage) : 0;
+        $ticketIds = array_values(array_filter(array_map(
+            static fn (array $ticket): int => (int) ($ticket['id'] ?? 0),
+            $items
+        )));
+        $threads = $this->hydrateSupportThreads(
+            $items,
+            $this->repository->listSupportTicketMessagesByTicketIds($ticketIds)
+        );
+
+        return [
+            'tickets' => $items,
+            'threads' => $threads,
+            'filters' => $normalizedFilters,
+            'pagination' => [
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'last_page' => $lastPage,
+                'from' => $from,
+                'to' => $to,
+                'pages' => $this->buildPaginationPages($page, $lastPage),
+            ],
+            'summary' => $this->repository->supportTicketMetricsByCompany(
+                $companyId,
+                [
+                    'search' => $normalizedFilters['search'],
+                    'status' => $normalizedFilters['status'],
+                    'priority' => $normalizedFilters['priority'],
+                    'assignment' => $normalizedFilters['assignment'],
+                ]
+            ),
+        ];
+    }
+
+    private function hydrateSupportThreads(array $tickets, array $messagesByTicketId): array
+    {
+        $threads = [];
+        foreach ($tickets as $ticket) {
+            $ticketId = (int) ($ticket['id'] ?? 0);
+            if ($ticketId <= 0) {
+                continue;
+            }
+
+            $messages = is_array($messagesByTicketId[$ticketId] ?? null) ? $messagesByTicketId[$ticketId] : [];
+            if ($messages === []) {
+                $messages[] = [
+                    'id' => 0,
+                    'ticket_id' => $ticketId,
+                    'sender_user_id' => (int) ($ticket['opened_by_user_id'] ?? 0),
+                    'sender_context' => 'company',
+                    'message' => (string) ($ticket['description'] ?? ''),
+                    'created_at' => (string) ($ticket['created_at'] ?? ''),
+                    'updated_at' => (string) ($ticket['updated_at'] ?? ''),
+                    'sender_user_name' => (string) ($ticket['opened_by_user_name'] ?? '-'),
+                    'sender_role_name' => 'Empresa',
+                ];
+            }
+
+            $threads[$ticketId] = $messages;
+        }
+
+        return $threads;
+    }
+
     private function normalizeUsersFilters(array $filters): array
     {
         $search = trim((string) ($filters['users_search'] ?? ''));
@@ -856,6 +1004,43 @@ final class DashboardService
             'per_page' => $perPage,
             'page' => $page,
             'per_page_options' => self::USER_LIST_PER_PAGE_OPTIONS,
+        ];
+    }
+
+    private function normalizeSupportFilters(array $filters): array
+    {
+        $search = trim((string) ($filters['support_search'] ?? ''));
+        if (strlen($search) > 80) {
+            $search = substr($search, 0, 80);
+        }
+
+        $status = strtolower(trim((string) ($filters['support_status'] ?? '')));
+        if ($status !== '' && !in_array($status, self::ALLOWED_SUPPORT_STATUS, true)) {
+            $status = '';
+        }
+
+        $priority = strtolower(trim((string) ($filters['support_priority'] ?? '')));
+        if ($priority !== '' && !in_array($priority, self::ALLOWED_SUPPORT_PRIORITY, true)) {
+            $priority = '';
+        }
+
+        $assignment = strtolower(trim((string) ($filters['support_assignment'] ?? '')));
+        if ($assignment !== '' && !in_array($assignment, self::ALLOWED_SUPPORT_ASSIGNMENT, true)) {
+            $assignment = '';
+        }
+
+        $page = (int) ($filters['support_page'] ?? 1);
+        if ($page <= 0) {
+            $page = 1;
+        }
+
+        return [
+            'search' => $search,
+            'status' => $status,
+            'priority' => $priority,
+            'assignment' => $assignment,
+            'page' => $page,
+            'per_page' => self::SUPPORT_LIST_PER_PAGE,
         ];
     }
 

@@ -11,7 +11,12 @@ $permissionsCatalog = is_array($usersModule['permissions_catalog'] ?? null) ? $u
 $permissionsGrouped = is_array($usersModule['permissions_grouped'] ?? null) ? $usersModule['permissions_grouped'] : [];
 $usersFilters = is_array($usersModule['filters'] ?? null) ? $usersModule['filters'] : (is_array($panel['users_filters'] ?? null) ? $panel['users_filters'] : []);
 $usersPagination = is_array($usersModule['pagination'] ?? null) ? $usersModule['pagination'] : (is_array($panel['users_pagination'] ?? null) ? $panel['users_pagination'] : []);
-$supportTickets = is_array($panel['support_tickets'] ?? null) ? $panel['support_tickets'] : [];
+$supportModule = is_array($panel['support_module'] ?? null) ? $panel['support_module'] : [];
+$supportTickets = is_array($supportModule['tickets'] ?? null) ? $supportModule['tickets'] : (is_array($panel['support_tickets'] ?? null) ? $panel['support_tickets'] : []);
+$supportThreads = is_array($supportModule['threads'] ?? null) ? $supportModule['threads'] : [];
+$supportFilters = is_array($supportModule['filters'] ?? null) ? $supportModule['filters'] : (is_array($panel['support_filters'] ?? null) ? $panel['support_filters'] : []);
+$supportPagination = is_array($supportModule['pagination'] ?? null) ? $supportModule['pagination'] : (is_array($panel['support_pagination'] ?? null) ? $panel['support_pagination'] : []);
+$supportSummary = is_array($supportModule['summary'] ?? null) ? $supportModule['summary'] : (is_array($panel['support_summary'] ?? null) ? $panel['support_summary'] : []);
 
 $kpis = is_array($analytics['kpis'] ?? null) ? $analytics['kpis'] : [];
 $salesByDay = is_array($analytics['sales_by_day'] ?? null) ? $analytics['sales_by_day'] : [];

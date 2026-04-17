@@ -1327,6 +1327,33 @@ CREATE INDEX idx_support_tickets_company_id ON support_tickets(company_id);
 CREATE INDEX idx_support_tickets_status ON support_tickets(status);
 CREATE INDEX idx_support_tickets_priority ON support_tickets(priority);
 
+CREATE TABLE support_ticket_messages (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador da mensagem do chamado',
+    ticket_id BIGINT UNSIGNED NOT NULL COMMENT 'Chamado vinculado a mensagem',
+    sender_user_id BIGINT UNSIGNED NOT NULL COMMENT 'Usuario que enviou a mensagem',
+    sender_context VARCHAR(20) NOT NULL COMMENT 'Origem do remetente: empresa ou SaaS',
+    message TEXT NOT NULL COMMENT 'Conteudo textual da mensagem',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data/hora de criacao da mensagem',
+    updated_at DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT 'Data/hora da ultima alteracao da mensagem',
+
+    CONSTRAINT fk_support_ticket_messages_ticket
+        FOREIGN KEY (ticket_id) REFERENCES support_tickets(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_support_ticket_messages_sender
+        FOREIGN KEY (sender_user_id) REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT chk_support_ticket_messages_sender_context CHECK (
+        sender_context IN ('company', 'saas')
+    )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Mensagens em thread dos chamados de suporte';
+
+CREATE INDEX idx_support_ticket_messages_ticket_id ON support_ticket_messages(ticket_id);
+CREATE INDEX idx_support_ticket_messages_sender_user_id ON support_ticket_messages(sender_user_id);
+CREATE INDEX idx_support_ticket_messages_created_at ON support_ticket_messages(created_at);
+
 -- =========================================================
 -- 15. DADOS INICIAIS: PLANOS
 -- =========================================================

@@ -243,6 +243,12 @@ final class AppShellService
                 'permission' => 'dashboard.view',
             ],
             [
+                'href' => '/saas/support',
+                'label' => 'Chamados',
+                'description' => 'Atendimento tecnico SaaS',
+                'permission' => 'support.view',
+            ],
+            [
                 'href' => '/saas/companies',
                 'label' => 'Empresas',
                 'description' => 'Clientes da plataforma',

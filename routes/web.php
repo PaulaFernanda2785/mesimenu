@@ -16,6 +16,7 @@ use App\Controllers\Admin\DeliveryController;
 use App\Controllers\Saas\DashboardController as SaasDashboardController;
 use App\Controllers\Saas\CompanyController as SaasCompanyController;
 use App\Controllers\Saas\PlanController as SaasPlanController;
+use App\Controllers\Saas\SupportController as SaasSupportController;
 use App\Controllers\Saas\SubscriptionController as SaasSubscriptionController;
 use App\Controllers\Saas\SubscriptionPaymentController as SaasSubscriptionPaymentController;
 use App\Middlewares\AuthMiddleware;
@@ -55,6 +56,7 @@ $router->post('/admin/dashboard/users/update', [DashboardController::class, 'upd
 $router->post('/admin/dashboard/users/status', [DashboardController::class, 'updateUserStatus'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/users/password', [DashboardController::class, 'updateUserPassword'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/support/store', [DashboardController::class, 'storeSupportTicket'], $companyAccess('dashboard.view'));
+$router->post('/admin/dashboard/support/reply', [DashboardController::class, 'replySupportTicket'], $companyAccess('dashboard.view'));
 
 $router->get('/admin/products', [ProductController::class, 'index'], $companyAccess('products.view'));
 $router->get('/admin/products/create', [ProductController::class, 'create'], $companyAccess('products.create'));
@@ -113,6 +115,8 @@ $router->post('/admin/cash-registers/open', [CashRegisterController::class, 'ope
 $router->post('/admin/cash-registers/close', [CashRegisterController::class, 'close'], $companyAccess('cash_registers.close'));
 
 $router->get('/saas/dashboard', [SaasDashboardController::class, 'index'], $saasAccess('dashboard.view'));
+$router->get('/saas/support', [SaasSupportController::class, 'index'], $saasAccess('support.view'));
+$router->post('/saas/support/reply', [SaasSupportController::class, 'reply'], $saasAccess('support.manage'));
 $router->get('/saas/companies', [SaasCompanyController::class, 'index'], $saasAccess('companies.view'));
 $router->get('/saas/plans', [SaasPlanController::class, 'index'], $saasAccess('plans.view'));
 $router->get('/saas/subscriptions', [SaasSubscriptionController::class, 'index'], $saasAccess('subscriptions.view'));

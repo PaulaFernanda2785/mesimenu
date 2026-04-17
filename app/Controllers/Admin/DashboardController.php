@@ -292,7 +292,8 @@ final class DashboardController extends Controller
             return $this->redirect('/login');
         }
 
-        $guard = $this->guardSingleSubmit($request, 'dashboard.support.store', '/admin/dashboard?section=support');
+        $redirectTo = $this->resolveSupportRedirect($request);
+        $guard = $this->guardSingleSubmit($request, 'dashboard.support.store', $redirectTo);
         if ($guard !== null) {
             return $guard;
         }
@@ -305,9 +306,36 @@ final class DashboardController extends Controller
 
         try {
             $this->service->openSupportTicket($companyId, $openedByUserId, $request->all());
-            return $this->backWithSuccess('Chamado tecnico aberto e encaminhado para o administrador do sistema.', '/admin/dashboard?section=support');
+            return $this->backWithSuccess('Chamado tecnico aberto e encaminhado para o administrador do sistema.', $redirectTo);
         } catch (ValidationException $e) {
-            return $this->backWithError($e->getMessage(), '/admin/dashboard?section=support');
+            return $this->backWithError($e->getMessage(), $redirectTo);
+        }
+    }
+
+    public function replySupportTicket(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return $this->redirect('/login');
+        }
+
+        $ticketId = (int) ($request->input('ticket_id', 0));
+        $redirectTo = $this->resolveSupportRedirect($request);
+        $guard = $this->guardSingleSubmit($request, 'dashboard.support.reply.' . $ticketId, $redirectTo);
+        if ($guard !== null) {
+            return $guard;
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $userId = (int) ($user['id'] ?? 0);
+
+        try {
+            $this->service->replySupportTicket($companyId, $ticketId, $userId, $request->all());
+            return $this->backWithSuccess('Mensagem enviada no historico do chamado.', $redirectTo);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), $redirectTo);
         }
     }
 
@@ -348,6 +376,42 @@ final class DashboardController extends Controller
         ];
 
         $safe = ['section' => 'users'];
+        foreach ($allowedKeys as $key) {
+            if ($key === 'section') {
+                continue;
+            }
+
+            if (array_key_exists($key, $params)) {
+                $safe[$key] = (string) $params[$key];
+            }
+        }
+
+        return '/admin/dashboard?' . http_build_query($safe);
+    }
+
+    private function resolveSupportRedirect(Request $request): string
+    {
+        $default = '/admin/dashboard?section=support';
+        $queryRaw = trim((string) ($request->input('return_query', '')));
+        if ($queryRaw === '') {
+            return $default;
+        }
+
+        parse_str($queryRaw, $params);
+        if (!is_array($params)) {
+            return $default;
+        }
+
+        $allowedKeys = [
+            'section',
+            'support_search',
+            'support_status',
+            'support_priority',
+            'support_assignment',
+            'support_page',
+        ];
+
+        $safe = ['section' => 'support'];
         foreach ($allowedKeys as $key) {
             if ($key === 'section') {
                 continue;
