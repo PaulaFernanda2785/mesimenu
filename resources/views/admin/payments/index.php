@@ -119,7 +119,7 @@ body.modal-open{overflow:hidden}
     <div class="topbar payments-topbar">
         <div>
             <h1>Painel de Pagamentos</h1>
-            <p>Visual moderno com filtros de periodo/status, página��o de 10 registros e modal completo do pedido.</p>
+            <p>Visual moderno com filtros de período/status, paginação de 10 registros e modal completo do pedido.</p>
         </div>
         <a class="btn" href="<?= htmlspecialchars(base_url('/admin/payments/create')) ?>">Registrar pagamento</a>
     </div>

@@ -127,6 +127,9 @@ $router->post('/saas/companies/store', [SaasCompanyController::class, 'store'], 
 $router->post('/saas/companies/update', [SaasCompanyController::class, 'update'], $saasAccess('companies.manage'));
 $router->post('/saas/companies/cancel', [SaasCompanyController::class, 'cancel'], $saasAccess('companies.manage'));
 $router->get('/saas/plans', [SaasPlanController::class, 'index'], $saasAccess('plans.view'));
+$router->post('/saas/plans/store', [SaasPlanController::class, 'store'], $saasAccess('plans.manage'));
+$router->post('/saas/plans/update', [SaasPlanController::class, 'update'], $saasAccess('plans.manage'));
+$router->post('/saas/plans/delete', [SaasPlanController::class, 'delete'], $saasAccess('plans.manage'));
 $router->get('/saas/subscriptions', [SaasSubscriptionController::class, 'index'], $saasAccess('subscriptions.view'));
 $router->get('/saas/subscription-payments', [SaasSubscriptionPaymentController::class, 'index'], $saasAccess('subscriptions.view'));
 $router->get('/saas/subscription-payments/create', [SaasSubscriptionPaymentController::class, 'create'], $saasAccess('subscriptions.manage'));
