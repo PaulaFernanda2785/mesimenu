@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Controllers\Auth\LoginController;
+use App\Controllers\Auth\AccountController;
 use App\Controllers\MediaController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\ProductController;
@@ -40,6 +41,8 @@ $router->get('/', [LoginController::class, 'show']);
 $router->get('/login', [LoginController::class, 'show']);
 $router->post('/login', [LoginController::class, 'store']);
 $router->post('/logout', [LoginController::class, 'logout']);
+$router->get('/account/password', [AccountController::class, 'editPassword'], [AuthMiddleware::class]);
+$router->post('/account/password', [AccountController::class, 'updatePassword'], [AuthMiddleware::class]);
 $router->get('/media/company', [MediaController::class, 'company']);
 $router->get('/media/product', [MediaController::class, 'product']);
 $router->get('/media/table-qr', [MediaController::class, 'tableQr']);

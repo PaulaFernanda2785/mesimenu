@@ -232,6 +232,11 @@ final class AppShellService
                 'description' => 'Abertura e fechamento',
                 'permission' => 'cash_registers.open',
             ],
+            [
+                'href' => '/account/password',
+                'label' => 'Alterar senha',
+                'description' => 'Conta e segurança',
+            ],
         ];
     }
 
@@ -273,6 +278,11 @@ final class AppShellService
                 'label' => 'Cobrancas',
                 'description' => 'Recebimentos SaaS',
                 'permission' => 'subscriptions.view',
+            ],
+            [
+                'href' => '/account/password',
+                'label' => 'Alterar senha',
+                'description' => 'Conta e segurança',
             ],
         ];
     }

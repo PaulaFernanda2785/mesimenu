@@ -108,4 +108,53 @@ final class UserRepository
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
+
+    public function findByIdForPasswordChange(int $userId): ?array
+    {
+        if ($userId <= 0) {
+            return null;
+        }
+
+        $stmt = Database::connection()->prepare("
+            SELECT
+                u.id,
+                u.company_id,
+                u.name,
+                u.email,
+                u.password_hash,
+                u.status,
+                u.is_saas_user,
+                r.context AS role_context,
+                r.name AS role_name
+            FROM users u
+            INNER JOIN roles r ON r.id = u.role_id
+            WHERE u.id = :id
+              AND u.deleted_at IS NULL
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $userId]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function updatePasswordHash(int $userId, string $passwordHash): void
+    {
+        if ($userId <= 0 || trim($passwordHash) === '') {
+            return;
+        }
+
+        $stmt = Database::connection()->prepare("
+            UPDATE users
+            SET password_hash = :password_hash,
+                updated_at = NOW()
+            WHERE id = :id
+              AND deleted_at IS NULL
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'id' => $userId,
+            'password_hash' => $passwordHash,
+        ]);
+    }
 }

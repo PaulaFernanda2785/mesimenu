@@ -27,6 +27,7 @@ $rawNavItems = is_array($navItems ?? null)
         ['href' => '/admin/products', 'label' => 'Produtos', 'description' => 'Cardápio e categorias'],
         ['href' => '/admin/tables', 'label' => 'Mesas', 'description' => 'Gestão de salão'],
         ['href' => '/admin/orders', 'label' => 'Pedidos', 'description' => 'Fila de atendimento'],
+        ['href' => '/account/password', 'label' => 'Alterar senha', 'description' => 'Conta e segurança'],
     ];
 
 $normalizedNavItems = [];

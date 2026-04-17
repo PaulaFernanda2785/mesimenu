@@ -10,6 +10,7 @@ $rawNavItems = is_array($navItems ?? null)
         ['href' => '/saas/plans', 'label' => 'Planos', 'description' => 'Catalogo comercial'],
         ['href' => '/saas/subscriptions', 'label' => 'Assinaturas', 'description' => 'Ciclo de contratos'],
         ['href' => '/saas/subscription-payments', 'label' => 'Cobrancas', 'description' => 'Recebimentos SaaS'],
+        ['href' => '/account/password', 'label' => 'Alterar senha', 'description' => 'Conta e segurança'],
     ];
 
 $normalizedNavItems = [];
