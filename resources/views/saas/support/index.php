@@ -134,7 +134,7 @@ $formatSupportDate = static function (mixed $value): string {
     .saas-support-ticket-box span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
     .saas-support-ticket-box strong{display:block;margin-top:4px;font-size:13px;color:#0f172a}
 
-    .saas-thread{display:grid;gap:10px;border-top:1px dashed #cbd5e1;padding-top:12px}
+    .saas-thread{display:grid;gap:10px;border-top:1px dashed #cbd5e1;padding-top:12px;max-height:420px;overflow-y:auto;padding-right:6px}
     .saas-thread-item{display:grid;gap:7px;border-radius:12px;padding:10px 12px;max-width:92%}
     .saas-thread-item.is-company{background:#fff7ed;border:1px solid #fed7aa;justify-self:start}
     .saas-thread-item.is-saas{background:#eff6ff;border:1px solid #bfdbfe;justify-self:end}
@@ -152,6 +152,18 @@ $formatSupportDate = static function (mixed $value): string {
     .saas-reply-box textarea{min-height:116px}
     .saas-reply-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
     .saas-reply-note{font-size:12px;color:#64748b;line-height:1.45;max-width:760px}
+    .saas-conversation{border-top:1px dashed #cbd5e1;padding-top:12px}
+    .saas-conversation summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none;font-weight:700;color:#0f172a}
+    .saas-conversation summary::-webkit-details-marker{display:none}
+    .saas-conversation-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .saas-conversation-count{font-size:12px;color:#64748b;font-weight:600}
+    .saas-conversation-toggle{font-size:11px;color:#1d4ed8;background:#dbeafe;border:1px solid #bfdbfe;border-radius:999px;padding:4px 9px;font-weight:700}
+    .saas-conversation[open] .saas-conversation-toggle{background:#eff6ff}
+    .saas-conversation-body{display:grid;gap:10px;margin-top:10px}
+    .saas-thread::-webkit-scrollbar{width:10px}
+    .saas-thread::-webkit-scrollbar-track{background:#e2e8f0;border-radius:999px}
+    .saas-thread::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:999px}
+    .saas-thread::-webkit-scrollbar-thumb:hover{background:#64748b}
 
     .saas-summary-grid{display:grid;gap:8px}
     .saas-summary-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px}
@@ -273,6 +285,7 @@ $formatSupportDate = static function (mixed $value): string {
                             $statusRaw = strtolower(trim((string) ($ticket['status'] ?? 'open')));
                             $priorityRaw = strtolower(trim((string) ($ticket['priority'] ?? 'medium')));
                             $threadMessages = is_array($threads[$ticketId] ?? null) ? $threads[$ticketId] : [];
+                            $messageCount = count($threadMessages);
                             $statusClass = match ($statusRaw) {
                                 'open' => 'saas-status-open',
                                 'in_progress' => 'saas-status-progress',
@@ -319,55 +332,67 @@ $formatSupportDate = static function (mixed $value): string {
                                     </div>
                                 </div>
 
-                                <div class="saas-thread">
-                                    <?php foreach ($threadMessages as $message): ?>
-                                        <?php
-                                        $senderContext = strtolower(trim((string) ($message['sender_context'] ?? 'company')));
-                                        $isCompany = $senderContext !== 'saas';
-                                        $senderName = trim((string) ($message['sender_user_name'] ?? ''));
-                                        if ($senderName === '') {
-                                            $senderName = $isCompany ? 'Empresa' : 'Suporte SaaS';
-                                        }
-                                        ?>
-                                        <div class="saas-thread-item<?= $isCompany ? ' is-company' : ' is-saas' ?>">
-                                            <div class="saas-thread-head">
-                                                <div>
-                                                    <strong><?= htmlspecialchars($senderName) ?></strong>
-                                                    <div class="saas-thread-badge<?= $isCompany ? ' is-company' : ' is-saas' ?>"><?= $isCompany ? 'Empresa' : 'SaaS' ?></div>
+                                <details class="saas-conversation">
+                                    <summary>
+                                        <span>Conversa do chamado</span>
+                                        <span class="saas-conversation-meta">
+                                            <span class="saas-conversation-count"><?= htmlspecialchars((string) $messageCount) ?> mensagem(ns)</span>
+                                            <span class="saas-conversation-toggle">Expandir / recolher</span>
+                                        </span>
+                                    </summary>
+
+                                    <div class="saas-conversation-body">
+                                        <div class="saas-thread">
+                                            <?php foreach ($threadMessages as $message): ?>
+                                                <?php
+                                                $senderContext = strtolower(trim((string) ($message['sender_context'] ?? 'company')));
+                                                $isCompany = $senderContext !== 'saas';
+                                                $senderName = trim((string) ($message['sender_user_name'] ?? ''));
+                                                if ($senderName === '') {
+                                                    $senderName = $isCompany ? 'Empresa' : 'Suporte SaaS';
+                                                }
+                                                ?>
+                                                <div class="saas-thread-item<?= $isCompany ? ' is-company' : ' is-saas' ?>">
+                                                    <div class="saas-thread-head">
+                                                        <div>
+                                                            <strong><?= htmlspecialchars($senderName) ?></strong>
+                                                            <div class="saas-thread-badge<?= $isCompany ? ' is-company' : ' is-saas' ?>"><?= $isCompany ? 'Empresa' : 'SaaS' ?></div>
+                                                        </div>
+                                                        <small><?= htmlspecialchars($formatSupportDate($message['created_at'] ?? '')) ?></small>
+                                                    </div>
+                                                    <p class="saas-thread-message"><?= nl2br(htmlspecialchars((string) ($message['message'] ?? '')), false) ?></p>
                                                 </div>
-                                                <small><?= htmlspecialchars($formatSupportDate($message['created_at'] ?? '')) ?></small>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                        <form class="saas-reply-box" method="POST" action="<?= htmlspecialchars(base_url('/saas/support/reply')) ?>">
+                                            <?= form_security_fields('saas.support.reply.' . $ticketId) ?>
+                                            <input type="hidden" name="ticket_id" value="<?= $ticketId ?>">
+                                            <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
+
+                                            <div class="saas-reply-grid">
+                                                <div class="field">
+                                                    <label for="saas_reply_message_<?= $ticketId ?>">Responder na mesma thread</label>
+                                                    <textarea id="saas_reply_message_<?= $ticketId ?>" name="message" rows="5" required placeholder="Escreva a resposta que ficara visivel no historico da empresa."></textarea>
+                                                </div>
+                                                <div class="field">
+                                                    <label for="saas_reply_status_<?= $ticketId ?>">Novo status</label>
+                                                    <select id="saas_reply_status_<?= $ticketId ?>" name="status">
+                                                        <option value="in_progress" <?= $statusRaw === 'open' ? 'selected' : '' ?>>Em andamento</option>
+                                                        <option value="open" <?= $statusRaw === 'open' ? '' : '' ?>>Aberto</option>
+                                                        <option value="resolved" <?= $statusRaw === 'resolved' ? 'selected' : '' ?>>Resolvido</option>
+                                                        <option value="closed" <?= $statusRaw === 'closed' ? 'selected' : '' ?>>Fechado</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <p class="saas-thread-message"><?= nl2br(htmlspecialchars((string) ($message['message'] ?? '')), false) ?></p>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
 
-                                <form class="saas-reply-box" method="POST" action="<?= htmlspecialchars(base_url('/saas/support/reply')) ?>">
-                                    <?= form_security_fields('saas.support.reply.' . $ticketId) ?>
-                                    <input type="hidden" name="ticket_id" value="<?= $ticketId ?>">
-                                    <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
-
-                                    <div class="saas-reply-grid">
-                                        <div class="field">
-                                            <label for="saas_reply_message_<?= $ticketId ?>">Responder na mesma thread</label>
-                                            <textarea id="saas_reply_message_<?= $ticketId ?>" name="message" rows="5" required placeholder="Escreva a resposta que ficara visivel no historico da empresa."></textarea>
-                                        </div>
-                                        <div class="field">
-                                            <label for="saas_reply_status_<?= $ticketId ?>">Novo status</label>
-                                            <select id="saas_reply_status_<?= $ticketId ?>" name="status">
-                                                <option value="in_progress" <?= $statusRaw === 'open' ? 'selected' : '' ?>>Em andamento</option>
-                                                <option value="open" <?= $statusRaw === 'open' ? '' : '' ?>>Aberto</option>
-                                                <option value="resolved" <?= $statusRaw === 'resolved' ? 'selected' : '' ?>>Resolvido</option>
-                                                <option value="closed" <?= $statusRaw === 'closed' ? 'selected' : '' ?>>Fechado</option>
-                                            </select>
-                                        </div>
+                                            <div class="saas-reply-footer">
+                                                <p class="saas-reply-note">A resposta fica registrada na mesma conversa do chamado e passa a aparecer tambem no ambiente da empresa. Ao responder, o chamado fica atribuido ao usuario SaaS atual.</p>
+                                                <button class="btn" type="submit">Responder chamado</button>
+                                            </div>
+                                        </form>
                                     </div>
-
-                                    <div class="saas-reply-footer">
-                                        <p class="saas-reply-note">A resposta fica registrada na mesma conversa do chamado e passa a aparecer tambem no ambiente da empresa. Ao responder, o chamado fica atribuido ao usuario SaaS atual.</p>
-                                        <button class="btn" type="submit">Responder chamado</button>
-                                    </div>
-                                </form>
+                                </details>
                             </article>
                         <?php endforeach; ?>
                     </div>

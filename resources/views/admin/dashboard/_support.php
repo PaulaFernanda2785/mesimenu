@@ -131,7 +131,7 @@ $formatSupportDate = static function (mixed $value): string {
         .st-ticket-info-item{border:1px solid #e2e8f0;border-radius:10px;background:#fff;padding:10px}
         .st-ticket-info-item span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
         .st-ticket-info-item strong{display:block;margin-top:4px;font-size:13px;color:#0f172a}
-        .st-thread{display:grid;gap:10px;border-top:1px dashed #cbd5e1;padding-top:10px}
+        .st-thread{display:grid;gap:10px;border-top:1px dashed #cbd5e1;padding-top:10px;max-height:420px;overflow-y:auto;padding-right:6px}
         .st-thread-item{display:grid;gap:7px;border-radius:12px;padding:10px 12px;max-width:92%}
         .st-thread-item.is-company{background:#eff6ff;border:1px solid #bfdbfe;justify-self:end}
         .st-thread-item.is-saas{background:#f8fafc;border:1px solid #e2e8f0;justify-self:start}
@@ -147,6 +147,18 @@ $formatSupportDate = static function (mixed $value): string {
         .st-reply-box textarea{min-height:108px}
         .st-reply-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
         .st-reply-note{font-size:12px;color:#64748b;line-height:1.45;max-width:720px}
+        .st-conversation{border-top:1px dashed #cbd5e1;padding-top:10px}
+        .st-conversation summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none;font-weight:700;color:#0f172a}
+        .st-conversation summary::-webkit-details-marker{display:none}
+        .st-conversation-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+        .st-conversation-count{font-size:12px;color:#64748b;font-weight:600}
+        .st-conversation-toggle{font-size:11px;color:#1d4ed8;background:#dbeafe;border:1px solid #bfdbfe;border-radius:999px;padding:4px 9px;font-weight:700}
+        .st-conversation[open] .st-conversation-toggle{background:#eff6ff}
+        .st-conversation-body{display:grid;gap:10px;margin-top:10px}
+        .st-thread::-webkit-scrollbar{width:10px}
+        .st-thread::-webkit-scrollbar-track{background:#e2e8f0;border-radius:999px}
+        .st-thread::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:999px}
+        .st-thread::-webkit-scrollbar-thumb:hover{background:#64748b}
 
         .st-summary-grid{display:grid;gap:8px}
         .st-summary-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px}
@@ -331,6 +343,7 @@ $formatSupportDate = static function (mixed $value): string {
                                 };
                                 $ticketId = (int) ($ticket['id'] ?? 0);
                                 $threadMessages = is_array($supportThreads[$ticketId] ?? null) ? $supportThreads[$ticketId] : [];
+                                $messageCount = count($threadMessages);
                                 ?>
                                 <article class="st-ticket-item">
                                     <div class="st-ticket-top">
@@ -359,51 +372,63 @@ $formatSupportDate = static function (mixed $value): string {
                                         </div>
                                     </div>
 
-                                    <div class="st-thread">
-                                        <?php foreach ($threadMessages as $threadMessage): ?>
-                                            <?php
-                                            $senderContext = strtolower(trim((string) ($threadMessage['sender_context'] ?? 'company')));
-                                            $isCompanySender = $senderContext !== 'saas';
-                                            $senderBadge = $isCompanySender ? 'Empresa' : 'SaaS';
-                                            $senderName = trim((string) ($threadMessage['sender_user_name'] ?? ''));
-                                            if ($senderName === '') {
-                                                $senderName = $isCompanySender ? 'Empresa' : 'Suporte SaaS';
-                                            }
-                                            ?>
-                                            <div class="st-thread-item<?= $isCompanySender ? ' is-company' : ' is-saas' ?>">
-                                                <div class="st-thread-head">
-                                                    <div>
-                                                        <strong><?= htmlspecialchars($senderName) ?></strong>
-                                                        <div class="st-thread-badge<?= $isCompanySender ? ' is-company' : ' is-saas' ?>"><?= htmlspecialchars($senderBadge) ?></div>
+                                    <details class="st-conversation">
+                                        <summary>
+                                            <span>Conversa do chamado</span>
+                                            <span class="st-conversation-meta">
+                                                <span class="st-conversation-count"><?= htmlspecialchars((string) $messageCount) ?> mensagem(ns)</span>
+                                                <span class="st-conversation-toggle">Expandir / recolher</span>
+                                            </span>
+                                        </summary>
+
+                                        <div class="st-conversation-body">
+                                            <div class="st-thread">
+                                                <?php foreach ($threadMessages as $threadMessage): ?>
+                                                    <?php
+                                                    $senderContext = strtolower(trim((string) ($threadMessage['sender_context'] ?? 'company')));
+                                                    $isCompanySender = $senderContext !== 'saas';
+                                                    $senderBadge = $isCompanySender ? 'Empresa' : 'SaaS';
+                                                    $senderName = trim((string) ($threadMessage['sender_user_name'] ?? ''));
+                                                    if ($senderName === '') {
+                                                        $senderName = $isCompanySender ? 'Empresa' : 'Suporte SaaS';
+                                                    }
+                                                    ?>
+                                                    <div class="st-thread-item<?= $isCompanySender ? ' is-company' : ' is-saas' ?>">
+                                                        <div class="st-thread-head">
+                                                            <div>
+                                                                <strong><?= htmlspecialchars($senderName) ?></strong>
+                                                                <div class="st-thread-badge<?= $isCompanySender ? ' is-company' : ' is-saas' ?>"><?= htmlspecialchars($senderBadge) ?></div>
+                                                            </div>
+                                                            <small><?= htmlspecialchars($formatSupportDate($threadMessage['created_at'] ?? '')) ?></small>
+                                                        </div>
+                                                        <p class="st-thread-message"><?= nl2br(htmlspecialchars((string) ($threadMessage['message'] ?? '')), false) ?></p>
                                                     </div>
-                                                    <small><?= htmlspecialchars($formatSupportDate($threadMessage['created_at'] ?? '')) ?></small>
-                                                </div>
-                                                <p class="st-thread-message"><?= nl2br(htmlspecialchars((string) ($threadMessage['message'] ?? '')), false) ?></p>
+                                                <?php endforeach; ?>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
 
-                                    <form class="st-reply-box" method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/support/reply')) ?>">
-                                        <?= form_security_fields('dashboard.support.reply.' . $ticketId) ?>
-                                        <input type="hidden" name="ticket_id" value="<?= $ticketId ?>">
-                                        <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnSupportQuery) ?>">
+                                            <form class="st-reply-box" method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/support/reply')) ?>">
+                                                <?= form_security_fields('dashboard.support.reply.' . $ticketId) ?>
+                                                <input type="hidden" name="ticket_id" value="<?= $ticketId ?>">
+                                                <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnSupportQuery) ?>">
 
-                                        <div class="field">
-                                            <label for="support_reply_<?= $ticketId ?>">Responder no mesmo chamado</label>
-                                            <textarea id="support_reply_<?= $ticketId ?>" name="message" rows="4" required placeholder="Escreva a continuidade da conversa para o suporte SaaS."></textarea>
+                                                <div class="field">
+                                                    <label for="support_reply_<?= $ticketId ?>">Responder no mesmo chamado</label>
+                                                    <textarea id="support_reply_<?= $ticketId ?>" name="message" rows="4" required placeholder="Escreva a continuidade da conversa para o suporte SaaS."></textarea>
+                                                </div>
+
+                                                <div class="st-reply-footer">
+                                                    <p class="st-reply-note">
+                                                        <?php if (in_array($statusRaw, ['resolved', 'closed'], true)): ?>
+                                                            Nova mensagem da empresa reabre o chamado no historico para continuar a tratativa.
+                                                        <?php else: ?>
+                                                            A resposta entra na mesma thread do chamado, sem criar outro registro no historico.
+                                                        <?php endif; ?>
+                                                    </p>
+                                                    <button class="btn secondary" type="submit">Enviar resposta</button>
+                                                </div>
+                                            </form>
                                         </div>
-
-                                        <div class="st-reply-footer">
-                                            <p class="st-reply-note">
-                                                <?php if (in_array($statusRaw, ['resolved', 'closed'], true)): ?>
-                                                    Nova mensagem da empresa reabre o chamado no historico para continuar a tratativa.
-                                                <?php else: ?>
-                                                    A resposta entra na mesma thread do chamado, sem criar outro registro no historico.
-                                                <?php endif; ?>
-                                            </p>
-                                            <button class="btn secondary" type="submit">Enviar resposta</button>
-                                        </div>
-                                    </form>
+                                    </details>
                                 </article>
                             <?php endforeach; ?>
                         </div>
