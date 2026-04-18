@@ -63,7 +63,7 @@ final class SubscriptionPaymentController extends Controller
         }
 
         try {
-            $this->service->markPaid($request->all());
+            $this->service->markPaid($request->all(), Auth::user() ?? []);
             return $this->backWithSuccess('Cobranca marcada como paga.', $redirectTo);
         } catch (ValidationException $e) {
             return $this->backWithError($e->getMessage(), $redirectTo);

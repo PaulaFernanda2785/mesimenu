@@ -127,7 +127,7 @@ final class SubscriptionPaymentService
         ]);
     }
 
-    public function markPaid(array $input): void
+    public function markPaid(array $input, array $actor = []): void
     {
         $paymentId = (int) ($input['subscription_payment_id'] ?? 0);
         $paymentMethod = $this->normalizeNullableText($input['payment_method'] ?? null);
@@ -150,13 +150,41 @@ final class SubscriptionPaymentService
             throw new ValidationException('Esta cobranca ja esta marcada como paga.');
         }
 
-        $this->subscriptionPayments->updateStatus(
-            $paymentId,
-            'pago',
-            $paymentMethod,
-            $transactionReference,
-            date('Y-m-d H:i:s')
-        );
+        $details = $this->mergePaymentDetails($payment, [
+            'source' => 'saas_manual',
+            'mode' => 'manual_mark_paid',
+            'marked_paid_at' => date('c'),
+        ]);
+
+        if (!empty($actor) && (int) ($actor['is_saas_user'] ?? 0) === 1) {
+            $details['saas_admin_signature'] = [
+                'user_id' => (int) ($actor['id'] ?? 0),
+                'name' => trim((string) ($actor['name'] ?? '')),
+                'email' => trim((string) ($actor['email'] ?? '')),
+                'role_name' => trim((string) ($actor['role_name'] ?? 'Administrador SaaS')),
+                'signed_at' => date('c'),
+                'type' => 'manual_mark_paid',
+            ];
+        }
+
+        $this->subscriptionPayments->updateRecord($paymentId, [
+            'status' => 'pago',
+            'payment_method' => $paymentMethod,
+            'paid_at' => date('Y-m-d H:i:s'),
+            'due_date' => (string) ($payment['due_date'] ?? ''),
+            'transaction_reference' => $transactionReference,
+            'charge_origin' => $payment['charge_origin'] ?? 'manual',
+            'pix_code' => $payment['pix_code'] ?? null,
+            'pix_qr_payload' => $payment['pix_qr_payload'] ?? null,
+            'pix_qr_image_base64' => $payment['pix_qr_image_base64'] ?? null,
+            'pix_ticket_url' => $payment['pix_ticket_url'] ?? null,
+            'payment_details_json' => json_encode($details, JSON_UNESCAPED_SLASHES),
+            'gateway_payment_id' => $payment['gateway_payment_id'] ?? null,
+            'gateway_payment_url' => $payment['gateway_payment_url'] ?? null,
+            'gateway_status' => $payment['gateway_status'] ?? null,
+            'gateway_webhook_payload_json' => $payment['gateway_webhook_payload_json'] ?? null,
+            'gateway_last_synced_at' => $payment['gateway_last_synced_at'] ?? null,
+        ]);
     }
 
     public function markOverdue(array $input): void
@@ -358,5 +386,23 @@ final class SubscriptionPaymentService
         sort($result);
 
         return $result;
+    }
+
+    private function mergePaymentDetails(array $payment, array $defaults): array
+    {
+        $details = [];
+        $raw = trim((string) ($payment['payment_details_json'] ?? ''));
+        if ($raw !== '') {
+            $decoded = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $details = $decoded;
+            }
+        }
+
+        foreach ($defaults as $key => $value) {
+            $details[$key] = $value;
+        }
+
+        return $details;
     }
 }

@@ -76,6 +76,7 @@ $router->post('/admin/dashboard/support/store', [DashboardController::class, 'st
 $router->post('/admin/dashboard/support/reply', [DashboardController::class, 'replySupportTicket'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/pix/generate', [DashboardController::class, 'generateSubscriptionPix'], $companyAccess('dashboard.view'));
 $router->get('/admin/dashboard/subscription/pix/status', [DashboardController::class, 'pollSubscriptionPixStatus'], $companyAccess('dashboard.view'));
+$router->get('/admin/dashboard/subscription/receipt', [DashboardController::class, 'subscriptionReceipt'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/card', [DashboardController::class, 'paySubscriptionWithCard'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/pix', [DashboardController::class, 'confirmSubscriptionPix'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/gateway/checkout', [DashboardController::class, 'createSubscriptionRecurringCheckout'], $companyAccess('dashboard.view'));

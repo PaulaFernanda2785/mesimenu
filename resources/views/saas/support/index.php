@@ -61,19 +61,19 @@ $supportPriorityOptions = [
     '' => 'Todas as prioridades',
     'urgent' => 'Urgente',
     'high' => 'Alta',
-    'medium' => 'Media',
+    'medium' => 'Média',
     'low' => 'Baixa',
 ];
 
 $supportAssignmentOptions = [
-    '' => 'Com e sem responsavel',
-    'assigned' => 'Somente atribuidos',
-    'unassigned' => 'Somente sem responsavel',
+    '' => 'Com e sem responsável',
+    'assigned' => 'Somente atribuídos',
+    'unassigned' => 'Somente sem responsável',
 ];
 
 $supportPriorityLabels = [
     'low' => 'Baixa',
-    'medium' => 'Media',
+    'medium' => 'Média',
     'high' => 'Alta',
     'urgent' => 'Urgente',
 ];
@@ -251,7 +251,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
         <div class="saas-support-hero-body">
             <div>
                 <h1>Atendimento SaaS</h1>
-                <p>Fila institucional de chamados das empresas assinantes. Cada ticket funciona como uma thread unica: a empresa abre, o administrador responde, o historico permanece visivel dos dois lados e o status evolui dentro da mesma conversa.</p>
+                <p>Fila institucional de chamados das empresas assinantes. Cada ticket funciona como uma thread única: a empresa abre, o administrador responde, o histórico permanece visível dos dois lados e o status evolui dentro da mesma conversa.</p>
             </div>
             <div class="saas-support-pills">
                 <span class="saas-support-pill">Chamados filtrados: <?= htmlspecialchars((string) $supportTotal) ?></span>
@@ -268,13 +268,13 @@ $supportAttachmentUrl = static function (array $attachment): string {
                 <div class="saas-support-head">
                     <div>
                         <h2>Fila de chamados</h2>
-                        <p class="saas-support-note">Filtre por empresa, texto, status, prioridade ou atribuicao. O retorno do SaaS entra no mesmo chamado da empresa e pode alterar o status no ato da resposta.</p>
+                        <p class="saas-support-note">Filtre por empresa, texto, status, prioridade ou atribuição. O retorno do SaaS entra no mesmo chamado da empresa e pode alterar o status no ato da resposta.</p>
                     </div>
                     <div class="saas-support-badges">
                         <?php if ($lastSupportActivityAt !== ''): ?>
-                            <span class="badge">Ultima atividade: <?= htmlspecialchars($formatSupportDate($lastSupportActivityAt)) ?></span>
+                            <span class="badge">Última atividade: <?= htmlspecialchars($formatSupportDate($lastSupportActivityAt)) ?></span>
                         <?php endif; ?>
-                        <span class="badge">Atribuidos: <?= htmlspecialchars((string) $supportAssignedCount) ?></span>
+                        <span class="badge">Atribuídos: <?= htmlspecialchars((string) $supportAssignedCount) ?></span>
                     </div>
                 </div>
 
@@ -286,7 +286,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                         </div>
                         <div class="field">
                             <label for="support_search">Busca inteligente</label>
-                            <input id="support_search" name="support_search" type="text" value="<?= htmlspecialchars($supportSearch) ?>" placeholder="ID do ticket, assunto, mensagem, autor ou responsavel">
+                            <input id="support_search" name="support_search" type="text" value="<?= htmlspecialchars($supportSearch) ?>" placeholder="ID do ticket, assunto, mensagem, autor ou responsável">
                         </div>
                         <div class="field">
                             <label for="support_status">Status</label>
@@ -305,7 +305,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                             </select>
                         </div>
                         <div class="field">
-                            <label for="support_assignment">Atribuicao</label>
+                            <label for="support_assignment">Atribuição</label>
                             <select id="support_assignment" name="support_assignment">
                                 <?php foreach ($supportAssignmentOptions as $value => $label): ?>
                                     <option value="<?= htmlspecialchars($value) ?>" <?= $supportAssignment === (string) $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
@@ -323,7 +323,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                     <div class="card" style="margin-top:16px;padding:14px;border:1px dashed #cbd5e1;box-shadow:none">
                         <?= ($supportSearch !== '' || $supportCompanySearch !== '' || $supportStatus !== '' || $supportPriority !== '' || $supportAssignment !== '')
                             ? 'Nenhum chamado encontrado para os filtros aplicados.'
-                            : 'Nenhum chamado registrado ate o momento.' ?>
+                            : 'Nenhum chamado registrado até o momento.' ?>
                     </div>
                 <?php else: ?>
                     <div class="saas-support-list" style="margin-top:16px">
@@ -367,11 +367,11 @@ $supportAttachmentUrl = static function (array $attachment): string {
                                         <strong><?= htmlspecialchars((string) ($ticket['company_name'] ?? '-')) ?></strong>
                                     </div>
                                     <div class="saas-support-ticket-box">
-                                        <span>Responsavel SaaS</span>
-                                        <strong><?= htmlspecialchars((string) ($ticket['assigned_to_user_name'] ?? 'Nao atribuido')) ?></strong>
+                                        <span>Responsável SaaS</span>
+                                        <strong><?= htmlspecialchars((string) ($ticket['assigned_to_user_name'] ?? 'Não atribuído')) ?></strong>
                                     </div>
                                     <div class="saas-support-ticket-box">
-                                        <span>Ultima atividade</span>
+                                        <span>Última atividade</span>
                                         <strong><?= htmlspecialchars($formatSupportDate($ticket['updated_at'] ?? $ticket['created_at'] ?? '')) ?></strong>
                                     </div>
                                     <div class="saas-support-ticket-box">
@@ -465,7 +465,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                                             <div class="saas-reply-grid">
                                                 <div class="field">
                                                     <label for="saas_reply_message_<?= $ticketId ?>">Responder na mesma thread</label>
-                                                    <textarea id="saas_reply_message_<?= $ticketId ?>" name="message" rows="5" placeholder="Escreva a resposta que ficara visivel no historico da empresa."></textarea>
+                                                    <textarea id="saas_reply_message_<?= $ticketId ?>" name="message" rows="5" placeholder="Escreva a resposta que ficará visível no histórico da empresa."></textarea>
                                                 </div>
                                                 <div class="field">
                                                     <label for="saas_reply_status_<?= $ticketId ?>">Novo status</label>
@@ -484,10 +484,10 @@ $supportAttachmentUrl = static function (array $attachment): string {
                                                     <input class="saas-uploader-input" id="saas_reply_attachments_<?= $ticketId ?>" data-uploader-input name="attachments[]" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.zip">
                                                     <div class="saas-uploader-dropzone" data-uploader-dropzone tabindex="0">
                                                         <strong>Arraste, cole ou clique para anexar</strong>
-                                                        <span>Envie varias evidencias na mesma resposta, no estilo de conversa.</span>
+                                                        <span>Envie várias evidências na mesma resposta, no estilo de conversa.</span>
                                                         <div class="saas-uploader-meta">
-                                                            <span class="saas-uploader-pill">Ate 8 arquivos</span>
-                                                            <span class="saas-uploader-pill">Maximo 10MB por arquivo</span>
+                                                            <span class="saas-uploader-pill">Até 8 arquivos</span>
+                                                            <span class="saas-uploader-pill">Máximo 10MB por arquivo</span>
                                                         </div>
                                                     </div>
                                                     <div class="saas-uploader-list" data-uploader-list hidden></div>
@@ -495,7 +495,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                                             </div>
 
                                             <div class="saas-reply-footer">
-                                                <p class="saas-reply-note">A resposta fica registrada na mesma conversa do chamado e passa a aparecer tambem no ambiente da empresa. Ao responder, o chamado fica atribuido ao usuario SaaS atual. Tambem e possivel enviar somente anexos, inclusive varios arquivos na mesma mensagem.</p>
+                                                <p class="saas-reply-note">A resposta fica registrada na mesma conversa do chamado e passa a aparecer também no ambiente da empresa. Ao responder, o chamado fica atribuído ao usuário SaaS atual. Também é possível enviar somente anexos, inclusive vários arquivos na mesma mensagem.</p>
                                                 <button class="btn" type="submit">Responder chamado</button>
                                             </div>
                                         </form>
@@ -525,7 +525,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                                 endforeach;
                                 ?>
                                 <?php if ($supportPage < $supportLastPage): ?>
-                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildSupportUrl(['support_page' => $supportPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildSupportUrl(['support_page' => $supportPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -547,7 +547,7 @@ $supportAttachmentUrl = static function (array $attachment): string {
                     <div class="saas-summary-item"><strong>Em aberto</strong><span><?= htmlspecialchars((string) $supportOpenCount) ?></span></div>
                     <div class="saas-summary-item"><strong>Em andamento</strong><span><?= htmlspecialchars((string) $supportInProgressCount) ?></span></div>
                     <div class="saas-summary-item"><strong>Resolvidos/fechados</strong><span><?= htmlspecialchars((string) $supportResolvedCount) ?></span></div>
-                    <div class="saas-summary-item"><strong>Atribuidos</strong><span><?= htmlspecialchars((string) $supportAssignedCount) ?></span></div>
+                    <div class="saas-summary-item"><strong>Atribuídos</strong><span><?= htmlspecialchars((string) $supportAssignedCount) ?></span></div>
                     <div class="saas-summary-item"><strong>Urgentes</strong><span><?= htmlspecialchars((string) $supportUrgentCount) ?></span></div>
                 </div>
             </div>
@@ -556,13 +556,13 @@ $supportAttachmentUrl = static function (array $attachment): string {
                 <div class="saas-support-head">
                     <div>
                         <h3>Regra operacional</h3>
-                        <p class="saas-support-note">A resposta do SaaS deve sempre contextualizar causa, acao tomada e proximo passo. Fechamento sem retorno claro tende a gerar reabertura desnecessaria.</p>
+                        <p class="saas-support-note">A resposta do SaaS deve sempre contextualizar causa, ação tomada e próximo passo. Fechamento sem retorno claro tende a gerar reabertura desnecessária.</p>
                     </div>
                 </div>
                 <div class="saas-summary-grid">
                     <div class="saas-summary-item"><strong>Ao responder</strong><span>Assume o chamado</span></div>
-                    <div class="saas-summary-item"><strong>Resolvido</strong><span>Problema tratado, aguardando validacao</span></div>
-                    <div class="saas-summary-item"><strong>Fechado</strong><span>Ciclo concluido</span></div>
+                    <div class="saas-summary-item"><strong>Resolvido</strong><span>Problema tratado, aguardando validação</span></div>
+                    <div class="saas-summary-item"><strong>Fechado</strong><span>Ciclo concluído</span></div>
                     <div class="saas-summary-item"><strong>Reabertura</strong><span>Empresa responde na mesma thread</span></div>
                 </div>
             </div>

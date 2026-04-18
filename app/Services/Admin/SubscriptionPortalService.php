@@ -74,6 +74,51 @@ final class SubscriptionPortalService
         ];
     }
 
+    public function receiptContext(int $companyId, int $paymentId): array
+    {
+        if ($companyId <= 0 || $paymentId <= 0) {
+            throw new ValidationException('Pagamento invalido para emitir recibo.');
+        }
+
+        $payment = $this->subscriptionPayments->findReceiptContextByIdForCompany($companyId, $paymentId);
+        if ($payment === null) {
+            throw new ValidationException('Pagamento nao encontrado para a empresa autenticada.');
+        }
+
+        if (trim((string) ($payment['status'] ?? '')) !== 'pago') {
+            throw new ValidationException('Somente pagamentos com status pago podem emitir recibo.');
+        }
+
+        $paymentDetails = null;
+        $paymentDetailsRaw = trim((string) ($payment['payment_details_json'] ?? ''));
+        if ($paymentDetailsRaw !== '') {
+            $decoded = json_decode($paymentDetailsRaw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $paymentDetails = $decoded;
+            }
+        }
+
+        $referenceMonth = max(1, min(12, (int) ($payment['reference_month'] ?? 0)));
+        $referenceYear = max(2000, (int) ($payment['reference_year'] ?? date('Y')));
+        $referenceLabel = sprintf('%02d/%04d', $referenceMonth, $referenceYear);
+        $paymentMethod = trim((string) ($payment['payment_method'] ?? ''));
+        $receiptNumber = sprintf('REC-%06d-%02d%04d', $paymentId, $referenceMonth, $referenceYear);
+        $saasSignature = $this->resolveReceiptSaasSignature($paymentDetails);
+
+        return [
+            'payment' => $payment,
+            'payment_details' => $paymentDetails,
+            'reference_label' => $referenceLabel,
+            'receipt_number' => $receiptNumber,
+            'status_label' => status_label('subscription_payment_status', (string) ($payment['status'] ?? '')),
+            'payment_method_label' => $this->paymentMethodLabel($paymentMethod),
+            'billing_cycle_label' => status_label('billing_cycle', (string) ($payment['billing_cycle'] ?? '')),
+            'charge_origin_label' => $this->chargeOriginLabel((string) ($payment['charge_origin'] ?? '')),
+            'generated_at' => date('Y-m-d H:i:s'),
+            'saas_signature' => $saasSignature,
+        ];
+    }
+
     public function payChargeWithCard(int $companyId, array $input): void
     {
         $paymentId = (int) ($input['subscription_payment_id'] ?? 0);
@@ -711,6 +756,52 @@ final class SubscriptionPortalService
             'billing_cycle' => $subscription['billing_cycle'] ?? null,
             'preferred_payment_method' => $subscription['preferred_payment_method'] ?? null,
             'auto_charge_enabled' => !empty($subscription['auto_charge_enabled']),
+        ];
+    }
+
+    private function paymentMethodLabel(string $method): string
+    {
+        return match ($method) {
+            'pix' => 'Pix',
+            'credito' => 'Cartao de credito',
+            'debito' => 'Cartao de debito',
+            default => 'Nao definido',
+        };
+    }
+
+    private function chargeOriginLabel(string $origin): string
+    {
+        return match (trim($origin)) {
+            'auto' => 'Recorrencia automatica',
+            'pix' => 'Cobranca PIX',
+            'manual' => 'Baixa manual',
+            default => trim($origin) !== '' ? trim($origin) : 'Nao informado',
+        };
+    }
+
+    private function resolveReceiptSaasSignature(?array $paymentDetails): array
+    {
+        $paymentDetails = is_array($paymentDetails) ? $paymentDetails : [];
+        $signature = is_array($paymentDetails['saas_admin_signature'] ?? null)
+            ? $paymentDetails['saas_admin_signature']
+            : [];
+
+        $signedAt = trim((string) ($signature['signed_at'] ?? ''));
+        if ($signedAt === '') {
+            $signedAt = trim((string) ($paymentDetails['marked_paid_at'] ?? ''));
+        }
+
+        $name = trim((string) ($signature['name'] ?? ''));
+        $email = trim((string) ($signature['email'] ?? ''));
+        $roleName = trim((string) ($signature['role_name'] ?? 'Administrador SaaS'));
+
+        return [
+            'mode' => ($name !== '' || $email !== '') ? 'named' : 'institutional',
+            'name' => $name !== '' ? $name : 'Comanda360 SaaS',
+            'email' => $email,
+            'role_name' => $roleName !== '' ? $roleName : 'Administrador SaaS',
+            'signed_at' => $signedAt,
+            'type' => trim((string) ($signature['type'] ?? 'system_issued')),
         ];
     }
 

@@ -508,6 +508,29 @@ final class DashboardController extends Controller
         }
     }
 
+    public function subscriptionReceipt(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return $this->redirect('/login');
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+        $companyId = (int) ($user['company_id'] ?? 0);
+        $paymentId = (int) ($request->input('subscription_payment_id', 0));
+
+        try {
+            return $this->view('admin/dashboard/subscription_receipt', [
+                'title' => 'Recibo da Assinatura',
+                'user' => $user,
+                'context' => $this->subscriptionService->receiptContext($companyId, $paymentId),
+                'backUrl' => $this->buildSubscriptionReturnUrlFromParams($request->query),
+            ]);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), $this->buildSubscriptionReturnUrlFromParams($request->query));
+        }
+    }
+
     public function disableSubscriptionAutoCharge(Request $request): Response
     {
         if (!Auth::check()) {
@@ -632,6 +655,11 @@ final class DashboardController extends Controller
             return $default;
         }
 
+        return $this->buildSubscriptionReturnUrlFromParams($params);
+    }
+
+    private function buildSubscriptionReturnUrlFromParams(array $params): string
+    {
         $allowedKeys = [
             'section',
             'subscription_history_search',

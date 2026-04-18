@@ -184,11 +184,11 @@ $chargeModeLabel = static function (bool $bound): string {
     <div class="saas-billing-hero">
         <div class="saas-billing-hero-body">
             <div>
-                <h1>Cobrancas</h1>
-                <p>O painel agora prioriza leitura rapida, fila operacional e excecoes. Em vez de uma sequencia de cards longos, cada cobranca aparece primeiro como linha objetiva e so abre detalhes quando realmente for preciso agir.</p>
+                <h1>Cobranças</h1>
+                <p>O painel agora prioriza leitura rápida, fila operacional e exceções. Em vez de uma sequência de cards longos, cada cobrança aparece primeiro como linha objetiva e só abre detalhes quando realmente for preciso agir.</p>
             </div>
             <div class="saas-billing-pills">
-                <span class="saas-billing-pill">Cobrancas filtradas: <?= htmlspecialchars((string) $totalCharges) ?></span>
+                <span class="saas-billing-pill">Cobranças filtradas: <?= htmlspecialchars((string) $totalCharges) ?></span>
                 <span class="saas-billing-pill">Pendentes: <?= htmlspecialchars((string) $pendingCharges) ?></span>
                 <span class="saas-billing-pill">Vencidas: <?= htmlspecialchars((string) $overdueCharges) ?></span>
                 <span class="saas-billing-pill">Recebido: <?= htmlspecialchars($formatMoney($paidAmount)) ?></span>
@@ -201,8 +201,8 @@ $chargeModeLabel = static function (bool $bound): string {
             <section class="card">
                 <div class="saas-billing-head">
                     <div>
-                        <h2>Fila de cobrancas</h2>
-                        <p class="saas-billing-note">Use a lista como painel de decisao. Primeiro identifique status e vinculo com gateway. So depois abra a cobranca para acao manual, sincronizacao ou geracao do PIX real.</p>
+                        <h2>Fila de cobranças</h2>
+                        <p class="saas-billing-note">Use a lista como painel de decisão. Primeiro identifique status e vínculo com gateway. Só depois abra a cobrança para ação manual, sincronização ou geração do PIX real.</p>
                     </div>
                     <div class="saas-billing-badges">
                         <span class="badge">Pagas: <?= htmlspecialchars((string) $paidCharges) ?></span>
@@ -214,7 +214,7 @@ $chargeModeLabel = static function (bool $bound): string {
                     <div class="saas-billing-kpi">
                         <span>Total</span>
                         <strong><?= htmlspecialchars((string) $totalCharges) ?></strong>
-                        <small>Historico consolidado</small>
+                        <small>Histórico consolidado</small>
                     </div>
                     <div class="saas-billing-kpi">
                         <span>Pendentes</span>
@@ -237,7 +237,7 @@ $chargeModeLabel = static function (bool $bound): string {
                     <div class="saas-billing-filter-grid">
                         <div class="field">
                             <label for="saas_payment_search">Busca inteligente</label>
-                            <input id="saas_payment_search" name="search" type="text" value="<?= htmlspecialchars($search) ?>" placeholder="Empresa, plano, slug, referencia ou gateway">
+                            <input id="saas_payment_search" name="search" type="text" value="<?= htmlspecialchars($search) ?>" placeholder="Empresa, plano, slug, referência ou gateway">
                         </div>
                         <div class="field">
                             <label for="saas_payment_status">Status</label>
@@ -257,8 +257,8 @@ $chargeModeLabel = static function (bool $bound): string {
                 <?php if ($subscriptionPayments === []): ?>
                     <div class="card" style="margin-top:16px;padding:14px;border:1px dashed #cbd5e1;box-shadow:none">
                         <?= ($search !== '' || $status !== '')
-                            ? 'Nenhuma cobranca encontrada para os filtros aplicados.'
-                            : 'Nenhuma cobranca cadastrada ate o momento.' ?>
+                            ? 'Nenhuma cobrança encontrada para os filtros aplicados.'
+                            : 'Nenhuma cobrança cadastrada até o momento.' ?>
                     </div>
                 <?php else: ?>
                     <div class="saas-billing-table" style="margin-top:16px">
@@ -274,10 +274,10 @@ $chargeModeLabel = static function (bool $bound): string {
                                     <div class="saas-billing-col saas-billing-company">
                                         <span>Empresa</span>
                                         <strong><?= htmlspecialchars((string) ($charge['company_name'] ?? 'Empresa')) ?></strong>
-                                        <small><?= htmlspecialchars((string) ($charge['company_slug'] ?? '-')) ?> · <?= htmlspecialchars((string) ($charge['plan_name'] ?? 'Sem plano')) ?> · <?= htmlspecialchars(status_label('billing_cycle', $charge['billing_cycle'] ?? null)) ?></small>
+                                        <small><?= htmlspecialchars((string) ($charge['company_slug'] ?? '-')) ?> &middot; <?= htmlspecialchars((string) ($charge['plan_name'] ?? 'Sem plano')) ?> &middot; <?= htmlspecialchars(status_label('billing_cycle', $charge['billing_cycle'] ?? null)) ?></small>
                                     </div>
                                     <div class="saas-billing-col">
-                                        <span>Referencia</span>
+                                        <span>Referência</span>
                                         <strong><?= str_pad((string) (int) ($charge['reference_month'] ?? 0), 2, '0', STR_PAD_LEFT) ?>/<?= (int) ($charge['reference_year'] ?? 0) ?></strong>
                                     </div>
                                     <div class="saas-billing-col">
@@ -293,7 +293,7 @@ $chargeModeLabel = static function (bool $bound): string {
                                         <strong><?= htmlspecialchars($gatewayStatusLabel($charge['gateway_status'] ?? null)) ?></strong>
                                     </div>
                                     <div class="saas-billing-col hide-mobile">
-                                        <span>Ultima sync</span>
+                                        <span>Última sincronização</span>
                                         <strong><?= htmlspecialchars($formatDate($charge['gateway_last_synced_at'] ?? null, true)) ?></strong>
                                     </div>
                                     <div class="saas-billing-flags">
@@ -304,7 +304,7 @@ $chargeModeLabel = static function (bool $bound): string {
 
                                 <details class="saas-billing-details">
                                     <summary>
-                                        <span>Detalhes e acoes da cobranca</span>
+                                        <span>Detalhes e ações da cobrança</span>
                                         <span class="saas-billing-details-toggle">Expandir / recolher</span>
                                     </summary>
 
@@ -315,12 +315,12 @@ $chargeModeLabel = static function (bool $bound): string {
                                                 <strong><?= htmlspecialchars($formatMoney($charge['amount'] ?? 0)) ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
-                                                <span>Referencia interna</span>
+                                                <span>Referência interna</span>
                                                 <strong><?= htmlspecialchars((string) ($charge['transaction_reference'] ?? '-')) ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
-                                                <span>Vinculo com gateway</span>
-                                                <strong><?= htmlspecialchars($chargeHasGatewayBinding ? 'Com vinculo real no gateway' : 'Manual ou sem vinculo') ?></strong>
+                                                <span>Vínculo com gateway</span>
+                                                <strong><?= htmlspecialchars($chargeHasGatewayBinding ? 'Com vínculo real no gateway' : 'Manual ou sem vínculo') ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
                                                 <span>Gateway payment ID</span>
@@ -330,9 +330,9 @@ $chargeModeLabel = static function (bool $bound): string {
 
                                         <div class="saas-billing-callout <?= $chargeModeClass ?>">
                                             <?php if ($chargeHasGatewayBinding): ?>
-                                                O trilho correto desta cobranca e automatico. Gere o PIX uma vez, deixe o usuario pagar e use sincronizacao apenas quando precisar validar divergencia.
+                                                O trilho correto desta cobrança é automático. Gere o PIX uma vez, deixe o usuário pagar e use sincronização apenas quando precisar validar divergência.
                                             <?php else: ?>
-                                                Esta cobranca ainda nao entrou no trilho automatico. Primeiro gere o PIX real no gateway. Sem isso, o sistema nao consegue confirmar pagamento sozinho.
+                                                Esta cobrança ainda não entrou no trilho automático. Primeiro gere o PIX real no gateway. Sem isso, o sistema não consegue confirmar pagamento sozinho.
                                             <?php endif; ?>
                                         </div>
 
@@ -350,7 +350,7 @@ $chargeModeLabel = static function (bool $bound): string {
                                                 <?= form_security_fields('saas.subscription_payments.sync_gateway.' . $chargeId) ?>
                                                 <input type="hidden" name="subscription_payment_id" value="<?= $chargeId ?>">
                                                 <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
-                                                <button class="btn secondary<?= $chargeHasGatewayBinding ? '' : ' saas-billing-disabled' ?>" type="submit" <?= $chargeHasGatewayBinding ? '' : 'disabled title="Esta cobranca nao possui gateway_payment_id salvo."' ?>>Sincronizar agora</button>
+                                                <button class="btn secondary<?= $chargeHasGatewayBinding ? '' : ' saas-billing-disabled' ?>" type="submit" <?= $chargeHasGatewayBinding ? '' : 'disabled title="Esta cobrança não possui gateway_payment_id salvo."' ?>>Sincronizar agora</button>
                                             </form>
 
                                             <?php if (!in_array($chargeStatus, ['pago', 'cancelado'], true)): ?>
@@ -359,7 +359,7 @@ $chargeModeLabel = static function (bool $bound): string {
                                                     <input type="hidden" name="subscription_payment_id" value="<?= $chargeId ?>">
                                                     <input type="hidden" name="payment_method" value="pix">
                                                     <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
-                                                    <input class="saas-billing-inline-input" type="text" name="transaction_reference" placeholder="Comprovante, txid ou observacao">
+                                                    <input class="saas-billing-inline-input" type="text" name="transaction_reference" placeholder="Comprovante, txid ou observação">
                                                     <button class="btn" type="submit"><?= $chargeHasGatewayBinding ? 'Baixa manual excepcional' : 'Registrar como pago' ?></button>
                                                 </form>
 
@@ -370,15 +370,15 @@ $chargeModeLabel = static function (bool $bound): string {
                                                     <button class="btn secondary" type="submit">Marcar em atraso</button>
                                                 </form>
 
-                                                <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/cancel')) ?>" onsubmit="return confirm('Cancelar esta cobranca?');">
+                                                <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/cancel')) ?>" onsubmit="return confirm('Cancelar esta cobrança?');">
                                                     <?= form_security_fields('saas.subscription_payments.cancel.' . $chargeId) ?>
                                                     <input type="hidden" name="subscription_payment_id" value="<?= $chargeId ?>">
                                                     <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
-                                                    <button class="btn secondary" type="submit">Cancelar cobranca</button>
+                                                    <button class="btn secondary" type="submit">Cancelar cobrança</button>
                                                 </form>
                                             <?php else: ?>
                                                 <span class="<?= $chargeStatus === 'pago' ? 'saas-billing-paid' : 'muted' ?>">
-                                                    <?= $chargeStatus === 'pago' ? 'Pagamento ja conciliado' : 'Cobranca encerrada' ?>
+                                                    <?= $chargeStatus === 'pago' ? 'Pagamento já conciliado' : 'Cobrança encerrada' ?>
                                                 </span>
                                             <?php endif; ?>
                                         </div>
@@ -390,7 +390,7 @@ $chargeModeLabel = static function (bool $bound): string {
 
                     <?php if ($paymentLastPage > 1): ?>
                         <div class="saas-billing-pagination">
-                            <div class="muted">Exibindo <?= htmlspecialchars((string) $paymentFrom) ?> a <?= htmlspecialchars((string) $paymentTo) ?> de <?= htmlspecialchars((string) $totalCharges) ?> cobrancas.</div>
+                            <div class="muted">Exibindo <?= htmlspecialchars((string) $paymentFrom) ?> a <?= htmlspecialchars((string) $paymentTo) ?> de <?= htmlspecialchars((string) $totalCharges) ?> cobranças.</div>
                             <div class="saas-billing-pagination-controls">
                                 <?php if ($paymentPage > 1): ?>
                                     <a class="saas-page-btn" href="<?= htmlspecialchars($buildPaymentsUrl(['payment_page' => $paymentPage - 1])) ?>">Anterior</a>
@@ -408,7 +408,7 @@ $chargeModeLabel = static function (bool $bound): string {
                                 endforeach;
                                 ?>
                                 <?php if ($paymentPage < $paymentLastPage): ?>
-                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildPaymentsUrl(['payment_page' => $paymentPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildPaymentsUrl(['payment_page' => $paymentPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -421,8 +421,8 @@ $chargeModeLabel = static function (bool $bound): string {
             <section class="card">
                 <div class="saas-billing-head">
                     <div>
-                        <h3>Resumo rapido</h3>
-                        <p class="saas-billing-note">Indicadores suficientes para saber se o gargalo esta em cobranca vencida, fila pendente ou conciliacao manual.</p>
+                        <h3>Resumo rápido</h3>
+                        <p class="saas-billing-note">Indicadores suficientes para saber se o gargalo está em cobrança vencida, fila pendente ou conciliação manual.</p>
                     </div>
                 </div>
                 <div class="saas-billing-summary-grid">
@@ -437,20 +437,20 @@ $chargeModeLabel = static function (bool $bound): string {
             <section class="card">
                 <div class="saas-billing-head">
                     <div>
-                        <h3>Nova cobranca PIX</h3>
-                        <p class="saas-billing-note">Crie a cobranca interna e depois transforme em PIX real no gateway quando quiser colocar a empresa no fluxo automatico.</p>
+                        <h3>Nova cobrança PIX</h3>
+                        <p class="saas-billing-note">Crie a cobrança interna e depois transforme em PIX real no gateway quando quiser colocar a empresa no fluxo automático.</p>
                     </div>
                 </div>
-                <a class="btn" href="<?= htmlspecialchars(base_url('/saas/subscription-payments/create')) ?>">Abrir formulario</a>
+                <a class="btn" href="<?= htmlspecialchars(base_url('/saas/subscription-payments/create')) ?>">Abrir formulário</a>
             </section>
 
             <section class="saas-billing-flow">
                 <h3>Regra operacional</h3>
-                <p>O painel precisa deixar uma distincao objetiva entre trilho automatico e excecao manual. Quando isso se mistura, o administrativo perde confiabilidade.</p>
+                <p>O painel precisa deixar uma distinção objetiva entre trilho automático e exceção manual. Quando isso se mistura, o administrativo perde confiabilidade.</p>
                 <ul>
-                    <li>Sem gateway_payment_id, a cobranca continua manual.</li>
-                    <li>Com gateway_payment_id, a prioridade e confirmar automaticamente.</li>
-                    <li>Baixa manual deve ser excecao documentada, nao rotina operacional.</li>
+                    <li>Sem gateway_payment_id, a cobrança continua manual.</li>
+                    <li>Com gateway_payment_id, a prioridade é confirmar automaticamente.</li>
+                    <li>Baixa manual deve ser exceção documentada, não rotina operacional.</li>
                 </ul>
             </section>
         </aside>

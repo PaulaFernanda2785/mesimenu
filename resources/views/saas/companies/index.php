@@ -184,7 +184,7 @@ $dateInputValue = static function (mixed $value): string {
         <div class="saas-company-hero-body">
             <div>
                 <h1>Empresas</h1>
-                <p>Painel institucional para gerir empresas cadastradas manualmente no SaaS e empresas originadas pelo fluxo publico de assinatura. Aqui o administrador consolida dados cadastrais, plano, estado operacional, situacao da assinatura e cancelamento da conta.</p>
+                <p>Painel institucional para gerir empresas cadastradas manualmente no SaaS e empresas originadas pelo fluxo público de assinatura. Aqui o administrador consolida dados cadastrais, plano, estado operacional, situação da assinatura e cancelamento da conta.</p>
             </div>
             <div class="saas-company-pills">
                 <span class="saas-company-pill">Empresas filtradas: <?= htmlspecialchars((string) $companyTotal) ?></span>
@@ -200,12 +200,12 @@ $dateInputValue = static function (mixed $value): string {
             <section class="card">
                 <div class="saas-company-head">
                     <div>
-                        <h2>Painel de gestao</h2>
-                        <p class="saas-company-note">Use filtros para localizar empresas por nome, slug, contato, status ou plano. O cadastro manual e o cadastro originado por assinatura publica ficam centralizados na mesma fila administrativa.</p>
+                        <h2>Painel de gestão</h2>
+                        <p class="saas-company-note">Use filtros para localizar empresas por nome, slug, contato, status ou plano. O cadastro manual e o cadastro originado por assinatura pública ficam centralizados na mesma fila administrativa.</p>
                     </div>
                     <div class="saas-company-badges">
                         <?php if ($lastCompanyCreatedAt !== ''): ?>
-                            <span class="badge">Ultimo cadastro: <?= htmlspecialchars($formatDate($lastCompanyCreatedAt)) ?></span>
+                            <span class="badge">Último cadastro: <?= htmlspecialchars($formatDate($lastCompanyCreatedAt)) ?></span>
                         <?php endif; ?>
                         <span class="badge">Assinaturas ativas: <?= htmlspecialchars((string) $companyActiveSubscriptionCount) ?></span>
                     </div>
@@ -256,7 +256,7 @@ $dateInputValue = static function (mixed $value): string {
                     <div class="card" style="margin-top:16px;padding:14px;border:1px dashed #cbd5e1;box-shadow:none">
                         <?= ($companySearch !== '' || $companyStatus !== '' || $companySubscriptionStatus !== '' || $companyPlanId > 0)
                             ? 'Nenhuma empresa encontrada para os filtros aplicados.'
-                            : 'Nenhuma empresa cadastrada ate o momento.' ?>
+                            : 'Nenhuma empresa cadastrada até o momento.' ?>
                     </div>
                 <?php else: ?>
                     <div class="saas-company-list" style="margin-top:16px">
@@ -281,7 +281,7 @@ $dateInputValue = static function (mixed $value): string {
                                 <div class="saas-company-card-top">
                                     <div class="saas-company-title">
                                         <strong>#<?= $companyId ?> - <?= htmlspecialchars($companyName) ?></strong>
-                                        <small><?= htmlspecialchars((string) ($company['slug'] ?? '-')) ?> · <?= htmlspecialchars((string) ($company['email'] ?? '-')) ?> · <?= htmlspecialchars((string) ($company['phone'] ?? $company['whatsapp'] ?? '-')) ?></small>
+                                        <small><?= htmlspecialchars((string) ($company['slug'] ?? '-')) ?> &middot; <?= htmlspecialchars((string) ($company['email'] ?? '-')) ?> &middot; <?= htmlspecialchars((string) ($company['phone'] ?? $company['whatsapp'] ?? '-')) ?></small>
                                     </div>
                                     <div class="saas-company-badges">
                                         <span class="badge <?= htmlspecialchars($operationalBadgeClass) ?>"><?= htmlspecialchars(status_label('company_status', $companyStatusValue)) ?></span>
@@ -296,7 +296,7 @@ $dateInputValue = static function (mixed $value): string {
                                     </div>
                                     <div class="saas-company-box">
                                         <span>Ciclo e valor</span>
-                                        <strong class="amount"><?= htmlspecialchars(status_label('billing_cycle', $companyBillingCycle)) ?> · R$ <?= number_format($companyAmount, 2, ',', '.') ?></strong>
+                                        <strong class="amount"><?= htmlspecialchars(status_label('billing_cycle', $companyBillingCycle)) ?> &middot; R$ <?= number_format($companyAmount, 2, ',', '.') ?></strong>
                                     </div>
                                     <div class="saas-company-box">
                                         <span>Próxima cobrança</span>
@@ -331,7 +331,7 @@ $dateInputValue = static function (mixed $value): string {
                                                         <input id="company_slug_<?= $companyId ?>" name="slug" type="text" value="<?= htmlspecialchars((string) ($company['slug'] ?? '')) ?>" placeholder="Opcional, gerado automaticamente se vazio">
                                                     </div>
                                                     <div class="field">
-                                                        <label for="company_legal_name_<?= $companyId ?>">Razao social</label>
+                                                        <label for="company_legal_name_<?= $companyId ?>">Razão social</label>
                                                         <input id="company_legal_name_<?= $companyId ?>" name="legal_name" type="text" value="<?= htmlspecialchars((string) ($company['legal_name'] ?? '')) ?>">
                                                     </div>
                                                     <div class="field">
@@ -379,7 +379,7 @@ $dateInputValue = static function (mixed $value): string {
                                                         </select>
                                                     </div>
                                                     <div class="field">
-                                                        <label for="company_billing_cycle_<?= $companyId ?>">Ciclo de cobranca</label>
+                                                        <label for="company_billing_cycle_<?= $companyId ?>">Ciclo de cobrança</label>
                                                         <select id="company_billing_cycle_<?= $companyId ?>" name="billing_cycle" required>
                                                             <?php foreach ($billingCycleOptions as $value => $label): ?>
                                                                 <option value="<?= htmlspecialchars($value) ?>" <?= $companyBillingCycle === (string) $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
@@ -391,7 +391,7 @@ $dateInputValue = static function (mixed $value): string {
                                                         <input id="company_amount_<?= $companyId ?>" name="amount" type="number" min="0" step="0.01" value="<?= htmlspecialchars(number_format($companyAmount, 2, '.', '')) ?>">
                                                     </div>
                                                     <div class="field">
-                                                        <label for="company_starts_at_<?= $companyId ?>">Inicio da assinatura</label>
+                                                        <label for="company_starts_at_<?= $companyId ?>">Início da assinatura</label>
                                                         <input id="company_starts_at_<?= $companyId ?>" name="subscription_starts_at" type="date" value="<?= htmlspecialchars($dateInputValue($company['subscription_starts_at'] ?? $company['subscription_record_starts_at'] ?? '')) ?>">
                                                     </div>
                                                     <div class="field">
@@ -409,14 +409,14 @@ $dateInputValue = static function (mixed $value): string {
                                                 </div>
 
                                                 <div class="saas-company-form-footer" style="margin-top:12px">
-                                                    <p class="saas-company-form-note">Edicao administrativa unifica cadastro operacional e retrato atual do contrato. O vencimento da próxima cobrança controla o alerta de atraso e o bloqueio no 4º dia corrido após o vencimento.</p>
+                                                    <p class="saas-company-form-note">Edição administrativa unifica cadastro operacional e retrato atual do contrato. O vencimento da próxima cobrança controla o alerta de atraso e o bloqueio no 4º dia corrido após o vencimento.</p>
                                                     <button class="btn" type="submit">Salvar ajustes</button>
                                                 </div>
                                             </form>
 
                                             <?php if (!$isCanceledCompany): ?>
                                                 <div class="saas-company-danger">
-                                                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/companies/cancel')) ?>" onsubmit="return confirm('Confirmar cancelamento desta empresa? O historico sera preservado.');">
+                                                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/companies/cancel')) ?>" onsubmit="return confirm('Confirmar cancelamento desta empresa? O histórico será preservado.');">
                                                         <?= form_security_fields('saas.companies.cancel.' . $companyId) ?>
                                                         <input type="hidden" name="company_id" value="<?= $companyId ?>">
                                                         <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
@@ -451,7 +451,7 @@ $dateInputValue = static function (mixed $value): string {
                                 endforeach;
                                 ?>
                                 <?php if ($companyPage < $companyLastPage): ?>
-                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildCompaniesUrl(['company_page' => $companyPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildCompaniesUrl(['company_page' => $companyPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -465,7 +465,7 @@ $dateInputValue = static function (mixed $value): string {
                 <div class="saas-company-head">
                     <div>
                         <h3>Resumo institucional</h3>
-                        <p class="saas-company-note">Panorama consolidado do recorte filtrado para operacao, cobranca e follow-up comercial.</p>
+                        <p class="saas-company-note">Panorama consolidado do recorte filtrado para operação, cobrança e follow-up comercial.</p>
                     </div>
                 </div>
                 <div class="saas-company-summary-grid">
@@ -484,7 +484,7 @@ $dateInputValue = static function (mixed $value): string {
                     <div class="saas-company-head">
                         <div>
                             <h3>Cadastrar empresa</h3>
-                            <p class="saas-company-note">Cadastro manual para entrada assistida, implantacao comercial ou regularizacao de conta fora do fluxo publico.</p>
+                            <p class="saas-company-note">Cadastro manual para entrada assistida, implantação comercial ou regularização de conta fora do fluxo público.</p>
                         </div>
                     </div>
 
@@ -501,7 +501,7 @@ $dateInputValue = static function (mixed $value): string {
                                 <input id="new_company_slug" name="slug" type="text" placeholder="Opcional">
                             </div>
                             <div class="field">
-                                <label for="new_company_legal_name">Razao social</label>
+                                <label for="new_company_legal_name">Razão social</label>
                                 <input id="new_company_legal_name" name="legal_name" type="text">
                             </div>
                             <div class="field">
@@ -551,7 +551,7 @@ $dateInputValue = static function (mixed $value): string {
                                 </select>
                             </div>
                             <div class="field">
-                                <label for="new_company_billing_cycle">Ciclo de cobranca</label>
+                                <label for="new_company_billing_cycle">Ciclo de cobrança</label>
                                 <select id="new_company_billing_cycle" name="billing_cycle" required>
                                     <option value="mensal">Mensal</option>
                                     <option value="anual">Anual</option>
@@ -562,7 +562,7 @@ $dateInputValue = static function (mixed $value): string {
                                 <input id="new_company_amount" name="amount" type="number" min="0" step="0.01" placeholder="Opcional">
                             </div>
                             <div class="field">
-                                <label for="new_company_starts_at">Inicio da assinatura</label>
+                                <label for="new_company_starts_at">Início da assinatura</label>
                                 <input id="new_company_starts_at" name="subscription_starts_at" type="date">
                             </div>
                             <div class="field">
@@ -580,7 +580,7 @@ $dateInputValue = static function (mixed $value): string {
                         </div>
 
                         <div class="saas-company-form-footer" style="margin-top:12px">
-                            <p class="saas-company-form-note">O cadastro manual cria a empresa, o registro comercial minimo da assinatura e o usuario administrador principal da empresa. O login inicial desse administrador sera o e-mail principal da empresa com a senha informada acima.</p>
+                            <p class="saas-company-form-note">O cadastro manual cria a empresa, o registro comercial mínimo da assinatura e o usuário administrador principal da empresa. O login inicial desse administrador será o e-mail principal da empresa com a senha informada acima.</p>
                             <button class="btn" type="submit">Cadastrar empresa</button>
                         </div>
                     </form>
@@ -589,8 +589,8 @@ $dateInputValue = static function (mixed $value): string {
                 <section class="card">
                     <div class="saas-company-head">
                         <div>
-                            <h3>Acoes restritas</h3>
-                            <p class="saas-company-note">Seu perfil possui acesso de visualizacao. Cadastro, edicao e cancelamento exigem a permissao <code>companies.manage</code>.</p>
+                            <h3>Ações restritas</h3>
+                            <p class="saas-company-note">Seu perfil possui acesso de visualização. Cadastro, edição e cancelamento exigem a permissão <code>companies.manage</code>.</p>
                         </div>
                     </div>
                 </section>
@@ -598,10 +598,10 @@ $dateInputValue = static function (mixed $value): string {
 
             <section class="saas-company-governance">
                 <h3>Regra operacional</h3>
-                <p>Cadastro de empresa nao deve virar atalho para mascarar problema financeiro. Antes de suspender ou cancelar, avalie o estado da assinatura e documente a decisao comercial no processo interno.</p>
+                <p>Cadastro de empresa não deve virar atalho para mascarar problema financeiro. Antes de suspender ou cancelar, avalie o estado da assinatura e documente a decisão comercial no processo interno.</p>
                 <ul>
                     <li>Plano e ciclo precisam refletir o contrato vigente.</li>
-                    <li>Inadimplencia nao exige remover a empresa do historico.</li>
+                    <li>Inadimplência não exige remover a empresa do histórico.</li>
                     <li>Cancelamento encerra a conta sem apagar rastreabilidade.</li>
                 </ul>
             </section>

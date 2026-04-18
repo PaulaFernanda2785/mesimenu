@@ -46,11 +46,11 @@ $subscriptions = is_array($subscriptions ?? null) ? $subscriptions : [];
     <div class="saas-charge-create-hero">
         <div class="saas-charge-create-hero-body">
             <div>
-                <h1>Nova cobranca PIX</h1>
-                <p>Esta tela cria a cobranca interna de forma objetiva. Ela ainda nao nasce automatica. O fluxo automatico so comeca depois que o administrativo abrir a lista e usar <strong>Gerar PIX no gateway</strong>.</p>
+                <h1>Nova cobrança PIX</h1>
+                <p>Esta tela cria a cobrança interna de forma objetiva. Ela ainda não nasce automática. O fluxo automático só começa depois que o administrativo abrir a lista e usar <strong>Gerar PIX no gateway</strong>.</p>
             </div>
             <div class="saas-charge-create-pills">
-                <span class="saas-charge-create-pill">Passo 1: criar cobranca</span>
+                <span class="saas-charge-create-pill">Passo 1: criar cobrança</span>
                 <span class="saas-charge-create-pill">Passo 2: gerar PIX real</span>
                 <span class="saas-charge-create-pill">Passo 3: confirmar automaticamente</span>
             </div>
@@ -62,10 +62,10 @@ $subscriptions = is_array($subscriptions ?? null) ? $subscriptions : [];
             <section class="card">
                 <div class="saas-charge-create-head">
                     <div>
-                        <h2>Cadastro da cobranca</h2>
-                        <p class="saas-charge-create-note">Preencha somente os dados minimos da cobranca. O objetivo aqui nao e resolver o pagamento inteiro, e sim registrar a cobranca com clareza e preparar a entrada no fluxo automatico depois.</p>
+                        <h2>Cadastro da cobrança</h2>
+                        <p class="saas-charge-create-note">Preencha somente os dados mínimos da cobrança. O objetivo aqui não é resolver o pagamento inteiro, e sim registrar a cobrança com clareza e preparar a entrada no fluxo automático depois.</p>
                     </div>
-                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Voltar para cobrancas</a>
+                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Voltar para cobranças</a>
                 </div>
 
                 <form method="POST" action="<?= htmlspecialchars(base_url('/saas/subscription-payments/store')) ?>" style="margin-top:16px">
@@ -87,16 +87,16 @@ $subscriptions = is_array($subscriptions ?? null) ? $subscriptions : [];
                         </div>
 
                         <div class="field">
-                            <label for="reference_month">Mes de referencia</label>
+                            <label for="reference_month">Mês de referência</label>
                             <input id="reference_month" name="reference_month" type="number" min="1" max="12" required>
                         </div>
                         <div class="field">
-                            <label for="reference_year">Ano de referencia</label>
+                            <label for="reference_year">Ano de referência</label>
                             <input id="reference_year" name="reference_year" type="number" min="2020" max="2100" value="<?= date('Y') ?>" required>
                         </div>
 
                         <div class="field">
-                            <label for="amount">Valor da cobranca</label>
+                            <label for="amount">Valor da cobrança</label>
                             <input id="amount" name="amount" type="number" min="0" step="0.01" required>
                         </div>
                         <div class="field">
@@ -105,14 +105,14 @@ $subscriptions = is_array($subscriptions ?? null) ? $subscriptions : [];
                         </div>
 
                         <div class="field full">
-                            <label for="transaction_reference">Observacao ou referencia interna</label>
+                            <label for="transaction_reference">Observação ou referência interna</label>
                             <input id="transaction_reference" name="transaction_reference" type="text" placeholder="Opcional">
                         </div>
                     </div>
 
                     <div class="saas-charge-create-footer" style="margin-top:12px">
-                        <p>Depois de salvar, a cobranca aparecera na fila administrativa. Se a intencao for PIX com confirmacao automatica, o proximo passo obrigatorio e <strong>Gerar PIX no gateway</strong>.</p>
-                        <button class="btn" type="submit">Criar cobranca</button>
+                        <p>Depois de salvar, a cobrança aparecerá na fila administrativa. Se a intenção for PIX com confirmação automática, o próximo passo obrigatório é <strong>Gerar PIX no gateway</strong>.</p>
+                        <button class="btn" type="submit">Criar cobrança</button>
                     </div>
                 </form>
             </section>
@@ -123,24 +123,24 @@ $subscriptions = is_array($subscriptions ?? null) ? $subscriptions : [];
                 <div class="saas-charge-create-head">
                     <div>
                         <h3>Fluxo correto</h3>
-                        <p class="saas-charge-create-note">A tela precisa impedir ambiguidade operacional. O erro era parecer que criar a cobranca ja bastava para automacao.</p>
+                        <p class="saas-charge-create-note">A tela precisa impedir ambiguidade operacional. O erro era parecer que criar a cobrança já bastava para automação.</p>
                     </div>
                 </div>
                 <div class="saas-charge-create-summary-grid">
-                    <div class="saas-charge-create-summary-item"><strong>Passo 1</strong><span>Criar cobranca interna</span></div>
+                    <div class="saas-charge-create-summary-item"><strong>Passo 1</strong><span>Criar cobrança interna</span></div>
                     <div class="saas-charge-create-summary-item"><strong>Passo 2</strong><span>Gerar PIX no gateway</span></div>
-                    <div class="saas-charge-create-summary-item"><strong>Passo 3</strong><span>Usuario paga o PIX</span></div>
+                    <div class="saas-charge-create-summary-item"><strong>Passo 3</strong><span>Usuário paga o PIX</span></div>
                     <div class="saas-charge-create-summary-item"><strong>Passo 4</strong><span>Status muda para pago</span></div>
                 </div>
             </section>
 
             <section class="saas-charge-create-flow">
                 <h3>Critério de entendimento</h3>
-                <p>Se a cobranca foi criada aqui, mas nao ganhou `gateway_payment_id` depois, ela continua manual. Esse corte precisa ficar evidente para o administrativo.</p>
+                <p>Se a cobrança foi criada aqui, mas não ganhou `gateway_payment_id` depois, ela continua manual. Esse corte precisa ficar evidente para o administrativo.</p>
                 <ul>
-                    <li>Criar cobranca nao gera PIX real por si so.</li>
-                    <li>Automacao depende de vinculo real com o gateway.</li>
-                    <li>Baixa manual e plano B, nao fluxo principal.</li>
+                    <li>Criar cobrança não gera PIX real por si só.</li>
+                    <li>Automação depende de vínculo real com o gateway.</li>
+                    <li>Baixa manual é plano B, não fluxo principal.</li>
                 </ul>
             </section>
         </aside>

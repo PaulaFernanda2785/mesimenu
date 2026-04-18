@@ -213,13 +213,13 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
         <div class="saas-plan-hero-body">
             <div>
                 <h1>Planos</h1>
-                <p>Catalogo comercial do SaaS para governar oferta, precificacao e limites operacionais. A tela centraliza cadastro, edicao e exclusao segura dos planos usados por empresas e assinaturas.</p>
+                <p>Catálogo comercial do SaaS para governar oferta, precificação e limites operacionais. A tela centraliza cadastro, edição e exclusão segura dos planos usados por empresas e assinaturas.</p>
             </div>
             <div class="saas-plan-pills">
                 <span class="saas-plan-pill">Planos filtrados: <?= htmlspecialchars((string) $planTotal) ?></span>
                 <span class="saas-plan-pill">Ativos: <?= htmlspecialchars((string) $planActiveCount) ?></span>
                 <span class="saas-plan-pill">Em uso por empresas: <?= htmlspecialchars((string) $planCompanyUseCount) ?></span>
-                <span class="saas-plan-pill">Com historico: <?= htmlspecialchars((string) $planHistoryCount) ?></span>
+                <span class="saas-plan-pill">Com histórico: <?= htmlspecialchars((string) $planHistoryCount) ?></span>
             </div>
         </div>
     </div>
@@ -230,11 +230,11 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                 <div class="saas-plan-head">
                     <div>
                         <h2>Painel de planos</h2>
-                        <p class="saas-plan-note">Filtre por nome, slug ou status. Toda alteracao aqui afeta a oferta comercial futura; por isso a exclusao fisica so aparece quando o plano nao tem uso nem historico de assinatura.</p>
+                        <p class="saas-plan-note">Filtre por nome, slug ou status. Toda alteração aqui afeta a oferta comercial futura; por isso a exclusão física só aparece quando o plano não tem uso nem histórico de assinatura.</p>
                     </div>
                     <div class="saas-plan-badges">
                         <?php if ($lastPlanCreatedAt !== ''): ?>
-                            <span class="badge">Ultimo cadastro: <?= htmlspecialchars($formatDate($lastPlanCreatedAt)) ?></span>
+                            <span class="badge">Último cadastro: <?= htmlspecialchars($formatDate($lastPlanCreatedAt)) ?></span>
                         <?php endif; ?>
                         <span class="badge">Inativos: <?= htmlspecialchars((string) $planInactiveCount) ?></span>
                     </div>
@@ -244,7 +244,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                     <div class="saas-plan-filter-grid">
                         <div class="field">
                             <label for="plan_search">Busca inteligente</label>
-                            <input id="plan_search" name="plan_search" type="text" value="<?= htmlspecialchars($planSearch) ?>" placeholder="Nome, slug, descricao ou ID do plano">
+                            <input id="plan_search" name="plan_search" type="text" value="<?= htmlspecialchars($planSearch) ?>" placeholder="Nome, slug, descrição ou ID do plano">
                         </div>
                         <div class="field">
                             <label for="plan_status">Status</label>
@@ -265,7 +265,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                     <div class="card" style="margin-top:16px;padding:14px;border:1px dashed #cbd5e1;box-shadow:none">
                         <?= ($planSearch !== '' || $planStatus !== '')
                             ? 'Nenhum plano encontrado para os filtros aplicados.'
-                            : 'Nenhum plano cadastrado ate o momento.' ?>
+                            : 'Nenhum plano cadastrado até o momento.' ?>
                     </div>
                 <?php else: ?>
                     <div class="saas-plan-list" style="margin-top:16px">
@@ -284,7 +284,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                 <div class="saas-plan-card-top">
                                     <div class="saas-plan-title">
                                         <strong>#<?= $planId ?> - <?= htmlspecialchars($planName) ?></strong>
-                                        <small><?= htmlspecialchars((string) ($plan['slug'] ?? '-')) ?> · <?= htmlspecialchars((string) ($plan['description'] ?? 'Sem descricao comercial')) ?></small>
+                                        <small><?= htmlspecialchars((string) ($plan['slug'] ?? '-')) ?> &middot; <?= htmlspecialchars((string) ($plan['description'] ?? 'Sem descrição comercial')) ?></small>
                                     </div>
                                     <div class="saas-plan-badges">
                                         <span class="badge <?= htmlspecialchars($planStatusClass) ?>"><?= htmlspecialchars(status_label('plan_status', $planStatusValue)) ?></span>
@@ -293,20 +293,20 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
 
                                 <div class="saas-plan-info">
                                     <div class="saas-plan-box">
-                                        <span>Preco mensal</span>
+                                        <span>Preço mensal</span>
                                         <strong class="amount">R$ <?= number_format((float) ($plan['price_monthly'] ?? 0), 2, ',', '.') ?></strong>
                                     </div>
                                     <div class="saas-plan-box">
-                                        <span>Preco anual</span>
+                                        <span>Preço anual</span>
                                         <strong class="amount">
                                             <?= $plan['price_yearly'] !== null
                                                 ? 'R$ ' . number_format((float) $plan['price_yearly'], 2, ',', '.')
-                                                : 'Nao informado' ?>
+                                                : 'Não informado' ?>
                                         </strong>
                                     </div>
                                     <div class="saas-plan-box">
                                         <span>Limites</span>
-                                        <strong>Usuarios: <?= htmlspecialchars($formatLimit($plan['max_users'] ?? null)) ?></strong>
+                                        <strong>Usuários: <?= htmlspecialchars($formatLimit($plan['max_users'] ?? null)) ?></strong>
                                         <strong>Produtos: <?= htmlspecialchars($formatLimit($plan['max_products'] ?? null)) ?></strong>
                                         <strong>Mesas: <?= htmlspecialchars($formatLimit($plan['max_tables'] ?? null)) ?></strong>
                                     </div>
@@ -340,19 +340,19 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                                         <input id="plan_slug_<?= $planId ?>" name="slug" type="text" value="<?= htmlspecialchars((string) ($plan['slug'] ?? '')) ?>" placeholder="Opcional">
                                                     </div>
                                                     <div class="field full">
-                                                        <label for="plan_description_<?= $planId ?>">Descricao comercial</label>
+                                                        <label for="plan_description_<?= $planId ?>">Descrição comercial</label>
                                                         <textarea id="plan_description_<?= $planId ?>" name="description" rows="3" placeholder="Resumo da proposta comercial do plano"><?= htmlspecialchars((string) ($plan['description'] ?? '')) ?></textarea>
                                                     </div>
                                                     <div class="field">
-                                                        <label for="plan_price_monthly_<?= $planId ?>">Preco mensal</label>
+                                                        <label for="plan_price_monthly_<?= $planId ?>">Preço mensal</label>
                                                         <input id="plan_price_monthly_<?= $planId ?>" name="price_monthly" type="number" min="0" step="0.01" required value="<?= htmlspecialchars(number_format((float) ($plan['price_monthly'] ?? 0), 2, '.', '')) ?>">
                                                     </div>
                                                     <div class="field">
-                                                        <label for="plan_price_yearly_<?= $planId ?>">Preco anual</label>
+                                                        <label for="plan_price_yearly_<?= $planId ?>">Preço anual</label>
                                                         <input id="plan_price_yearly_<?= $planId ?>" name="price_yearly" type="number" min="0" step="0.01" value="<?= $plan['price_yearly'] !== null ? htmlspecialchars(number_format((float) $plan['price_yearly'], 2, '.', '')) : '' ?>">
                                                     </div>
                                                     <div class="field">
-                                                        <label for="plan_max_users_<?= $planId ?>">Limite de usuarios</label>
+                                                        <label for="plan_max_users_<?= $planId ?>">Limite de usuários</label>
                                                         <input id="plan_max_users_<?= $planId ?>" name="max_users" type="number" min="0" step="1" value="<?= $plan['max_users'] !== null ? (int) $plan['max_users'] : '' ?>" placeholder="Vazio = ilimitado">
                                                     </div>
                                                     <div class="field">
@@ -371,7 +371,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                                         </select>
                                                     </div>
                                                     <div class="field full">
-                                                        <label>Recursos de negocio</label>
+                                                        <label>Recursos de negócio</label>
                                                         <div class="saas-plan-feature-grid">
                                                             <?php foreach ($featureCatalog as $feature): ?>
                                                                 <?php
@@ -398,14 +398,14 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                                 </div>
 
                                                 <div class="saas-plan-form-footer" style="margin-top:12px">
-                                                    <p class="saas-plan-form-note">O JSON de recursos e gerado automaticamente a partir de status, precificacao e limites. Se o plano ja tem uso historico, prefira inativar em vez de tentar “substituir” retroativamente a precificacao.</p>
+                                                    <p class="saas-plan-form-note">O JSON de recursos é gerado automaticamente a partir de status, precificação e limites. Se o plano já tem uso histórico, prefira inativar em vez de tentar substituir retroativamente a precificação.</p>
                                                     <button class="btn" type="submit">Salvar ajustes</button>
                                                 </div>
                                             </form>
 
                                             <?php if ($canDeletePlan): ?>
                                                 <div class="saas-plan-danger">
-                                                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/plans/delete')) ?>" onsubmit="return confirm('Confirmar exclusao definitiva deste plano?');">
+                                                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/plans/delete')) ?>" onsubmit="return confirm('Confirmar exclusão definitiva deste plano?');">
                                                         <?= form_security_fields('saas.plans.delete.' . $planId) ?>
                                                         <input type="hidden" name="plan_id" value="<?= $planId ?>">
                                                         <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
@@ -413,7 +413,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                                     </form>
                                                 </div>
                                             <?php else: ?>
-                                                <div class="saas-plan-form-note">Exclusao bloqueada: este plano possui empresas vinculadas ou historico de assinaturas.</div>
+                                                <div class="saas-plan-form-note">Exclusão bloqueada: este plano possui empresas vinculadas ou histórico de assinaturas.</div>
                                             <?php endif; ?>
                                         </div>
                                     </details>
@@ -442,7 +442,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                 endforeach;
                                 ?>
                                 <?php if ($planPage < $planLastPage): ?>
-                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildPlansUrl(['plan_page' => $planPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildPlansUrl(['plan_page' => $planPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -456,7 +456,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                 <div class="saas-plan-head">
                     <div>
                         <h3>Resumo comercial</h3>
-                        <p class="saas-plan-note">Leitura consolidada do catalogo no recorte filtrado.</p>
+                        <p class="saas-plan-note">Leitura consolidada do catálogo no recorte filtrado.</p>
                     </div>
                 </div>
                 <div class="saas-plan-summary-grid">
@@ -464,7 +464,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                     <div class="saas-plan-summary-item"><strong>Ativos</strong><span><?= htmlspecialchars((string) $planActiveCount) ?></span></div>
                     <div class="saas-plan-summary-item"><strong>Inativos</strong><span><?= htmlspecialchars((string) $planInactiveCount) ?></span></div>
                     <div class="saas-plan-summary-item"><strong>Em uso por empresas</strong><span><?= htmlspecialchars((string) $planCompanyUseCount) ?></span></div>
-                    <div class="saas-plan-summary-item"><strong>Com historico de assinaturas</strong><span><?= htmlspecialchars((string) $planHistoryCount) ?></span></div>
+                    <div class="saas-plan-summary-item"><strong>Com histórico de assinaturas</strong><span><?= htmlspecialchars((string) $planHistoryCount) ?></span></div>
                 </div>
             </section>
 
@@ -473,7 +473,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                     <div class="saas-plan-head">
                         <div>
                             <h3>Cadastrar plano</h3>
-                            <p class="saas-plan-note">Crie uma nova oferta comercial com precificacao, limites operacionais e conjunto de recursos.</p>
+                            <p class="saas-plan-note">Crie uma nova oferta comercial com precificação, limites operacionais e conjunto de recursos.</p>
                         </div>
                     </div>
 
@@ -490,19 +490,19 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                 <input id="new_plan_slug" name="slug" type="text" placeholder="Opcional">
                             </div>
                             <div class="field full">
-                                <label for="new_plan_description">Descricao comercial</label>
+                                <label for="new_plan_description">Descrição comercial</label>
                                 <textarea id="new_plan_description" name="description" rows="3"></textarea>
                             </div>
                             <div class="field">
-                                <label for="new_plan_price_monthly">Preco mensal</label>
+                                <label for="new_plan_price_monthly">Preço mensal</label>
                                 <input id="new_plan_price_monthly" name="price_monthly" type="number" min="0" step="0.01" required>
                             </div>
                             <div class="field">
-                                <label for="new_plan_price_yearly">Preco anual</label>
+                                <label for="new_plan_price_yearly">Preço anual</label>
                                 <input id="new_plan_price_yearly" name="price_yearly" type="number" min="0" step="0.01">
                             </div>
                             <div class="field">
-                                <label for="new_plan_max_users">Limite de usuarios</label>
+                                <label for="new_plan_max_users">Limite de usuários</label>
                                 <input id="new_plan_max_users" name="max_users" type="number" min="0" step="1" placeholder="Vazio = ilimitado">
                             </div>
                             <div class="field">
@@ -521,7 +521,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                 </select>
                             </div>
                             <div class="field full">
-                                <label>Recursos de negocio</label>
+                                <label>Recursos de negócio</label>
                                 <div class="saas-plan-feature-grid">
                                     <?php foreach ($featureCatalog as $feature): ?>
                                         <?php
@@ -544,7 +544,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                         </div>
 
                         <div class="saas-plan-form-footer" style="margin-top:12px">
-                            <p class="saas-plan-form-note">Cadastre apenas ofertas coerentes com a estrategia comercial. O campo de recursos em JSON sera gerado automaticamente com base nos dados comerciais informados.</p>
+                            <p class="saas-plan-form-note">Cadastre apenas ofertas coerentes com a estratégia comercial. O campo de recursos em JSON será gerado automaticamente com base nos dados comerciais informados.</p>
                             <button class="btn" type="submit">Cadastrar plano</button>
                         </div>
                     </form>
@@ -553,8 +553,8 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                 <section class="card">
                     <div class="saas-plan-head">
                         <div>
-                            <h3>Acoes restritas</h3>
-                            <p class="saas-plan-note">Seu perfil possui acesso de visualizacao. Cadastro, edicao e exclusao exigem a permissao <code>plans.manage</code>.</p>
+                            <h3>Ações restritas</h3>
+                            <p class="saas-plan-note">Seu perfil possui acesso de visualização. Cadastro, edição e exclusão exigem a permissão <code>plans.manage</code>.</p>
                         </div>
                     </div>
                 </section>
@@ -562,11 +562,11 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
 
             <section class="saas-plan-governance">
                 <h3>Regra operacional</h3>
-                <p>Plano nao e so tabela de preco. Ele define expectativa comercial e capacidade operacional. Exclusao fisica deve ser rara e restrita a rascunhos sem uso.</p>
+                <p>Plano não é só tabela de preço. Ele define expectativa comercial e capacidade operacional. Exclusão física deve ser rara e restrita a rascunhos sem uso.</p>
                 <ul>
-                    <li>Plano com historico comercial deve ser inativado, nao apagado.</li>
+                    <li>Plano com histórico comercial deve ser inativado, não apagado.</li>
                     <li>Limites precisam refletir o contrato vendido de verdade.</li>
-                    <li>JSON de recursos deve permanecer consistente com os modulos que o produto realmente entrega.</li>
+                    <li>JSON de recursos deve permanecer consistente com os módulos que o produto realmente entrega.</li>
                 </ul>
             </section>
         </aside>

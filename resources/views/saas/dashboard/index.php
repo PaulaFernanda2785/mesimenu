@@ -63,7 +63,7 @@ $supportPriorityOptions = [
     '' => 'Todas as prioridades',
     'urgent' => 'Urgente',
     'high' => 'Alta',
-    'medium' => 'Media',
+    'medium' => 'Média',
     'low' => 'Baixa',
 ];
 
@@ -97,7 +97,7 @@ $supportPriorityLabel = static function (mixed $value): string {
     return match (strtolower(trim((string) ($value ?? '')))) {
         'urgent' => 'Urgente',
         'high' => 'Alta',
-        'medium' => 'Media',
+        'medium' => 'Média',
         'low' => 'Baixa',
         default => 'Sem prioridade',
     };
@@ -161,7 +161,7 @@ $subscriptionChartItems = [
     ['label' => 'Ativas', 'value' => (int) ($subscriptionSummary['active_subscriptions'] ?? 0), 'tone' => 'success'],
     ['label' => 'Trial', 'value' => (int) ($subscriptionSummary['trial_subscriptions'] ?? 0), 'tone' => 'info'],
     ['label' => 'Expiradas', 'value' => (int) ($subscriptionSummary['expired_subscriptions'] ?? 0), 'tone' => 'warning'],
-    ['label' => 'Auto cobranca', 'value' => (int) ($subscriptionSummary['auto_charge_enabled'] ?? 0), 'tone' => 'primary'],
+    ['label' => 'Auto cobrança', 'value' => (int) ($subscriptionSummary['auto_charge_enabled'] ?? 0), 'tone' => 'primary'],
 ];
 $subscriptionChartTotal = max(
     1,
@@ -201,7 +201,7 @@ $executiveCards = [
     [
         'label' => 'Assinaturas ativas',
         'value' => (string) ($overview['active_subscriptions'] ?? 0),
-        'note' => 'Receita recorrente em producao',
+        'note' => 'Receita recorrente em produção',
         'tone' => 'success',
     ],
     [
@@ -221,25 +221,25 @@ $executiveCards = [
 $chartGroups = [
     [
         'title' => 'Base de empresas',
-        'description' => 'Mostra o retrato operacional da carteira e evita confundir crescimento com saude da base.',
+        'description' => 'Mostra o retrato operacional da carteira e evita confundir crescimento com saúde da base.',
         'items' => $companyChartItems,
         'total' => $companyChartTotal,
     ],
     [
         'title' => 'Carteira de assinaturas',
-        'description' => 'Separa contratos ativos, trial, expirados e nivel de automacao da recorrencia.',
+        'description' => 'Separa contratos ativos, trial, expirados e nível de automação da recorrência.',
         'items' => $subscriptionChartItems,
         'total' => $subscriptionChartTotal,
     ],
     [
         'title' => 'Pressao financeira',
-        'description' => 'Mostra o peso real de pendencia, atraso e recuperacao dentro da operacao.',
+        'description' => 'Mostra o peso real de pendência, atraso e recuperação dentro da operação.',
         'items' => $financialChartItems,
         'total' => $financialChartTotal,
     ],
     [
         'title' => 'Atendimento e suporte',
-        'description' => 'Chamado urgente acumulado e sintoma de fragilidade estrutural, nao apenas fila de atendimento.',
+        'description' => 'Chamado urgente acumulado é sintoma de fragilidade estrutural, não apenas fila de atendimento.',
         'items' => $supportChartItems,
         'total' => $supportChartTotal,
     ],
@@ -250,7 +250,7 @@ $priorityCards = [
         'tone' => 'danger',
         'eyebrow' => 'Financeiro',
         'headline' => (string) ($overview['delinquent_companies'] ?? 0) . ' empresas inadimplentes',
-        'copy' => 'Esse volume ja mistura risco de caixa, chance de cancelamento e desgaste comercial.',
+        'copy' => 'Esse volume já mistura risco de caixa, chance de cancelamento e desgaste comercial.',
         'actions' => [
             ['label' => 'Ver empresas em atraso', 'href' => base_url('/saas/companies?company_subscription_status=inadimplente'), 'secondary' => false],
         ],
@@ -259,7 +259,7 @@ $priorityCards = [
         'tone' => 'warning',
         'eyebrow' => 'Fila financeira',
         'headline' => (string) ($overview['pending_charges'] ?? 0) . ' pendentes e ' . (string) ($overview['overdue_charges'] ?? 0) . ' vencidas',
-        'copy' => 'Cobranca atrasada em escala deixa de ser detalhe operacional e passa a exigir gestao ativa.',
+        'copy' => 'Cobrança atrasada em escala deixa de ser detalhe operacional e passa a exigir gestão ativa.',
         'actions' => [
             ['label' => 'Pendentes', 'href' => base_url('/saas/subscription-payments?status=pendente'), 'secondary' => false],
             ['label' => 'Vencidas', 'href' => base_url('/saas/subscription-payments?status=vencido'), 'secondary' => true],
@@ -269,7 +269,7 @@ $priorityCards = [
         'tone' => 'info',
         'eyebrow' => 'Suporte',
         'headline' => (string) ($supportSummary['open_count'] ?? 0) . ' abertos e ' . (string) ($supportSummary['urgent_count'] ?? 0) . ' urgentes',
-        'copy' => 'Chamado sem dono claro piora percepcao de produto mesmo quando a falha e localizada.',
+        'copy' => 'Chamado sem dono claro piora a percepção do produto, mesmo quando a falha é localizada.',
         'actions' => [
             ['label' => 'Chamados abertos', 'href' => base_url('/saas/support?support_status=open'), 'secondary' => false],
             ['label' => 'Urgentes', 'href' => base_url('/saas/support?support_priority=urgent'), 'secondary' => true],
@@ -277,9 +277,9 @@ $priorityCards = [
     ],
     [
         'tone' => 'primary',
-        'eyebrow' => 'Automacao',
-        'headline' => (string) ($overview['gateway_bound_subscriptions'] ?? 0) . ' com gateway e ' . (string) ($overview['auto_charge_enabled'] ?? 0) . ' com auto cobranca',
-        'copy' => 'Toda assinatura fora do trilho automatico aumenta custo operacional e dependencia humana.',
+        'eyebrow' => 'Automação',
+        'headline' => (string) ($overview['gateway_bound_subscriptions'] ?? 0) . ' com gateway e ' . (string) ($overview['auto_charge_enabled'] ?? 0) . ' com auto cobrança',
+        'copy' => 'Toda assinatura fora do trilho automático aumenta custo operacional e dependência humana.',
         'actions' => [
             ['label' => 'Assinaturas', 'href' => base_url('/saas/subscriptions'), 'secondary' => false],
             ['label' => 'Cobrancas', 'href' => base_url('/saas/subscription-payments'), 'secondary' => true],
@@ -293,7 +293,7 @@ $managementSummaryItems = [
     ['label' => 'Planos ativos', 'value' => (string) ($planSummary['active_plans'] ?? 0)],
     ['label' => 'Planos em uso', 'value' => (string) ($planSummary['plans_in_company_use'] ?? 0)],
     ['label' => 'Assinaturas trial', 'value' => (string) ($subscriptionSummary['trial_subscriptions'] ?? 0)],
-    ['label' => 'Cobrancas pagas', 'value' => (string) ($paymentSummary['paid_charges'] ?? 0)],
+    ['label' => 'Cobranças pagas', 'value' => (string) ($paymentSummary['paid_charges'] ?? 0)],
     ['label' => 'Recebido', 'value' => $formatMoney($paymentSummary['total_paid_amount'] ?? 0)],
     ['label' => 'Chamados em andamento', 'value' => (string) ($supportSummary['in_progress_count'] ?? 0)],
 ];
@@ -306,30 +306,30 @@ $hubLinks = [
     ],
     [
         'title' => 'Planos',
-        'copy' => 'Catalogo comercial, limites, modulos e coerencia da oferta.',
+        'copy' => 'Catálogo comercial, limites, módulos e coerência da oferta.',
         'href' => base_url('/saas/plans'),
     ],
     [
         'title' => 'Assinaturas',
-        'copy' => 'Trilho contratual, recorrencia, gateway e automacao de cobranca.',
+        'copy' => 'Trilho contratual, recorrência, gateway e automação de cobrança.',
         'href' => base_url('/saas/subscriptions'),
     ],
     [
         'title' => 'Cobrancas',
-        'copy' => 'Fila financeira, PIX real, sincronizacao e tratamento de excecoes.',
+        'copy' => 'Fila financeira, PIX real, sincronização e tratamento de exceções.',
         'href' => base_url('/saas/subscription-payments'),
     ],
     [
         'title' => 'Suporte',
-        'copy' => 'Atendimento, urgencia, historico e qualidade operacional da plataforma.',
+        'copy' => 'Atendimento, urgência, histórico e qualidade operacional da plataforma.',
         'href' => base_url('/saas/support'),
     ],
 ];
 
 $governanceNotes = [
-    'Empresa inadimplente e problema financeiro, mas tambem de relacionamento e retencao.',
-    'Assinatura sem automacao amplia custo operacional e atrito no modulo de cobrancas.',
-    'Chamado urgente recorrente mostra fragilidade estrutural, nao apenas carga no atendimento.',
+    'Empresa inadimplente é problema financeiro, mas também de relacionamento e retenção.',
+    'Assinatura sem automação amplia custo operacional e atrito no módulo de cobranças.',
+    'Chamado urgente recorrente mostra fragilidade estrutural, não apenas carga no atendimento.',
 ];
 ?>
 
@@ -456,7 +456,7 @@ $governanceNotes = [
         <div class="saas-dashboard-hero-body">
             <div class="saas-dashboard-hero-copy">
                 <h1>Dashboard SaaS</h1>
-                <p>O painel foi reorganizado para funcionar como centro de gestao do administrador. A pagina cruza base, recorrencia, financeiro e suporte no mesmo fluxo, sem excesso visual e sem blocos que nao agregam decisao.</p>
+                <p>O painel foi reorganizado para funcionar como centro de gestão do administrador. A página cruza base, recorrência, financeiro e suporte no mesmo fluxo, sem excesso visual e sem blocos que não agregam decisão.</p>
             </div>
             <div class="saas-dashboard-pills">
                 <span class="saas-dashboard-pill">Empresas: <?= htmlspecialchars((string) ($overview['total_companies'] ?? 0)) ?></span>
@@ -472,12 +472,12 @@ $governanceNotes = [
             <section class="card">
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
-                        <h2>Visao executiva</h2>
-                        <p class="saas-dashboard-panel-note">Os indicadores principais resumem tracao da base, recorrencia viva, risco financeiro e pressao operacional.</p>
+                        <h2>Visão executiva</h2>
+                        <p class="saas-dashboard-panel-note">Os indicadores principais resumem tração da base, recorrência viva, risco financeiro e pressão operacional.</p>
                     </div>
                     <div class="saas-dashboard-badges">
                         <span class="badge">Gateway ativo: <?= htmlspecialchars((string) ($overview['gateway_bound_subscriptions'] ?? 0)) ?></span>
-                        <span class="badge">Auto cobranca: <?= htmlspecialchars((string) ($overview['auto_charge_enabled'] ?? 0)) ?></span>
+                        <span class="badge">Auto cobrança: <?= htmlspecialchars((string) ($overview['auto_charge_enabled'] ?? 0)) ?></span>
                     </div>
                 </div>
 
@@ -496,11 +496,11 @@ $governanceNotes = [
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
                         <h2>Leitura operacional</h2>
-                        <p class="saas-dashboard-panel-note">Os graficos evitam analisar numero isolado como se fosse tendencia. O foco aqui e proporcao e pressao entre modulos.</p>
+                        <p class="saas-dashboard-panel-note">Os gráficos evitam analisar número isolado como se fosse tendência. O foco aqui é proporção e pressão entre módulos.</p>
                     </div>
                     <div class="saas-dashboard-badges">
-                        <span class="badge">Comparacao interna</span>
-                        <span class="badge">Sem dependencia externa</span>
+                        <span class="badge">Comparação interna</span>
+                        <span class="badge">Sem dependência externa</span>
                     </div>
                 </div>
 
@@ -533,7 +533,7 @@ $governanceNotes = [
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
                         <h2>Radar de prioridade</h2>
-                        <p class="saas-dashboard-panel-note">Esses blocos puxam acao imediata. Quando um indicador sobe aqui, o impacto ja atravessou modulo e virou tema de gestao.</p>
+                        <p class="saas-dashboard-panel-note">Esses blocos puxam ação imediata. Quando um indicador sobe aqui, o impacto já atravessou módulo e virou tema de gestão.</p>
                     </div>
                 </div>
 
@@ -564,7 +564,7 @@ $governanceNotes = [
                     <div class="saas-dashboard-panel-head">
                         <div class="saas-dashboard-panel-copy">
                             <h2>Empresas recentes</h2>
-                            <p class="saas-dashboard-panel-note">Entrada de novos clientes, status operacional e situacao contratual da base em formacao.</p>
+                            <p class="saas-dashboard-panel-note">Entrada de novos clientes, status operacional e situação contratual da base em formação.</p>
                         </div>
                         <div class="saas-dashboard-panel-actions">
                             <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/companies')) ?>">Abrir empresas</a>
@@ -593,7 +593,7 @@ $governanceNotes = [
                                         <strong><?= htmlspecialchars(status_label('company_status', $company['status'] ?? null)) ?></strong>
                                     </div>
                                     <div class="saas-dashboard-meta-box">
-                                        <span>Proxima cobranca</span>
+                                        <span>Próxima cobrança</span>
                                         <strong><?= htmlspecialchars($formatDate($company['next_charge_due_date'] ?? null, false)) ?></strong>
                                     </div>
                                 </div>
@@ -606,7 +606,7 @@ $governanceNotes = [
                     <div class="saas-dashboard-panel-head">
                         <div class="saas-dashboard-panel-copy">
                             <h2>Assinaturas recentes</h2>
-                            <p class="saas-dashboard-panel-note">A carteira precisa ser lida com contexto financeiro e operacional, nao apenas por volume.</p>
+                            <p class="saas-dashboard-panel-note">A carteira precisa ser lida com contexto financeiro e operacional, não apenas por volume.</p>
                         </div>
                         <div class="saas-dashboard-panel-actions">
                             <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscriptions')) ?>">Abrir assinaturas</a>
@@ -649,14 +649,14 @@ $governanceNotes = [
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
                         <h2>Fila financeira</h2>
-                        <p class="saas-dashboard-panel-note">Esse card funciona como fila de trabalho: filtro proprio, leitura objetiva e paginacao de no maximo 10 registros.</p>
+                        <p class="saas-dashboard-panel-note">Esse card funciona como fila de trabalho: filtro próprio, leitura objetiva e paginação de no máximo 10 registros.</p>
                     </div>
                     <div class="saas-dashboard-panel-actions">
                         <div class="saas-dashboard-badges">
-                            <span class="badge">10 por pagina</span>
+                            <span class="badge">10 por página</span>
                             <span class="badge">Total filtrado: <?= htmlspecialchars((string) $dashboardPaymentTotal) ?></span>
                         </div>
-                        <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Abrir cobrancas</a>
+                        <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Abrir cobranças</a>
                     </div>
                 </div>
 
@@ -674,7 +674,7 @@ $governanceNotes = [
                             type="text"
                             name="dashboard_payment_search"
                             value="<?= htmlspecialchars($dashboardPaymentSearch) ?>"
-                            placeholder="Empresa, plano ou referencia"
+                            placeholder="Empresa, plano ou referência"
                         >
                     </div>
                     <div class="field">
@@ -700,7 +700,7 @@ $governanceNotes = [
 
                 <div class="saas-dashboard-list">
                     <?php if ($payments === []): ?>
-                        <div class="saas-dashboard-empty">Nenhuma cobranca encontrada para os filtros aplicados.</div>
+                            <div class="saas-dashboard-empty">Nenhuma cobrança encontrada para os filtros aplicados.</div>
                     <?php endif; ?>
 
                     <?php foreach ($payments as $payment): ?>
@@ -731,7 +731,7 @@ $governanceNotes = [
                 <?php if ($dashboardPaymentTotal > 0): ?>
                     <div class="saas-dashboard-pagination">
                         <div class="saas-dashboard-panel-note">
-                            Exibindo <?= htmlspecialchars((string) $dashboardPaymentFrom) ?> a <?= htmlspecialchars((string) $dashboardPaymentTo) ?> de <?= htmlspecialchars((string) $dashboardPaymentTotal) ?> cobrancas filtradas.
+                            Exibindo <?= htmlspecialchars((string) $dashboardPaymentFrom) ?> a <?= htmlspecialchars((string) $dashboardPaymentTo) ?> de <?= htmlspecialchars((string) $dashboardPaymentTotal) ?> cobranças filtradas.
                         </div>
                         <?php if ($dashboardPaymentLastPage > 1): ?>
                             <div class="saas-dashboard-pagination-controls">
@@ -755,7 +755,7 @@ $governanceNotes = [
                                 <?php endforeach; ?>
 
                                 <?php if ($dashboardPaymentPage < $dashboardPaymentLastPage): ?>
-                                    <a class="saas-dashboard-page-btn" href="<?= htmlspecialchars($buildDashboardPaymentsUrl(['dashboard_payment_page' => $dashboardPaymentPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-dashboard-page-btn" href="<?= htmlspecialchars($buildDashboardPaymentsUrl(['dashboard_payment_page' => $dashboardPaymentPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
@@ -767,11 +767,11 @@ $governanceNotes = [
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
                         <h2>Suporte em foco</h2>
-                        <p class="saas-dashboard-panel-note">Chamados abertos dizem muito sobre qualidade operacional. Aqui a leitura precisa ser curta, filtravel e acionavel.</p>
+                        <p class="saas-dashboard-panel-note">Chamados abertos dizem muito sobre qualidade operacional. Aqui a leitura precisa ser curta, filtrável e acionável.</p>
                     </div>
                     <div class="saas-dashboard-panel-actions">
                         <div class="saas-dashboard-badges">
-                            <span class="badge">10 por pagina</span>
+                            <span class="badge">10 por página</span>
                             <span class="badge">Total filtrado: <?= htmlspecialchars((string) $dashboardSupportTotal) ?></span>
                         </div>
                         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/support')) ?>">Abrir suporte</a>
@@ -849,7 +849,7 @@ $governanceNotes = [
                                     <strong><?= htmlspecialchars($supportStatusLabel($ticket['status'] ?? null)) ?></strong>
                                 </div>
                                 <div class="saas-dashboard-meta-box">
-                                    <span>Atualizacao</span>
+                                    <span>Atualização</span>
                                     <strong><?= htmlspecialchars($formatDate($ticket['updated_at'] ?? null)) ?></strong>
                                 </div>
                             </div>
@@ -884,7 +884,7 @@ $governanceNotes = [
                                 <?php endforeach; ?>
 
                                 <?php if ($dashboardSupportPage < $dashboardSupportLastPage): ?>
-                                    <a class="saas-dashboard-page-btn" href="<?= htmlspecialchars($buildDashboardSupportUrl(['dashboard_support_page' => $dashboardSupportPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-dashboard-page-btn" href="<?= htmlspecialchars($buildDashboardSupportUrl(['dashboard_support_page' => $dashboardSupportPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
@@ -898,7 +898,7 @@ $governanceNotes = [
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
                         <h3>Resumo gerencial</h3>
-                        <p class="saas-dashboard-panel-note">Leitura rapida para entender onde o peso dominante esta hoje: base, recorrencia, financeiro ou atendimento.</p>
+                        <p class="saas-dashboard-panel-note">Leitura rápida para entender onde o peso dominante está hoje: base, recorrência, financeiro ou atendimento.</p>
                     </div>
                 </div>
 
@@ -915,8 +915,8 @@ $governanceNotes = [
             <section class="card">
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
-                        <h3>Central de gestao</h3>
-                        <p class="saas-dashboard-panel-note">Atalhos para os modulos que sustentam governanca, receita e operacao diaria do SaaS.</p>
+                        <h3>Central de gestão</h3>
+                        <p class="saas-dashboard-panel-note">Atalhos para os módulos que sustentam governança, receita e operação diária do SaaS.</p>
                     </div>
                 </div>
 
@@ -924,7 +924,7 @@ $governanceNotes = [
                     <?php foreach ($hubLinks as $link): ?>
                         <a href="<?= htmlspecialchars((string) ($link['href'] ?? '#')) ?>">
                             <div>
-                                <strong><?= htmlspecialchars((string) ($link['title'] ?? 'Modulo')) ?></strong>
+                                <strong><?= htmlspecialchars((string) ($link['title'] ?? 'Módulo')) ?></strong>
                                 <small><?= htmlspecialchars((string) ($link['copy'] ?? '')) ?></small>
                             </div>
                             <span>&gt;</span>
@@ -936,8 +936,8 @@ $governanceNotes = [
             <section class="card">
                 <div class="saas-dashboard-panel-head">
                     <div class="saas-dashboard-panel-copy">
-                        <h3>Planos em evidencia</h3>
-                        <p class="saas-dashboard-panel-note">Visao rapida de quais ofertas sustentam a base atual do SaaS.</p>
+                        <h3>Planos em evidência</h3>
+                        <p class="saas-dashboard-panel-note">Visão rápida de quais ofertas sustentam a base atual do SaaS.</p>
                     </div>
                     <div class="saas-dashboard-panel-actions">
                         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/plans')) ?>">Abrir planos</a>
@@ -977,7 +977,7 @@ $governanceNotes = [
 
             <section class="saas-dashboard-rule">
                 <h3>Diretriz operacional</h3>
-                <p>Um painel de gestao so e util quando mostra relacao entre modulos. Empresa, assinatura, cobranca e suporte nao podem ser lidos como telas isoladas.</p>
+                <p>Um painel de gestão só é útil quando mostra relação entre módulos. Empresa, assinatura, cobrança e suporte não podem ser lidos como telas isoladas.</p>
                 <ul>
                     <?php foreach ($governanceNotes as $note): ?>
                         <li><?= htmlspecialchars((string) $note) ?></li>

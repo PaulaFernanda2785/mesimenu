@@ -11,7 +11,7 @@ $status = trim((string) ($filters['status'] ?? ''));
 $statusOptions = [
     '' => 'Todos os status',
     'ativa' => 'Ativas',
-    'trial' => 'Trial',
+    'trial' => 'Teste',
     'vencida' => 'Vencidas',
     'cancelada' => 'Canceladas',
 ];
@@ -81,7 +81,7 @@ $paymentMethodLabel = static function (mixed $value): string {
 
     return match ($raw) {
         'pix' => 'PIX',
-        'card', 'credit_card' => 'Cartao',
+        'card', 'credit_card' => 'Cartão',
         'boleto' => 'Boleto',
         '' => 'Nao definido',
         default => ucfirst(str_replace(['_', '-'], ' ', $raw)),
@@ -184,12 +184,12 @@ $paymentMethodLabel = static function (mixed $value): string {
         <div class="saas-billing-hero-body">
             <div>
                 <h1>Assinaturas</h1>
-                <p>O painel de assinaturas agora usa a mesma leitura operacional de cobrancas: visao executiva no topo, fila filtravel no centro e detalhes expansiveis so quando a decisao realmente exige contexto.</p>
+                <p>O painel de assinaturas agora usa a mesma leitura operacional de cobranças: visão executiva no topo, fila filtrável no centro e detalhes expansíveis só quando a decisão realmente exige contexto.</p>
             </div>
             <div class="saas-billing-pills">
                 <span class="saas-billing-pill">Assinaturas filtradas: <?= htmlspecialchars((string) $totalSubscriptions) ?></span>
                 <span class="saas-billing-pill">Ativas: <?= htmlspecialchars((string) $activeSubscriptions) ?></span>
-                <span class="saas-billing-pill">Trial: <?= htmlspecialchars((string) $trialSubscriptions) ?></span>
+                <span class="saas-billing-pill">Teste: <?= htmlspecialchars((string) $trialSubscriptions) ?></span>
                 <span class="saas-billing-pill">MRR ativo: <?= htmlspecialchars($formatMoney($activeMonthlyMrr)) ?></span>
             </div>
         </div>
@@ -201,11 +201,11 @@ $paymentMethodLabel = static function (mixed $value): string {
                 <div class="saas-billing-head">
                     <div>
                         <h2>Fila de assinaturas</h2>
-                        <p class="saas-billing-note">A lista agora deixa claro status contratual, vinculo com gateway e capacidade de cobranca automatica antes de abrir qualquer detalhe operacional.</p>
+                        <p class="saas-billing-note">A lista agora deixa claro status contratual, vínculo com gateway e capacidade de cobrança automática antes de abrir qualquer detalhe operacional.</p>
                     </div>
                     <div class="saas-billing-badges">
                         <span class="badge">Com gateway: <?= htmlspecialchars((string) $gatewayBound) ?></span>
-                        <span class="badge">Auto cobranca: <?= htmlspecialchars((string) $autoChargeEnabled) ?></span>
+                        <span class="badge">Auto cobrança: <?= htmlspecialchars((string) $autoChargeEnabled) ?></span>
                     </div>
                 </div>
 
@@ -223,7 +223,7 @@ $paymentMethodLabel = static function (mixed $value): string {
                     <div class="saas-billing-kpi">
                         <span>Vencidas</span>
                         <strong><?= htmlspecialchars((string) $expiredSubscriptions) ?></strong>
-                        <small>Exigem acao comercial</small>
+                        <small>Exigem ação comercial</small>
                     </div>
                     <div class="saas-billing-kpi">
                         <span>MRR ativo</span>
@@ -257,7 +257,7 @@ $paymentMethodLabel = static function (mixed $value): string {
                     <div class="card" style="margin-top:16px;padding:14px;border:1px dashed #cbd5e1;box-shadow:none">
                         <?= ($search !== '' || $status !== '')
                             ? 'Nenhuma assinatura encontrada para os filtros aplicados.'
-                            : 'Nenhuma assinatura cadastrada ate o momento.' ?>
+                            : 'Nenhuma assinatura cadastrada até o momento.' ?>
                     </div>
                 <?php else: ?>
                     <div class="saas-billing-table" style="margin-top:16px">
@@ -275,10 +275,10 @@ $paymentMethodLabel = static function (mixed $value): string {
                                     <div class="saas-billing-col saas-billing-company">
                                         <span>Empresa</span>
                                         <strong><?= htmlspecialchars((string) ($subscription['company_name'] ?? 'Empresa')) ?></strong>
-                                        <small><?= htmlspecialchars((string) ($subscription['company_slug'] ?? '-')) ?> · <?= htmlspecialchars((string) ($subscription['plan_name'] ?? 'Sem plano')) ?> · <?= htmlspecialchars(status_label('billing_cycle', $subscription['billing_cycle'] ?? null)) ?></small>
+                                        <small><?= htmlspecialchars((string) ($subscription['company_slug'] ?? '-')) ?> &middot; <?= htmlspecialchars((string) ($subscription['plan_name'] ?? 'Sem plano')) ?> &middot; <?= htmlspecialchars(status_label('billing_cycle', $subscription['billing_cycle'] ?? null)) ?></small>
                                     </div>
                                     <div class="saas-billing-col">
-                                        <span>Inicio</span>
+                                        <span>Início</span>
                                         <strong><?= htmlspecialchars($formatDate($subscription['starts_at'] ?? null)) ?></strong>
                                     </div>
                                     <div class="saas-billing-col">
@@ -294,11 +294,11 @@ $paymentMethodLabel = static function (mixed $value): string {
                                         <strong><?= htmlspecialchars($gatewayStatusLabel($subscription['gateway_status'] ?? null)) ?></strong>
                                     </div>
                                     <div class="saas-billing-col hide-mobile">
-                                        <span>Ultima sync</span>
+                                        <span>Última sincronização</span>
                                         <strong><?= htmlspecialchars($formatDate($subscription['gateway_last_synced_at'] ?? null, true)) ?></strong>
                                     </div>
                                     <div class="saas-billing-flags">
-                                        <span class="saas-billing-mode <?= $modeClass ?>"><?= htmlspecialchars($autoCharge ? 'Automatico' : 'Manual') ?></span>
+                                        <span class="saas-billing-mode <?= $modeClass ?>"><?= htmlspecialchars($autoCharge ? 'Automático' : 'Manual') ?></span>
                                         <span class="badge <?= htmlspecialchars(status_badge_class('subscription_status', $subscriptionStatus)) ?>"><?= htmlspecialchars(status_label('subscription_status', $subscriptionStatus)) ?></span>
                                     </div>
                                 </div>
@@ -320,7 +320,7 @@ $paymentMethodLabel = static function (mixed $value): string {
                                                 <strong><?= htmlspecialchars((string) ($subscription['company_document_number'] ?? '-')) ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
-                                                <span>Gateway provider</span>
+                                                <span>Provedor do gateway</span>
                                                 <strong><?= htmlspecialchars((string) ($subscription['gateway_provider'] ?? '-')) ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
@@ -332,11 +332,11 @@ $paymentMethodLabel = static function (mixed $value): string {
                                                 <strong><?= htmlspecialchars($paymentMethodLabel($subscription['preferred_payment_method'] ?? null)) ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
-                                                <span>Auto cobranca</span>
+                                                <span>Auto cobrança</span>
                                                 <strong><?= htmlspecialchars($autoCharge ? 'Habilitada' : 'Desabilitada') ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
-                                                <span>Cartao salvo</span>
+                                                <span>Cartão salvo</span>
                                                 <strong><?= htmlspecialchars(trim((string) ($subscription['card_brand'] ?? '')) !== '' ? ((string) $subscription['card_brand'] . ' final ' . (string) ($subscription['card_last_digits'] ?? '')) : '-') ?></strong>
                                             </div>
                                             <div class="saas-billing-box">
@@ -347,16 +347,16 @@ $paymentMethodLabel = static function (mixed $value): string {
 
                                         <div class="saas-billing-callout <?= $modeClass ?>">
                                             <?php if ($hasGatewayBinding && $autoCharge): ?>
-                                                A assinatura esta no trilho operacional correto: possui vinculo com gateway e auto cobranca habilitada. A tela de cobrancas deve ser usada mais para excecao, auditoria e sincronizacao.
+                                                A assinatura está no trilho operacional correto: possui vínculo com gateway e auto cobrança habilitada. A tela de cobranças deve ser usada mais para exceção, auditoria e sincronização.
                                             <?php elseif ($hasGatewayBinding): ?>
-                                                Existe vinculo com gateway, mas a recorrencia ainda nao esta totalmente automatizada. O ponto fraco aqui nao e contrato, e sim a politica de cobranca.
+                                                Existe vínculo com gateway, mas a recorrência ainda não está totalmente automatizada. O ponto fraco aqui não é contrato, e sim a política de cobrança.
                                             <?php else: ?>
-                                                Esta assinatura ainda nao esta ancorada no gateway. Sem esse vinculo, o painel de cobrancas vira operacao manual e perde previsibilidade.
+                                                Esta assinatura ainda não está ancorada no gateway. Sem esse vínculo, o painel de cobranças vira operação manual e perde previsibilidade.
                                             <?php endif; ?>
                                         </div>
 
                                         <div class="saas-billing-actions">
-                                            <a class="btn" href="<?= htmlspecialchars($chargeSearchUrl) ?>">Ver cobrancas da empresa</a>
+                                            <a class="btn" href="<?= htmlspecialchars($chargeSearchUrl) ?>">Ver cobranças da empresa</a>
                                             <?php if (trim((string) ($subscription['gateway_checkout_url'] ?? '')) !== ''): ?>
                                                 <a class="btn secondary" href="<?= htmlspecialchars((string) $subscription['gateway_checkout_url']) ?>" target="_blank" rel="noreferrer">Abrir checkout</a>
                                             <?php endif; ?>
@@ -388,7 +388,7 @@ $paymentMethodLabel = static function (mixed $value): string {
                                 endforeach;
                                 ?>
                                 <?php if ($subscriptionPage < $subscriptionLastPage): ?>
-                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildSubscriptionsUrl(['subscription_page' => $subscriptionPage + 1])) ?>">Proxima</a>
+                                    <a class="saas-page-btn" href="<?= htmlspecialchars($buildSubscriptionsUrl(['subscription_page' => $subscriptionPage + 1])) ?>">Próxima</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -402,13 +402,13 @@ $paymentMethodLabel = static function (mixed $value): string {
                 <div class="saas-billing-head">
                     <div>
                         <h3>Resumo rapido</h3>
-                        <p class="saas-billing-note">Os indicadores deixam claro onde esta o risco contratual: inadimplencia, excesso de assinatura manual ou pouca integracao com gateway.</p>
+                        <p class="saas-billing-note">Os indicadores deixam claro onde está o risco contratual: inadimplência, excesso de assinatura manual ou pouca integração com gateway.</p>
                     </div>
                 </div>
                 <div class="saas-billing-summary-grid">
                     <div class="saas-billing-summary-item"><strong>Total</strong><span><?= htmlspecialchars((string) $totalSubscriptions) ?></span></div>
                     <div class="saas-billing-summary-item"><strong>Ativas</strong><span><?= htmlspecialchars((string) $activeSubscriptions) ?></span></div>
-                    <div class="saas-billing-summary-item"><strong>Trial</strong><span><?= htmlspecialchars((string) $trialSubscriptions) ?></span></div>
+                    <div class="saas-billing-summary-item"><strong>Teste</strong><span><?= htmlspecialchars((string) $trialSubscriptions) ?></span></div>
                     <div class="saas-billing-summary-item"><strong>Vencidas</strong><span><?= htmlspecialchars((string) $expiredSubscriptions) ?></span></div>
                     <div class="saas-billing-summary-item"><strong>Canceladas</strong><span><?= htmlspecialchars((string) $canceledSubscriptions) ?></span></div>
                     <div class="saas-billing-summary-item"><strong>MRR ativo</strong><span><?= htmlspecialchars($formatMoney($activeMonthlyMrr)) ?></span></div>
@@ -418,23 +418,23 @@ $paymentMethodLabel = static function (mixed $value): string {
             <section class="card">
                 <div class="saas-billing-head">
                     <div>
-                        <h3>Atalhos de cobranca</h3>
-                        <p class="saas-billing-note">Assinatura sem trilho financeiro consistente sempre estoura depois na fila de cobrancas. O fluxo operacional precisa continuar acoplado.</p>
+                        <h3>Atalhos de cobrança</h3>
+                        <p class="saas-billing-note">Assinatura sem trilho financeiro consistente sempre estoura depois na fila de cobranças. O fluxo operacional precisa continuar acoplado.</p>
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
-                    <a class="btn" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Abrir cobrancas</a>
-                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments/create')) ?>">Nova cobranca</a>
+                    <a class="btn" href="<?= htmlspecialchars(base_url('/saas/subscription-payments')) ?>">Abrir cobranças</a>
+                    <a class="btn secondary" href="<?= htmlspecialchars(base_url('/saas/subscription-payments/create')) ?>">Nova cobrança</a>
                 </div>
             </section>
 
             <section class="saas-billing-flow">
                 <h3>Regra operacional</h3>
-                <p>Assinatura e cobranca precisam falar a mesma lingua visual porque sao partes do mesmo problema. Quando a assinatura parece saudavel mas a cobranca nao esta automatizada, o risco comercial esta apenas escondido.</p>
+                <p>Assinatura e cobrança precisam falar a mesma língua visual porque são partes do mesmo problema. Quando a assinatura parece saudável, mas a cobrança não está automatizada, o risco comercial está apenas escondido.</p>
                 <ul>
                     <li>Assinatura ativa sem gateway ainda depende de rotina manual.</li>
-                    <li>Gateway vinculado sem auto cobranca indica trilho incompleto.</li>
-                    <li>Cobrancas e assinaturas devem ser analisadas como um unico fluxo operacional.</li>
+                    <li>Gateway vinculado sem auto cobrança indica trilho incompleto.</li>
+                    <li>Cobranças e assinaturas devem ser analisadas como um único fluxo operacional.</li>
                 </ul>
             </section>
         </aside>

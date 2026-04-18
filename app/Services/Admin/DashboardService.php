@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 
 use App\Exceptions\ValidationException;
 use App\Repositories\DashboardRepository;
+use App\Services\Shared\PlanFeatureCatalogService;
 use App\Services\Shared\SupportAttachmentService;
 
 final class DashboardService
@@ -68,6 +69,17 @@ final class DashboardService
     private const PROFILE_DESCRIPTION_MAX_LENGTH = 500;
     private const USER_LIST_PER_PAGE_OPTIONS = [10, 20, 50];
     private const SUPPORT_LIST_PER_PAGE = 10;
+    private const PERMISSION_PLAN_FEATURE_MAP = [
+        'products' => 'cardapio_digital',
+        'categories' => 'cardapio_digital',
+        'additionals' => 'cardapio_digital',
+        'tables' => 'qrcode_mesa',
+        'commands' => 'comandas',
+        'payments' => 'pagamentos',
+        'cash_registers' => 'caixa',
+        'reports' => 'relatorios',
+        'stock' => 'estoque',
+    ];
 
     private const MAX_IMAGE_SIZE_BYTES = 10485760; // 10MB
     private const DEFAULT_PRIMARY_COLOR = '#1d4ed8';
@@ -78,7 +90,9 @@ final class DashboardService
 
     public function __construct(
         private readonly DashboardRepository $repository = new DashboardRepository(),
-        private readonly SupportAttachmentService $supportAttachments = new SupportAttachmentService()
+        private readonly SupportAttachmentService $supportAttachments = new SupportAttachmentService(),
+        private readonly CompanyPlanFeatureService $companyPlanFeatures = new CompanyPlanFeatureService(),
+        private readonly PlanFeatureCatalogService $planFeatureCatalog = new PlanFeatureCatalogService()
     ) {}
 
     public function panel(int $companyId, array $filters): array
@@ -471,7 +485,7 @@ final class DashboardService
 
         $name = trim((string) ($input['name'] ?? ''));
         $description = trim((string) ($input['description'] ?? ''));
-        $permissionIds = $this->normalizePermissionIds($input['permission_ids'] ?? []);
+        $permissionIds = $this->normalizePermissionIds($companyId, $input['permission_ids'] ?? []);
 
         if ($name === '') {
             throw new ValidationException('Informe o nome do perfil.');
@@ -516,7 +530,7 @@ final class DashboardService
 
         $name = trim((string) ($input['name'] ?? ''));
         $description = trim((string) ($input['description'] ?? ''));
-        $permissionIds = $this->normalizePermissionIds($input['permission_ids'] ?? []);
+        $permissionIds = $this->normalizePermissionIds($companyId, $input['permission_ids'] ?? []);
 
         if ($name === '') {
             throw new ValidationException('Informe o nome do perfil.');
@@ -860,19 +874,26 @@ final class DashboardService
     private function buildUsersModule(int $companyId, array $filters): array
     {
         $roles = $this->repository->companyRoles($companyId);
-        $permissionsCatalog = $this->repository->listCompanyPermissionsCatalog();
+        $permissionAccess = $this->availablePermissionsCatalogForCompany($companyId);
+        $permissionsCatalog = $permissionAccess['permissions'];
         $roleIds = array_values(array_filter(array_map(
             static fn (array $role): int => (int) ($role['id'] ?? 0),
             $roles
         )));
         $permissionMap = $this->repository->listPermissionIdsByRoleIds($roleIds);
+        $visiblePermissionIds = $permissionAccess['permission_ids'];
 
         foreach ($roles as &$role) {
             $roleId = (int) ($role['id'] ?? 0);
+            $rolePermissionIds = array_values(array_filter(
+                array_map('intval', $permissionMap[$roleId] ?? []),
+                static fn (int $permissionId): bool => isset($visiblePermissionIds[$permissionId])
+            ));
+            sort($rolePermissionIds);
             $role['is_custom'] = (int) ($role['is_custom'] ?? 0) === 1;
             $role['users_count'] = (int) ($role['users_count'] ?? 0);
-            $role['permissions_count'] = (int) ($role['permissions_count'] ?? 0);
-            $role['permission_ids'] = $permissionMap[$roleId] ?? [];
+            $role['permissions_count'] = count($rolePermissionIds);
+            $role['permission_ids'] = $rolePermissionIds;
         }
         unset($role);
 
@@ -912,6 +933,8 @@ final class DashboardService
             'roles' => $roles,
             'permissions_catalog' => $permissionsCatalog,
             'permissions_grouped' => $permissionGroups,
+            'hidden_permission_modules' => $permissionAccess['hidden_modules'],
+            'available_plan_features' => $permissionAccess['available_features'],
             'users' => $items,
             'filters' => $normalizedFilters,
             'pagination' => [
@@ -1177,7 +1200,7 @@ final class DashboardService
         return $resolved;
     }
 
-    private function normalizePermissionIds(mixed $rawPermissionIds): array
+    private function normalizePermissionIds(int $companyId, mixed $rawPermissionIds): array
     {
         $source = is_array($rawPermissionIds) ? $rawPermissionIds : [$rawPermissionIds];
         $normalized = [];
@@ -1194,21 +1217,67 @@ final class DashboardService
             return [];
         }
 
-        $allowed = [];
-        foreach ($this->repository->listCompanyPermissionsCatalog() as $permission) {
-            $id = (int) ($permission['id'] ?? 0);
-            if ($id > 0) {
-                $allowed[$id] = true;
-            }
-        }
+        $allowed = $this->availablePermissionsCatalogForCompany($companyId)['permission_ids'];
 
         foreach ($normalized as $permissionId) {
             if (!isset($allowed[$permissionId])) {
-                throw new ValidationException('Permissao selecionada nao e valida para perfis internos.');
+                throw new ValidationException('Permissao selecionada nao esta disponivel para o plano atual da empresa.');
             }
         }
 
         return $normalized;
+    }
+
+    private function availablePermissionsCatalogForCompany(int $companyId): array
+    {
+        $planFeatureState = $this->companyPlanFeatures->featureStateForCompany($companyId);
+        $featureLabels = [];
+        foreach ($this->planFeatureCatalog->catalog() as $feature) {
+            $featureKey = trim((string) ($feature['key'] ?? ''));
+            if ($featureKey !== '') {
+                $featureLabels[$featureKey] = trim((string) ($feature['label'] ?? $featureKey));
+            }
+        }
+
+        $permissions = [];
+        $permissionIds = [];
+        $hiddenModules = [];
+        foreach ($this->repository->listCompanyPermissionsCatalog() as $permission) {
+            $module = strtolower(trim((string) ($permission['module'] ?? '')));
+            $featureKey = self::PERMISSION_PLAN_FEATURE_MAP[$module] ?? null;
+            $enabled = $featureKey === null || !empty($planFeatureState[$featureKey]);
+
+            if (!$enabled) {
+                if (!isset($hiddenModules[$module])) {
+                    $hiddenModules[$module] = [
+                        'module' => $module,
+                        'feature_key' => $featureKey,
+                        'feature_label' => $featureLabels[$featureKey] ?? ($featureKey ?? $module),
+                    ];
+                }
+                continue;
+            }
+
+            $permissionId = (int) ($permission['id'] ?? 0);
+            if ($permissionId > 0) {
+                $permissionIds[$permissionId] = true;
+            }
+            $permissions[] = $permission;
+        }
+
+        $availableFeatures = [];
+        foreach ($planFeatureState as $featureKey => $enabled) {
+            if ($enabled && isset($featureLabels[$featureKey])) {
+                $availableFeatures[] = $featureLabels[$featureKey];
+            }
+        }
+
+        return [
+            'permissions' => $permissions,
+            'permission_ids' => $permissionIds,
+            'hidden_modules' => array_values($hiddenModules),
+            'available_features' => $availableFeatures,
+        ];
     }
 
     private function buildCompanyRoleSlug(int $companyId, string $name): string

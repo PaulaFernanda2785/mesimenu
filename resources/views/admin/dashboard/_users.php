@@ -2,6 +2,8 @@
 $users = is_array($users ?? null) ? $users : [];
 $roles = is_array($roles ?? null) ? $roles : [];
 $permissionsGrouped = is_array($permissionsGrouped ?? null) ? $permissionsGrouped : [];
+$hiddenPermissionModules = is_array($hiddenPermissionModules ?? null) ? $hiddenPermissionModules : [];
+$availablePlanFeatures = is_array($availablePlanFeatures ?? null) ? $availablePlanFeatures : [];
 $usersFilters = is_array($usersFilters ?? null) ? $usersFilters : [];
 $usersPagination = is_array($usersPagination ?? null) ? $usersPagination : [];
 
@@ -68,6 +70,7 @@ $moduleLabelMap = [
     'command' => 'Comandas',
     'orders' => 'Pedidos',
     'order' => 'Pedidos',
+    'stock' => 'Estoque',
     'payments' => 'Pagamentos',
     'payment' => 'Pagamentos',
     'cash_registers' => 'Caixas',
@@ -106,6 +109,16 @@ foreach ($roles as $roleRow) {
         $totalFactoryRoles++;
     }
 }
+
+$availablePlanFeatures = array_values(array_filter(array_map(
+    static fn (mixed $feature): string => trim((string) $feature),
+    $availablePlanFeatures
+)));
+$hiddenModuleLabels = array_values(array_filter(array_map(
+    static fn (array $item): string => trim((string) ($item['module'] ?? '')),
+    $hiddenPermissionModules
+)));
+$hiddenModuleLabels = array_map($moduleLabel, $hiddenModuleLabels);
 
 $formatDateTime = static function (mixed $value): string {
     $raw = trim((string) $value);
@@ -522,12 +535,23 @@ $formatDateTime = static function (mixed $value): string {
                                                 </div>
 
                                                 <div class="iu-perm-toolbar">
-                                                    <p>Ajuste as permissões deste perfil customizado.</p>
+                                                    <p>Ajuste as permissões deste perfil customizado. O construtor já respeita somente os recursos liberados no plano assinado.</p>
                                                     <div class="iu-perm-toolbar-actions">
                                                         <button type="button" class="btn ghost small" data-toggle-all-permissions="on">Marcar tudo</button>
                                                         <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar seleção</button>
                                                     </div>
                                                 </div>
+
+                                                <?php if ($availablePlanFeatures !== [] || $hiddenModuleLabels !== []): ?>
+                                                    <div class="iu-badges" style="margin:10px 0 12px">
+                                                        <?php foreach ($availablePlanFeatures as $featureLabel): ?>
+                                                            <span class="badge status-default">Plano: <?= htmlspecialchars($featureLabel) ?></span>
+                                                        <?php endforeach; ?>
+                                                        <?php foreach ($hiddenModuleLabels as $moduleLabelValue): ?>
+                                                            <span class="badge status-default">Oculto do plano: <?= htmlspecialchars($moduleLabelValue) ?></span>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                <?php endif; ?>
 
                                                 <div class="iu-perm-grid">
                                                     <?php foreach ($permissionsGrouped as $module => $modulePermissions): ?>
@@ -650,12 +674,23 @@ $formatDateTime = static function (mixed $value): string {
                         </div>
 
                         <div class="iu-perm-toolbar">
-                            <p>Selecione permissões por módulo.</p>
+                            <p>Selecione permissões por módulo. O construtor exibe apenas o que o plano atual da empresa realmente libera.</p>
                             <div class="iu-perm-toolbar-actions">
                                 <button type="button" class="btn ghost small" data-toggle-all-permissions="on">Marcar tudo</button>
                                 <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar seleção</button>
                             </div>
                         </div>
+
+                        <?php if ($availablePlanFeatures !== [] || $hiddenModuleLabels !== []): ?>
+                            <div class="iu-badges" style="margin:10px 0 12px">
+                                <?php foreach ($availablePlanFeatures as $featureLabel): ?>
+                                    <span class="badge status-default">Plano: <?= htmlspecialchars($featureLabel) ?></span>
+                                <?php endforeach; ?>
+                                <?php foreach ($hiddenModuleLabels as $moduleLabelValue): ?>
+                                    <span class="badge status-default">Oculto do plano: <?= htmlspecialchars($moduleLabelValue) ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="iu-perm-grid">
                             <?php foreach ($permissionsGrouped as $module => $modulePermissions): ?>

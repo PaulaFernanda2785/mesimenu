@@ -464,6 +464,73 @@ final class SubscriptionPaymentRepository extends BaseRepository
         return $row ?: null;
     }
 
+    public function findReceiptContextByIdForCompany(int $companyId, int $paymentId): ?array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                sp.id,
+                sp.subscription_id,
+                sp.company_id,
+                sp.reference_month,
+                sp.reference_year,
+                sp.amount,
+                sp.status,
+                sp.payment_method,
+                sp.paid_at,
+                sp.due_date,
+                sp.transaction_reference,
+                sp.charge_origin,
+                sp.pix_code,
+                sp.pix_qr_payload,
+                sp.pix_qr_image_base64,
+                sp.pix_ticket_url,
+                sp.payment_details_json,
+                sp.gateway_payment_id,
+                sp.gateway_payment_url,
+                sp.gateway_status,
+                sp.gateway_webhook_payload_json,
+                sp.gateway_last_synced_at,
+                sp.created_at,
+                sp.updated_at,
+                s.status AS subscription_status,
+                s.billing_cycle,
+                s.amount AS subscription_amount,
+                s.starts_at AS subscription_starts_at,
+                s.ends_at AS subscription_ends_at,
+                s.preferred_payment_method,
+                s.auto_charge_enabled,
+                s.gateway_provider,
+                s.gateway_subscription_id,
+                p.name AS plan_name,
+                p.slug AS plan_slug,
+                c.name AS company_name,
+                c.legal_name AS company_legal_name,
+                c.document_number AS company_document_number,
+                c.email AS company_email,
+                c.phone AS company_phone,
+                c.whatsapp AS company_whatsapp,
+                c.slug AS company_slug,
+                ct.logo_path AS company_logo_path,
+                ct.title AS company_theme_title,
+                ct.footer_text AS company_footer_text
+            FROM subscription_payments sp
+            INNER JOIN subscriptions s ON s.id = sp.subscription_id
+            INNER JOIN plans p ON p.id = s.plan_id
+            INNER JOIN companies c ON c.id = sp.company_id
+            LEFT JOIN company_themes ct ON ct.company_id = c.id
+            WHERE sp.company_id = :company_id
+              AND sp.id = :payment_id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'payment_id' => $paymentId,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function findByReference(int $subscriptionId, int $referenceMonth, int $referenceYear): ?array
     {
         $stmt = $this->db()->prepare("
