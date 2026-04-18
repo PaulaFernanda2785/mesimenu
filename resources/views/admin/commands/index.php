@@ -131,7 +131,7 @@ foreach ($commandOperational as $row) {
     }
 </style>
 
-<div class="commands-page">
+<div class="commands-page ops-page">
     <div class="topbar">
         <div>
             <h1>Comandas Abertas</h1>
@@ -139,6 +139,23 @@ foreach ($commandOperational as $row) {
         </div>
         <a class="btn" href="<?= htmlspecialchars(base_url('/admin/commands/create')) ?>">Abrir comanda</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Atendimento em Curso</span>
+            <h1>Comandas Abertas</h1>
+            <p>Centralize a abertura, o acompanhamento e a edição operacional das comandas em um painel consistente com o padrão executivo do dashboard.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= $totalCommands ?> comandas abertas</span>
+                <span class="ops-hero-pill"><?= count($tablesInUse) ?> mesas em consumo</span>
+                <span class="ops-hero-pill"><?= array_sum($operationalSummary) ?> pedidos em andamento</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn" href="<?= htmlspecialchars(base_url('/admin/commands/create')) ?>">Abrir comanda</a>
+            <a class="btn secondary" href="#commandsGrid">Fila de comandas</a>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= $totalCommands ?></strong><span>Comandas abertas</span></div>

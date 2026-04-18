@@ -129,7 +129,7 @@ $openCurrentBalance = $openCashRegister !== null
     }
 </style>
 
-<div class="cash-page">
+<div class="cash-page ops-page">
     <div class="topbar cash-topbar">
         <div>
             <h1>Painel de Caixa</h1>
@@ -137,6 +137,23 @@ $openCurrentBalance = $openCashRegister !== null
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/payments')) ?>">Ver pagamentos</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Tesouraria Operacional</span>
+            <h1>Caixa</h1>
+            <p>Acompanhe abertura, saldo corrente, fechamento e histórico do caixa com a mesma hierarquia visual aplicada ao dashboard da empresa.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= $totalRegisters ?> caixas registrados</span>
+                <span class="ops-hero-pill"><?= $openCount ?> abertos agora</span>
+                <span class="ops-hero-pill"><?= $formatMoney($totalIncome) ?> em entradas</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/payments')) ?>">Ver pagamentos</a>
+            <a class="btn" href="#cashFilterInfo">Histórico de caixa</a>
+        </div>
+    </section>
 
     <section class="cash-kpi-grid">
         <article class="cash-kpi"><strong><?= $totalRegisters ?></strong><span>Caixas registrados</span></article>

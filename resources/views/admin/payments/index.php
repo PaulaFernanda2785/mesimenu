@@ -115,7 +115,7 @@ body.modal-open{overflow:hidden}
 @media (max-width:980px){.payments-filter-grid{grid-template-columns:1fr 1fr}.payment-modal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:680px){.payments-kpi-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.payments-board{grid-template-columns:1fr}.payment-meta-grid{grid-template-columns:1fr}.payments-filter-grid{grid-template-columns:1fr}.payment-modal-grid{grid-template-columns:1fr}}
 </style>
-<div class="payments-page">
+<div class="payments-page ops-page">
     <div class="topbar payments-topbar">
         <div>
             <h1>Painel de Pagamentos</h1>
@@ -123,6 +123,23 @@ body.modal-open{overflow:hidden}
         </div>
         <a class="btn" href="<?= htmlspecialchars(base_url('/admin/payments/create')) ?>">Registrar pagamento</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Conferência Financeira</span>
+            <h1>Pagamentos</h1>
+            <p>Concentre conferência, filtros, análise por método e histórico financeiro em um painel com a mesma identidade visual do dashboard administrativo.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= count($payments) ?> lançamentos</span>
+                <span class="ops-hero-pill"><?= $formatMoney($totalAmount) ?> movimentados</span>
+                <span class="ops-hero-pill"><?= $paidCount ?> pagamentos concluídos</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn" href="<?= htmlspecialchars(base_url('/admin/payments/create')) ?>">Registrar pagamento</a>
+            <a class="btn secondary" href="#paymentsBoard">Histórico financeiro</a>
+        </div>
+    </section>
 
     <section class="payments-kpi-grid">
         <article class="payments-kpi"><strong><?= count($payments) ?></strong><span>Lancamentos</span></article>

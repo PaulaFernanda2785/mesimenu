@@ -39,7 +39,7 @@ foreach ($tables as $table) {
     }
 </style>
 
-<div class="command-open-page">
+<div class="command-open-page ops-page">
     <div class="topbar">
         <div>
             <h1>Abrir Comanda</h1>
@@ -47,6 +47,23 @@ foreach ($tables as $table) {
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/commands')) ?>">Voltar para comandas</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Abertura de Atendimento</span>
+            <h1>Abrir Comanda</h1>
+            <p>Crie novas comandas com visão rápida de disponibilidade de mesas e contexto operacional, mantendo a mesma linguagem do dashboard.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= $totalTables ?> mesas disponíveis no fluxo</span>
+                <span class="ops-hero-pill"><?= $freeTables ?> livres para abertura</span>
+                <span class="ops-hero-pill"><?= $busyTables ?> em atendimento</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/commands')) ?>">Voltar para comandas</a>
+            <a class="btn" href="#table_id">Nova abertura</a>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= $totalTables ?></strong><span>Mesas selecionaveis</span></div>

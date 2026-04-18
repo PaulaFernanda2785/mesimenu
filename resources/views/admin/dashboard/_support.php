@@ -60,19 +60,19 @@ $supportPriorityOptions = [
     '' => 'Todas as prioridades',
     'urgent' => 'Urgente',
     'high' => 'Alta',
-    'medium' => 'Media',
+    'medium' => 'Média',
     'low' => 'Baixa',
 ];
 
 $supportAssignmentOptions = [
-    '' => 'Com e sem responsavel',
-    'assigned' => 'Somente atribuidos',
-    'unassigned' => 'Somente sem responsavel',
+    '' => 'Com e sem responsável',
+    'assigned' => 'Somente atribuídos',
+    'unassigned' => 'Somente sem responsável',
 ];
 
 $supportAssignmentLabels = [
-    'assigned' => 'Atribuidos',
-    'unassigned' => 'Sem responsavel',
+    'assigned' => 'Atribuídos',
+    'unassigned' => 'Sem responsável',
 ];
 
 $formatSupportDate = static function (mixed $value): string {
@@ -198,7 +198,7 @@ $formatSupportDate = static function (mixed $value): string {
             <div class="st-hero-body">
                 <div>
                     <h2>Fale com a equipe técnica</h2>
-                    <p>Abra chamados operacionais no mesmo padrão visual de Usuários internos e Personalização. O histórico agora trabalha com filtros inteligentes e páginação de no máximo 10 registros por página.</p>
+                    <p>Abra chamados operacionais no mesmo padrão visual de Usuários internos e Personalização. O histórico agora trabalha com filtros inteligentes e paginação de no máximo 10 registros por página.</p>
                 </div>
                 <div class="st-hero-metrics">
                     <span class="st-hero-pill">Chamados filtrados: <?= htmlspecialchars((string) $supportTotal) ?></span>
@@ -259,7 +259,7 @@ $formatSupportDate = static function (mixed $value): string {
                     <div class="st-card-head">
                         <div>
                             <h3>Histórico de chamados</h3>
-                            <p class="st-card-note">Use busca por ID, assunto, descricao, quem abriu ou responsavel. Os resultados abaixo exibem no maximo 10 itens por página.</p>
+                            <p class="st-card-note">Use busca por ID, assunto, descrição, quem abriu ou responsável. Os resultados abaixo exibem no máximo 10 itens por página.</p>
                         </div>
                         <div class="st-badges">
                             <?php if ($lastSupportOpenedAt !== ''): ?>
@@ -274,7 +274,7 @@ $formatSupportDate = static function (mixed $value): string {
                         <div class="st-filter-grid">
                             <div class="field">
                                 <label for="support_search">Busca inteligente</label>
-                                <input id="support_search" name="support_search" type="text" value="<?= htmlspecialchars($supportSearch) ?>" placeholder="ID, assunto, descricao, autor ou responsavel">
+                                <input id="support_search" name="support_search" type="text" value="<?= htmlspecialchars($supportSearch) ?>" placeholder="ID, assunto, descrição, autor ou responsável">
                             </div>
                             <div class="field">
                                 <label for="support_status">Status</label>
@@ -293,7 +293,7 @@ $formatSupportDate = static function (mixed $value): string {
                                 </select>
                             </div>
                             <div class="field">
-                                <label for="support_assignment">Atribuicao</label>
+                                <label for="support_assignment">Atribuição</label>
                                 <select id="support_assignment" name="support_assignment">
                                     <?php foreach ($supportAssignmentOptions as $value => $label): ?>
                                         <option value="<?= htmlspecialchars($value) ?>" <?= $supportAssignment === (string) $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
@@ -312,7 +312,7 @@ $formatSupportDate = static function (mixed $value): string {
                         <?php if ($supportSearch !== ''): ?><span class="badge status-default">Busca: <?= htmlspecialchars($supportSearch) ?></span><?php endif; ?>
                         <?php if ($supportStatus !== ''): ?><span class="badge status-default">Status: <?= htmlspecialchars($supportStatusLabels[$supportStatus] ?? ucfirst($supportStatus)) ?></span><?php endif; ?>
                         <?php if ($supportPriority !== ''): ?><span class="badge status-default">Prioridade: <?= htmlspecialchars($supportPriorityLabels[$supportPriority] ?? ucfirst($supportPriority)) ?></span><?php endif; ?>
-                        <?php if ($supportAssignment !== ''): ?><span class="badge status-default">Atribuicao: <?= htmlspecialchars($supportAssignmentLabels[$supportAssignment] ?? $supportAssignment) ?></span><?php endif; ?>
+                        <?php if ($supportAssignment !== ''): ?><span class="badge status-default">Atribuição: <?= htmlspecialchars($supportAssignmentLabels[$supportAssignment] ?? $supportAssignment) ?></span><?php endif; ?>
                     </div>
 
                     <?php if ($supportTickets === []): ?>
@@ -419,9 +419,9 @@ $formatSupportDate = static function (mixed $value): string {
                                                 <div class="st-reply-footer">
                                                     <p class="st-reply-note">
                                                         <?php if (in_array($statusRaw, ['resolved', 'closed'], true)): ?>
-                                                            Nova mensagem da empresa reabre o chamado no historico para continuar a tratativa.
+                                                            Nova mensagem da empresa reabre o chamado no histórico para continuar a tratativa.
                                                         <?php else: ?>
-                                                            A resposta entra na mesma thread do chamado, sem criar outro registro no historico.
+                                                            A resposta entra na mesma thread do chamado, sem criar outro registro no histórico.
                                                         <?php endif; ?>
                                                     </p>
                                                     <button class="btn secondary" type="submit">Enviar resposta</button>
@@ -471,7 +471,7 @@ $formatSupportDate = static function (mixed $value): string {
                     <div class="st-card-head">
                         <div>
                             <h3>Resumo operacional</h3>
-                            <p class="st-card-note">Leitura consolidada da fila atual conforme os filtros aplicados no historico.</p>
+                            <p class="st-card-note">Leitura consolidada da fila atual conforme os filtros aplicados no histórico.</p>
                         </div>
                     </div>
 
@@ -505,14 +505,14 @@ $formatSupportDate = static function (mixed $value): string {
 
                 <div class="st-governance">
                     <h4>Triage e governanca</h4>
-                    <p>Esse canal deve concentrar incidentes técnicos e bloqueios reais da operacao. Ajustes cosméticos, dúvidas simples ou mudanças de processo precisam ser descritos com clareza para nao competir com incidentes críticos.</p>
+                    <p>Esse canal deve concentrar incidentes técnicos e bloqueios reais da operação. Ajustes cosméticos, dúvidas simples ou mudanças de processo precisam ser descritos com clareza para não competir com incidentes críticos.</p>
                     <div class="st-governance-list">
                         <div class="st-governance-item">
                             <strong>Uso ideal</strong>
                             <span class="st-governance-badge">Erro, indisponibilidade ou falha de fluxo</span>
                         </div>
                         <div class="st-governance-item">
-                            <strong>Dados minimos</strong>
+                            <strong>Dados mínimos</strong>
                             <span class="st-governance-badge">Impacto, horário e reproducao</span>
                         </div>
                         <div class="st-governance-item">

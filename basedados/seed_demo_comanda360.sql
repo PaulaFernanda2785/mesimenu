@@ -368,9 +368,9 @@ currency_code = VALUES(currency_code),
 timezone = VALUES(timezone);
 
 INSERT INTO company_themes (
-    id, company_id, primary_color, secondary_color, accent_color, logo_path, banner_path, title, description, footer_text
+    id, company_id, primary_color, secondary_color, accent_color, main_card_color, logo_path, banner_path, title, description, footer_text
 ) VALUES (
-    1, 1, '#D62828', '#1D3557', '#F4A261',
+    1, 1, '#D62828', '#1D3557', '#F4A261', '#1D3557',
     'uploads/logos/sabor-mesa-logo.png',
     'uploads/banners/sabor-mesa-banner.png',
     'Restaurante Sabor & Mesa',
@@ -381,6 +381,7 @@ ON DUPLICATE KEY UPDATE
 primary_color = VALUES(primary_color),
 secondary_color = VALUES(secondary_color),
 accent_color = VALUES(accent_color),
+main_card_color = VALUES(main_card_color),
 logo_path = VALUES(logo_path),
 banner_path = VALUES(banner_path),
 title = VALUES(title),

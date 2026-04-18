@@ -332,6 +332,7 @@ CREATE TABLE company_themes (
     primary_color VARCHAR(20) NULL COMMENT 'Cor principal do sistema',
     secondary_color VARCHAR(20) NULL COMMENT 'Cor secundária',
     accent_color VARCHAR(20) NULL COMMENT 'Cor de destaque',
+    main_card_color VARCHAR(20) NULL COMMENT 'Cor do card principal das páginas',
     logo_path VARCHAR(255) NULL COMMENT 'Caminho do arquivo da logo',
     banner_path VARCHAR(255) NULL COMMENT 'Caminho do arquivo do banner',
     title VARCHAR(150) NULL COMMENT 'Título exibido na área pública',
@@ -1806,9 +1807,9 @@ INSERT INTO company_settings (
 );
 
 INSERT INTO company_themes (
-    id, company_id, primary_color, secondary_color, accent_color, logo_path, banner_path, title, description, footer_text
+    id, company_id, primary_color, secondary_color, accent_color, main_card_color, logo_path, banner_path, title, description, footer_text
 ) VALUES (
-    1, 1, '#D62828', '#1D3557', '#F4A261',
+    1, 1, '#D62828', '#1D3557', '#F4A261', '#1D3557',
     'uploads/logos/sabor-mesa-logo.png',
     'uploads/banners/sabor-mesa-banner.png',
     'Restaurante Sabor & Mesa',

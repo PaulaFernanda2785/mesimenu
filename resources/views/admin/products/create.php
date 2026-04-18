@@ -45,6 +45,7 @@ $hasCategories = !empty($categories);
     }
 </style>
 
+<div class="ops-page product-create-page">
 <div class="topbar">
     <div>
         <h1><?= $isEdit ? 'Editar Produto' : 'Novo Produto' ?></h1>
@@ -52,6 +53,23 @@ $hasCategories = !empty($categories);
     </div>
     <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/products')) ?>">Voltar ao painel</a>
 </div>
+
+<section class="ops-hero">
+    <div class="ops-hero-copy">
+        <span class="ops-eyebrow">Cadastro de Catálogo</span>
+        <h1><?= $isEdit ? 'Editar Produto' : 'Novo Produto' ?></h1>
+        <p>Estruture preço, disponibilidade, categoria e imagem do produto com um fluxo visual alinhado ao padrão do dashboard do ambiente da empresa.</p>
+        <div class="ops-hero-meta">
+            <span class="ops-hero-pill"><?= $hasCategories ? count(is_array($categories ?? null) ? $categories : []) : 0 ?> categorias disponíveis</span>
+            <span class="ops-hero-pill">Status <?= htmlspecialchars($operationalStatus) ?></span>
+            <span class="ops-hero-pill"><?= $existingImagePath !== '' ? 'com imagem cadastrada' : 'aguardando imagem' ?></span>
+        </div>
+    </div>
+    <div class="ops-hero-actions">
+        <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/products')) ?>">Voltar ao painel</a>
+        <a class="btn" href="#name"><?= $isEdit ? 'Revisar produto' : 'Cadastrar produto' ?></a>
+    </div>
+</section>
 
 <form method="POST" action="<?= htmlspecialchars($formAction) ?>" enctype="multipart/form-data">
     <?= form_security_fields($isEdit ? 'products.update' : 'products.store') ?>
@@ -221,6 +239,7 @@ $hasCategories = !empty($categories);
         <input type="hidden" name="product_id" value="<?= (int) ($product['id'] ?? 0) ?>">
     </form>
 <?php endif; ?>
+</div>
 
 <script>
 (() => {

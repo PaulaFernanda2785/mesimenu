@@ -8,6 +8,7 @@ $bannerPath = trim((string) ($company['banner_path'] ?? ''));
 $primaryColor = trim((string) ($company['primary_color'] ?? '#1d4ed8'));
 $secondaryColor = trim((string) ($company['secondary_color'] ?? '#0f172a'));
 $accentColor = trim((string) ($company['accent_color'] ?? '#0ea5e9'));
+$mainCardColor = trim((string) ($company['main_card_color'] ?? '#0f172a'));
 
 $logoUrl = $logoPath !== '' ? company_image_url($logoPath) : '';
 $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
@@ -16,7 +17,7 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
 <section class="dash-section<?= $activeSection === 'branding' ? ' active' : '' ?>" data-section="branding">
     <style>
         .branding-layout{display:grid;gap:14px;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
-        .branding-hero{border:1px solid #bfdbfe;background:linear-gradient(118deg,#0f172a 0%,#1e3a8a 58%,#0ea5e9 100%);border-radius:14px;padding:16px;position:relative;overflow:hidden;color:#fff}
+        .branding-hero{border:1px solid #bfdbfe;background:linear-gradient(118deg,var(--brand-preview-main-card,#0f172a) 0%,#1e3a8a 58%,#0ea5e9 100%);border-radius:14px;padding:16px;position:relative;overflow:hidden;color:#fff}
         .branding-hero:before{content:"";position:absolute;top:-60px;right:-48px;width:210px;height:210px;border-radius:999px;background:rgba(255,255,255,.12)}
         .branding-hero:after{content:"";position:absolute;bottom:-70px;left:-34px;width:180px;height:180px;border-radius:999px;background:rgba(255,255,255,.1)}
         .branding-hero-body{position:relative;z-index:1;display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
@@ -32,17 +33,20 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
         .branding-main{display:grid;gap:14px}
         .branding-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
         .branding-form-grid .field.full{grid-column:1 / -1}
-        .branding-color-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-        .branding-color-card{border:1px solid #dbeafe;border-radius:12px;background:#fff;padding:10px}
+        .branding-color-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+        .branding-color-card{border:1px solid #dbeafe;border-radius:12px;background:#fff;padding:10px;display:grid;grid-template-rows:auto auto 1fr auto;align-content:start;height:100%;gap:2px}
         .branding-color-card strong{display:block;font-size:13px;color:#0f172a}
-        .branding-color-card small{display:block;font-size:12px;color:#64748b;margin-top:2px}
-        .branding-color-inputs{display:grid;grid-template-columns:52px 1fr;gap:8px;margin-top:8px;align-items:center}
+        .branding-color-card small{display:block;font-size:12px;color:#64748b;margin-top:2px;line-height:1.45}
+        .branding-color-inputs{display:grid;grid-template-columns:52px 1fr;gap:8px;margin-top:10px;align-items:center}
         .branding-color-inputs input[type="color"]{padding:0;height:42px;border-radius:10px;cursor:pointer}
         .branding-color-inputs input[type="text"]{font-family:Consolas,monospace;text-transform:uppercase}
         .branding-preview-shell{border:1px solid #dbeafe;border-radius:12px;overflow:hidden}
         .branding-preview-head{padding:10px;background:linear-gradient(135deg,var(--brand-preview-accent,#0ea5e9),#0f172a);color:#fff}
         .branding-preview-menu{padding:10px;background:linear-gradient(185deg,var(--brand-preview-secondary,#0f172a) 0%,#111827 100%);color:#e2e8f0}
         .branding-preview-btn{display:inline-flex;padding:8px 12px;border-radius:8px;background:var(--brand-preview-primary,#1d4ed8);color:#fff;font-weight:600;font-size:12px}
+        .branding-preview-main-card{padding:12px;background:linear-gradient(118deg,var(--brand-preview-main-card,#0f172a) 0%,#1e293b 58%,#334155 100%);color:#fff}
+        .branding-preview-main-card strong{display:block;font-size:14px}
+        .branding-preview-main-card small{display:block;margin-top:4px;color:#dbeafe}
         .branding-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
         .branding-upload-card{border:1px solid #dbeafe;border-radius:12px;padding:12px;background:#fff}
         .dropzone{border:2px dashed #93c5fd;border-radius:14px;padding:16px;text-align:center;background:linear-gradient(180deg,#eff6ff,#f8fafc);cursor:pointer}
@@ -78,14 +82,14 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
 
     <div class="branding-layout">
         <div class="branding-main">
-            <div class="branding-hero">
+            <div class="branding-hero" style="--brand-preview-main-card:<?= htmlspecialchars($mainCardColor) ?>">
                 <div class="branding-hero-body">
                     <div>
                         <h3>Personalização visual por estabelecimento</h3>
-                        <p>Defina nome comercial, cores do sistema, logo no menu/tickets e banner do cabecalho. O upload abaixo aceita selecionar, arrastar e colar imagem (Ctrl+V).</p>
+                        <p>Defina nome comercial, cores do sistema, logo no menu/tickets e banner do cabeçalho. O upload abaixo aceita selecionar, arrastar e colar imagem (`Ctrl+V`).</p>
                         <div class="branding-hero-actions">
-                            <button class="btn-outline-danger" type="submit" form="restoreFactoryThemeForm" onclick="return confirm('Restaurar o estilo de fabrica e remover logo/banner atuais?');">
-                                Restaurar estilo de fabrica
+                            <button class="btn-outline-danger" type="submit" form="restoreFactoryThemeForm" onclick="return confirm('Restaurar o estilo de fábrica e remover a logo e o banner atuais?');">
+                                Restaurar estilo de fábrica
                             </button>
                         </div>
                     </div>
@@ -149,9 +153,17 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                                 <input id="accent_color_text" type="text" value="<?= htmlspecialchars($accentColor) ?>" data-color-text-for="accent_color" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
                             </div>
                         </article>
+                        <article class="branding-color-card">
+                            <strong>Cor do card principal</strong>
+                            <small>Controla o grande card de destaque no topo das páginas. Use tons médios ou escuros.</small>
+                            <div class="branding-color-inputs">
+                                <input id="main_card_color" name="main_card_color" type="color" value="<?= htmlspecialchars($mainCardColor) ?>" data-color-key="main_card">
+                                <input id="main_card_color_text" type="text" value="<?= htmlspecialchars($mainCardColor) ?>" data-color-text-for="main_card_color" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
+                            </div>
+                        </article>
                     </div>
 
-                    <div class="branding-preview-shell" id="brandingSystemPreview" style="--brand-preview-primary:<?= htmlspecialchars($primaryColor) ?>;--brand-preview-secondary:<?= htmlspecialchars($secondaryColor) ?>;--brand-preview-accent:<?= htmlspecialchars($accentColor) ?>;margin-top:12px">
+                    <div class="branding-preview-shell" id="brandingSystemPreview" style="--brand-preview-primary:<?= htmlspecialchars($primaryColor) ?>;--brand-preview-secondary:<?= htmlspecialchars($secondaryColor) ?>;--brand-preview-accent:<?= htmlspecialchars($accentColor) ?>;--brand-preview-main-card:<?= htmlspecialchars($mainCardColor) ?>;margin-top:12px">
                         <div class="branding-preview-head">
                             <strong><?= htmlspecialchars($companyName !== '' ? $companyName : 'Estabelecimento') ?></strong>
                             <div style="font-size:12px;opacity:.9">Cabeçalho com usuário e perfil</div>
@@ -161,6 +173,10 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                                 <span>Menu lateral</span>
                                 <span class="branding-preview-btn">Botão principal</span>
                             </div>
+                        </div>
+                        <div class="branding-preview-main-card">
+                            <strong>Card principal da página</strong>
+                            <small>Hero operacional aplicado ao topo do dashboard e das telas padronizadas.</small>
                         </div>
                     </div>
                 </div>
@@ -175,7 +191,7 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                                 <p><strong>Selecione, arraste ou cole (Ctrl+V) a logo aqui</strong></p>
                                 <small>Formatos: JPG, PNG, WEBP ou GIF. Máximo: 10MB.</small>
                             </div>
-                            <p class="ticket-note" style="margin-top:8px">Tamanho recomendado da logo: <strong>512 x 512 px</strong> (minimo 256 x 256 px) para manter boa leitura no menu e tickets.</p>
+                            <p class="ticket-note" style="margin-top:8px">Tamanho recomendado da logo: <strong>512 x 512 px</strong> (mínimo 256 x 256 px) para manter boa leitura no menu e tickets.</p>
                             <div class="field" style="margin-top:10px">
                                 <input id="logo_file" name="logo_file" type="file" accept="image/*">
                             </div>
@@ -202,7 +218,7 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                                 <p><strong>Selecione, arraste ou cole (Ctrl+V) o banner aqui</strong></p>
                                 <small>Formatos: JPG, PNG, WEBP ou GIF. Máximo: 10MB.</small>
                             </div>
-                            <p class="ticket-note" style="margin-top:8px">Tamanho recomendado do banner: <strong>1920 x 420 px</strong> (minimo 1366 x 300 px) para melhor visibilidade no cabecalho.</p>
+                            <p class="ticket-note" style="margin-top:8px">Tamanho recomendado do banner: <strong>1920 x 420 px</strong> (mínimo 1366 x 300 px) para melhor visibilidade no cabeçalho.</p>
                             <div class="field" style="margin-top:10px">
                                 <input id="banner_file" name="banner_file" type="file" accept="image/*">
                             </div>
@@ -245,6 +261,10 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                         <span><span class="branding-dot" style="background:<?= htmlspecialchars($accentColor) ?>"></span>Cor do cabeçalho</span>
                         <strong><?= htmlspecialchars(strtoupper($accentColor)) ?></strong>
                     </div>
+                    <div class="branding-legend-item">
+                        <span><span class="branding-dot" style="background:<?= htmlspecialchars($mainCardColor) ?>"></span>Card principal</span>
+                        <strong><?= htmlspecialchars(strtoupper($mainCardColor)) ?></strong>
+                    </div>
                 </div>
             </div>
             <div class="branding-access-card">
@@ -256,8 +276,8 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                         <span class="branding-access-badge">Administrador / Gerente</span>
                     </div>
                     <div class="branding-access-item">
-                        <strong>Aplicacao</strong>
-                        <span class="branding-access-badge">Menu, cabeçalho, rodapé e tickets</span>
+                        <strong>Aplicação</strong>
+                        <span class="branding-access-badge">Menu, cabeçalho, rodapé, tickets e card principal</span>
                     </div>
                     <div class="branding-access-item">
                         <strong>Risco operacional</strong>
@@ -299,6 +319,8 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                         previewShell.style.setProperty('--brand-preview-secondary', hex);
                     } else if (colorInput.id === 'accent_color') {
                         previewShell.style.setProperty('--brand-preview-accent', hex);
+                    } else if (colorInput.id === 'main_card_color') {
+                        previewShell.style.setProperty('--brand-preview-main-card', hex);
                     }
                 }
             };
@@ -326,6 +348,7 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
         syncColorPair(document.getElementById('primary_color'), document.getElementById('primary_color_text'));
         syncColorPair(document.getElementById('secondary_color'), document.getElementById('secondary_color_text'));
         syncColorPair(document.getElementById('accent_color'), document.getElementById('accent_color_text'));
+        syncColorPair(document.getElementById('main_card_color'), document.getElementById('main_card_color_text'));
 
         const firstImageFileFromList = (files) => {
             for (const file of files) {

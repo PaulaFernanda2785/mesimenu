@@ -143,7 +143,7 @@ foreach ($ordersByTable as $tablePanel) {
     }
 </style>
 
-<div class="orders-page">
+<div class="orders-page ops-page">
     <div class="topbar">
         <div>
             <h1>Painel Operacional de Pedidos</h1>
@@ -154,6 +154,23 @@ foreach ($ordersByTable as $tablePanel) {
             <a class="btn" href="<?= htmlspecialchars(base_url('/admin/orders/create')) ?>">Novo pedido</a>
         </div>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Execução Operacional</span>
+            <h1>Pedidos</h1>
+            <p>Supervisione pedidos ativos por mesa, status de produção e situação financeira em uma camada visual alinhada ao dashboard do ambiente da empresa.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= (int) ($panelSummary['active_orders'] ?? 0) ?> pedidos ativos</span>
+                <span class="ops-hero-pill"><?= (int) ($panelSummary['tables_in_service'] ?? 0) ?> mesas em atendimento</span>
+                <span class="ops-hero-pill"><?= $ordersWaitingKitchen ?> aguardando cozinha</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn" href="<?= htmlspecialchars(base_url('/admin/orders/create')) ?>">Novo pedido</a>
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/kitchen')) ?>">Fila de cozinha</a>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= (int) ($panelSummary['active_orders'] ?? 0) ?></strong><span>Pedidos ativos</span></div>

@@ -481,13 +481,13 @@ $formatDateTime = static function (mixed $value): string {
                                     <div class="iu-role-head">
                                         <div class="iu-role-title">
                                             <strong><?= htmlspecialchars($roleName) ?></strong>
-                                            <small><?= $roleDescription !== '' ? htmlspecialchars($roleDescription) : 'Sem descricao detalhada.' ?></small>
+                                            <small><?= $roleDescription !== '' ? htmlspecialchars($roleDescription) : 'Sem descrição detalhada.' ?></small>
                                         </div>
                                         <div class="iu-role-meta">
-                                            <span class="badge status-default"><?= htmlspecialchars((string) $rolePermissionsCount) ?> permissoes</span>
-                                            <span class="badge status-default"><?= htmlspecialchars((string) $roleUsersCount) ?> usuarios</span>
+                                            <span class="badge status-default"><?= htmlspecialchars((string) $rolePermissionsCount) ?> permissões</span>
+                                            <span class="badge status-default"><?= htmlspecialchars((string) $roleUsersCount) ?> usuários</span>
                                             <?php if (!$roleIsCustom): ?>
-                                                <span class="iu-role-lock">Perfil de fabrica</span>
+                                                <span class="iu-role-lock">Perfil de fábrica</span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -496,11 +496,11 @@ $formatDateTime = static function (mixed $value): string {
                                         <div class="iu-role-actions">
                                             <button type="button" class="btn ghost small" data-profile-edit-toggle="<?= htmlspecialchars($editPanelId) ?>">Editar perfil</button>
 
-                                            <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/roles/delete')) ?>" onsubmit="return confirm('Excluir este perfil personalizado? Esta acao nao pode ser desfeita.');">
+                                            <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/roles/delete')) ?>" onsubmit="return confirm('Excluir este perfil personalizado? Esta ação não pode ser desfeita.');">
                                                 <?= form_security_fields('dashboard.roles.delete.' . $roleId) ?>
                                                 <input type="hidden" name="role_id" value="<?= $roleId ?>">
                                                 <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
-                                                <button class="btn danger small" type="submit" <?= $canDeleteRole ? '' : 'disabled title="Realoque os usuarios vinculados antes de excluir este perfil."' ?>>Excluir perfil</button>
+                                                <button class="btn danger small" type="submit" <?= $canDeleteRole ? '' : 'disabled title="Realoque os usuários vinculados antes de excluir este perfil."' ?>>Excluir perfil</button>
                                             </form>
                                         </div>
 
@@ -522,10 +522,10 @@ $formatDateTime = static function (mixed $value): string {
                                                 </div>
 
                                                 <div class="iu-perm-toolbar">
-                                                    <p>Ajuste as permissoes deste perfil customizado.</p>
+                                                    <p>Ajuste as permissões deste perfil customizado.</p>
                                                     <div class="iu-perm-toolbar-actions">
                                                         <button type="button" class="btn ghost small" data-toggle-all-permissions="on">Marcar tudo</button>
-                                                        <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar selecao</button>
+                                                        <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar seleção</button>
                                                     </div>
                                                 </div>
 
@@ -537,8 +537,8 @@ $formatDateTime = static function (mixed $value): string {
                                                                 <span class="iu-perm-count" data-module-count>0</span>
                                                             </div>
                                                             <div class="iu-perm-actions">
-                                                                <button type="button" class="btn ghost small" data-module-toggle="on">Marcar modulo</button>
-                                                                <button type="button" class="btn text small" data-module-toggle="off">Limpar modulo</button>
+                                                                <button type="button" class="btn ghost small" data-module-toggle="on">Marcar módulo</button>
+                                                                <button type="button" class="btn text small" data-module-toggle="off">Limpar módulo</button>
                                                             </div>
                                                             <div class="iu-perm-body">
                                                                 <?php foreach ((array) $modulePermissions as $permission): ?>
@@ -564,7 +564,7 @@ $formatDateTime = static function (mixed $value): string {
                                             </form>
                                         </div>
                                     <?php else: ?>
-                                        <p class="iu-role-system-note">Perfil padrão de fabrica. Mantido como referencia para governanca do sistema.</p>
+                                        <p class="iu-role-system-note">Perfil padrão de fábrica. Mantido como referência para governança do sistema.</p>
                                     <?php endif; ?>
                                 </article>
                             <?php endforeach; ?>
@@ -577,8 +577,8 @@ $formatDateTime = static function (mixed $value): string {
                 <div class="card">
                     <div class="iu-card-head">
                         <div>
-                            <h3>Cadastrar usuario interno</h3>
-                            <p class="iu-card-note">Cadastro direto com definicao de perfil, status inicial e senha temporaria.</p>
+                            <h3>Cadastrar usuário interno</h3>
+                            <p class="iu-card-note">Cadastro direto com definição de perfil, status inicial e senha temporária.</p>
                         </div>
                     </div>
 
@@ -622,7 +622,7 @@ $formatDateTime = static function (mixed $value): string {
                             </div>
                         </div>
 
-                        <button class="btn" type="submit" style="margin-top:12px">Cadastrar usuario</button>
+                        <button class="btn" type="submit" style="margin-top:12px">Cadastrar usuário</button>
                     </form>
                 </div>
 
@@ -630,7 +630,7 @@ $formatDateTime = static function (mixed $value): string {
                     <div class="iu-card-head">
                         <div>
                             <h3>Construtor de perfil</h3>
-                            <p class="iu-card-note">Crie perfis novos por modulo/permissao. Perfis de fabrica continuam como base padrão do sistema.</p>
+                            <p class="iu-card-note">Crie perfis novos por módulo/permissão. Perfis de fábrica continuam como base padrão do sistema.</p>
                         </div>
                     </div>
 
@@ -650,10 +650,10 @@ $formatDateTime = static function (mixed $value): string {
                         </div>
 
                         <div class="iu-perm-toolbar">
-                            <p>Selecione permissoes por modulo.</p>
+                            <p>Selecione permissões por módulo.</p>
                             <div class="iu-perm-toolbar-actions">
                                 <button type="button" class="btn ghost small" data-toggle-all-permissions="on">Marcar tudo</button>
-                                <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar selecao</button>
+                                <button type="button" class="btn text small" data-toggle-all-permissions="off">Limpar seleção</button>
                             </div>
                         </div>
 
@@ -665,8 +665,8 @@ $formatDateTime = static function (mixed $value): string {
                                         <span class="iu-perm-count" data-module-count>0</span>
                                     </div>
                                     <div class="iu-perm-actions">
-                                        <button type="button" class="btn ghost small" data-module-toggle="on">Marcar modulo</button>
-                                        <button type="button" class="btn text small" data-module-toggle="off">Limpar modulo</button>
+                                        <button type="button" class="btn ghost small" data-module-toggle="on">Marcar módulo</button>
+                                        <button type="button" class="btn text small" data-module-toggle="off">Limpar módulo</button>
                                     </div>
                                     <div class="iu-perm-body">
                                         <?php foreach ((array) $modulePermissions as $permission): ?>
@@ -692,12 +692,12 @@ $formatDateTime = static function (mixed $value): string {
                 </div>
 
                 <div class="card" style="border:1px solid #c7d2fe;background:linear-gradient(140deg,#eef2ff 0%,#f8fafc 100%)">
-                    <h4 style="margin:0 0 8px;color:#1e1b4b">Governanca e regra de fabrica</h4>
-                    <p class="ticket-note" style="margin-bottom:8px;color:#312e81">Perfis padrão continuam fixos como base de configuracao do sistema. Perfis customizados devem ser usados para adaptacoes operacionais por estabelecimento.</p>
+                    <h4 style="margin:0 0 8px;color:#1e1b4b">Governança e regra de fábrica</h4>
+                    <p class="ticket-note" style="margin-bottom:8px;color:#312e81">Perfis padrão continuam fixos como base de configuração do sistema. Perfis customizados devem ser usados para adaptações operacionais por estabelecimento.</p>
                     <div class="iu-badges">
-                        <span class="badge status-default">Baseline de fabrica ativo</span>
-                        <span class="badge status-default">Edicao segura por perfil</span>
-                        <span class="badge status-default">Controle por permissao</span>
+                        <span class="badge status-default">Base de fábrica ativa</span>
+                        <span class="badge status-default">Edição segura por perfil</span>
+                        <span class="badge status-default">Controle por permissão</span>
                     </div>
                 </div>
             </aside>
@@ -738,7 +738,7 @@ $formatDateTime = static function (mixed $value): string {
             }
 
             const isOpen = panel.classList.toggle('is-open');
-            button.textContent = isOpen ? 'Fechar edicao' : 'Editar perfil';
+            button.textContent = isOpen ? 'Fechar edição' : 'Editar perfil';
         });
     });
 

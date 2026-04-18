@@ -105,7 +105,7 @@ $canCreateOrder = $totalProducts > 0;
     }
 </style>
 
-<div class="order-create-page">
+<div class="order-create-page ops-page">
     <div class="topbar">
         <div>
             <h1>Novo Pedido</h1>
@@ -113,6 +113,23 @@ $canCreateOrder = $totalProducts > 0;
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Voltar</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Registro Operacional</span>
+            <h1>Novo Pedido</h1>
+            <p>Monte pedidos por canal, configure adicionais e acompanhe o resumo financeiro no mesmo padrão visual das áreas estratégicas do sistema.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= $totalProducts ?> produtos disponíveis</span>
+                <span class="ops-hero-pill"><?= $totalCommands ?> comandas abertas</span>
+                <span class="ops-hero-pill"><?= count($deliveryZones) ?> zonas para entrega</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Voltar</a>
+            <a class="btn" href="#orderCreateForm">Montar pedido</a>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= $totalCommands ?></strong><span>Comandas abertas</span></div>

@@ -46,7 +46,7 @@ $canCreateProducts = !empty($canCreateProducts);
     }
 </style>
 
-<div class="products-page">
+<div class="products-page ops-page">
     <div class="topbar">
         <div>
             <h1>Produtos</h1>
@@ -56,6 +56,27 @@ $canCreateProducts = !empty($canCreateProducts);
             <a class="btn" href="<?= htmlspecialchars(base_url('/admin/products/create')) ?>">Novo produto</a>
         <?php endif; ?>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Catálogo e Operação</span>
+            <h1>Produtos</h1>
+            <p>Controle o catálogo, a disponibilidade comercial e a estrutura de categorias no mesmo padrão executivo aplicado ao dashboard da empresa.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= (int) ($summary['total'] ?? 0) ?> produtos no painel</span>
+                <span class="ops-hero-pill"><?= (int) ($summary['categories_total'] ?? 0) ?> categorias estruturadas</span>
+                <span class="ops-hero-pill"><?= (int) ($summary['with_additionals'] ?? 0) ?> itens com adicionais</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <?php if ($canCreateProducts): ?>
+                <a class="btn" href="<?= htmlspecialchars(base_url('/admin/products/create')) ?>">Novo produto</a>
+            <?php endif; ?>
+            <?php if ($canManageProducts): ?>
+                <a class="btn secondary" href="#productCategoriesPanel">Categorias</a>
+            <?php endif; ?>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= (int) ($summary['total'] ?? 0) ?></strong><span>Produtos</span></div>
@@ -67,7 +88,7 @@ $canCreateProducts = !empty($canCreateProducts);
     </div>
 
     <?php if ($canManageProducts): ?>
-        <div class="card">
+        <div class="card" id="productCategoriesPanel">
             <h3 style="margin-top:0">Gerenciar categorias</h3>
             <div class="category-manager">
                 <form method="POST" action="<?= htmlspecialchars(base_url('/admin/products/categories/store')) ?>">

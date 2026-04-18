@@ -5,6 +5,7 @@ $user = is_array($user ?? null) ? $user : [];
 $themePrimary = (string) ($appShellTheme['primary_color'] ?? '#1d4ed8');
 $themeSecondary = (string) ($appShellTheme['secondary_color'] ?? '#0f172a');
 $themeAccent = (string) ($appShellTheme['accent_color'] ?? '#0ea5e9');
+$themeMainCard = (string) ($appShellTheme['main_card_color'] ?? '#0f172a');
 
 $companyName = trim((string) ($appShellTheme['company_name'] ?? 'Estabelecimento'));
 $brandTitle = trim((string) ($appShellTheme['title'] ?? 'Painel da Empresa'));
@@ -93,6 +94,7 @@ $routeMatches = static function (string $path, array $routes): bool {
             --theme-primary:<?= htmlspecialchars($themePrimary) ?>;
             --theme-secondary:<?= htmlspecialchars($themeSecondary) ?>;
             --theme-accent:<?= htmlspecialchars($themeAccent) ?>;
+            --theme-main-card:<?= htmlspecialchars($themeMainCard) ?>;
             --surface:#ffffff;
             --surface-soft:#f8fafc;
             --line:#e2e8f0;
@@ -315,6 +317,134 @@ $routeMatches = static function (string $path, array $routes): bool {
         .badge.status-inactive{background:#f3f4f6;color:#4b5563}
         .badge.status-success{background:#dcfce7;color:#166534}
 
+        .ops-page{display:grid;gap:18px}
+        .ops-page > .topbar{display:none}
+        .ops-hero{
+            position:relative;
+            overflow:hidden;
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:18px;
+            flex-wrap:wrap;
+            padding:24px;
+            border-radius:20px;
+            border:1px solid rgba(148,163,184,.22);
+            box-shadow:0 20px 42px rgba(15,23,42,.16);
+            background:
+                radial-gradient(circle at 100% 0%, rgba(56,189,248,.2), transparent 28%),
+                radial-gradient(circle at 0% 100%, rgba(34,197,94,.14), transparent 30%),
+                linear-gradient(118deg, var(--theme-main-card) 0%, var(--theme-secondary) 54%, #334155 100%);
+            color:#fff;
+        }
+        .ops-hero::before{
+            content:"";
+            position:absolute;
+            inset:auto -80px -100px auto;
+            width:220px;
+            height:220px;
+            border-radius:999px;
+            background:rgba(255,255,255,.06);
+        }
+        .ops-hero-copy{position:relative;z-index:1;display:grid;gap:10px;max-width:820px}
+        .ops-eyebrow{
+            display:inline-flex;
+            align-items:center;
+            width:max-content;
+            padding:6px 11px;
+            border-radius:999px;
+            background:rgba(15,23,42,.34);
+            border:1px solid rgba(186,230,253,.26);
+            color:#bfdbfe;
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+        }
+        .ops-hero h1{margin:0;font-size:28px;line-height:1.08;color:#fff}
+        .ops-hero p{margin:0;color:#dbeafe;font-size:14px;line-height:1.55}
+        .ops-hero-meta{display:flex;gap:8px;flex-wrap:wrap}
+        .ops-hero-pill{
+            display:inline-flex;
+            align-items:center;
+            padding:6px 10px;
+            border-radius:999px;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(191,219,254,.2);
+            color:#e2e8f0;
+            font-size:12px;
+        }
+        .ops-hero-actions{
+            position:relative;
+            z-index:1;
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            align-items:flex-start;
+            justify-content:flex-end;
+            max-width:360px;
+        }
+        .ops-hero-actions .btn{
+            min-height:42px;
+            border-radius:12px;
+            padding:10px 16px;
+            box-shadow:0 12px 24px rgba(15,23,42,.18);
+        }
+        .ops-hero-actions .btn.secondary{
+            background:rgba(15,23,42,.32);
+            border:1px solid rgba(191,219,254,.24);
+            color:#f8fafc;
+        }
+        .ops-page > .card,
+        .ops-page > section.card{
+            border-radius:16px;
+            box-shadow:0 14px 30px rgba(15,23,42,.08);
+        }
+        main .ops-page > .kpi-grid,
+        main .ops-page > [class$="-kpi-grid"],
+        main .ops-page > [class$="-kpis"]{
+            display:grid;
+            grid-template-columns:repeat(6,minmax(130px,1fr));
+            gap:12px;
+        }
+        main .ops-page > .kpi-grid > .kpi-item,
+        main .ops-page > [class$="-kpi-grid"] > [class*="-kpi"],
+        main .ops-page > [class$="-kpi-grid"] > .kpi-item,
+        main .ops-page > [class$="-kpis"] > [class*="-kpi"]{
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:14px;
+            padding:14px;
+            box-shadow:0 10px 24px rgba(15,23,42,.05);
+        }
+        main .ops-page > .kpi-grid > .kpi-item strong,
+        main .ops-page > [class$="-kpi-grid"] > [class*="-kpi"] strong,
+        main .ops-page > [class$="-kpi-grid"] > .kpi-item strong,
+        main .ops-page > [class$="-kpis"] > [class*="-kpi"] strong{
+            display:block;
+            font-size:22px;
+            line-height:1.1;
+            color:#0f172a;
+        }
+        main .ops-page > .kpi-grid > .kpi-item span,
+        main .ops-page > [class$="-kpi-grid"] > [class*="-kpi"] span,
+        main .ops-page > [class$="-kpi-grid"] > .kpi-item span,
+        main .ops-page > [class$="-kpis"] > [class*="-kpi"] span{
+            display:block;
+            margin-top:6px;
+            font-size:12px;
+            color:#64748b;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+        }
+        .ops-stack{display:grid;gap:14px}
+        .ops-split{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}
+        .ops-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+        .ops-panel-head h2,
+        .ops-panel-head h3{margin:0;color:#0f172a}
+        .ops-panel-head p{margin:6px 0 0;color:#475569;font-size:13px}
+        .ops-inline-badges{display:flex;gap:8px;flex-wrap:wrap}
+
         .btn.is-loading{opacity:.92;pointer-events:none}
         .btn-spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.65);border-top-color:#fff;border-radius:50%;animation:btnspin .7s linear infinite;vertical-align:-2px;margin-right:6px}
         @keyframes btnspin{to{transform:rotate(360deg)}}
@@ -333,11 +463,22 @@ $routeMatches = static function (string $path, array $routes): bool {
             .shell-user-chip{width:100%;text-align:left;min-width:0}
             main{padding:16px}
             .shell-footer{padding:10px 16px}
+            .ops-hero{padding:20px}
+            .ops-hero h1{font-size:24px}
+            .ops-split{grid-template-columns:1fr}
+            main .ops-page > .kpi-grid,
+            main .ops-page > [class$="-kpi-grid"],
+            main .ops-page > [class$="-kpis"]{grid-template-columns:repeat(3,minmax(120px,1fr))}
         }
         @media (max-width:640px){
             .grid.two{grid-template-columns:1fr}
             .card{padding:18px}
             .nav-link-copy strong{white-space:normal}
+            .ops-hero{padding:18px}
+            .ops-hero-actions{max-width:none;width:100%;justify-content:flex-start}
+            main .ops-page > .kpi-grid,
+            main .ops-page > [class$="-kpi-grid"],
+            main .ops-page > [class$="-kpis"]{grid-template-columns:1fr}
         }
     </style>
 </head>

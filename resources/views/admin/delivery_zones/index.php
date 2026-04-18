@@ -58,7 +58,7 @@ foreach ($zones as $zone) {
     @media (max-width:760px){.zones-board{grid-template-columns:1fr}.zone-meta-grid,.zone-edit-grid,.zones-create-grid,.zones-filter-grid{grid-template-columns:1fr}}
 </style>
 
-<div class="zones-page">
+<div class="zones-page ops-page">
     <div class="topbar zones-topbar">
         <div>
             <h1>Zonas e Taxas de Entrega</h1>
@@ -66,6 +66,23 @@ foreach ($zones as $zone) {
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/deliveries')) ?>">Ver painel de entregas</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Entrega e Cobertura</span>
+            <h1>Zonas de Entrega</h1>
+            <p>Estruture a cobertura logística, defina taxas e ajuste a disponibilidade operacional das zonas com o mesmo padrão visual das páginas centrais do sistema.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= count($zones) ?> zonas cadastradas</span>
+                <span class="ops-hero-pill"><?= $activeCount ?> zonas ativas</span>
+                <span class="ops-hero-pill"><?= $formatMoney($totalFee) ?> em taxas configuradas</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/deliveries')) ?>">Painel de entregas</a>
+            <a class="btn" href="#zone_new_name">Nova zona</a>
+        </div>
+    </section>
 
     <section class="zones-kpi-grid">
         <article class="zones-kpi"><strong><?= count($zones) ?></strong><span>Zonas cadastradas</span></article>
@@ -447,4 +464,3 @@ foreach ($zones as $zone) {
     applyFilter(true);
 })();
 </script>
-

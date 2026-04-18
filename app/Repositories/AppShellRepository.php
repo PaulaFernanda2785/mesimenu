@@ -16,6 +16,7 @@ final class AppShellRepository extends BaseRepository
                 ct.primary_color,
                 ct.secondary_color,
                 ct.accent_color,
+                ct.main_card_color,
                 ct.logo_path,
                 ct.banner_path,
                 ct.title,

@@ -170,7 +170,7 @@ $elapsedSince = static function (?string $value): string {
     }
 </style>
 
-<div class="kitchen-page">
+<div class="kitchen-page ops-page">
     <div class="topbar kitchen-topbar">
         <div>
             <h1>Painel de Cozinha</h1>
@@ -178,6 +178,23 @@ $elapsedSince = static function (?string $value): string {
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Voltar para pedidos</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Produção</span>
+            <h1>Cozinha</h1>
+            <p>Organize a fila de produção por etapa, acompanhe o tempo de execução e priorize a expedição com a mesma identidade visual das páginas centrais do sistema.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= count($receivedOrders) ?> pedidos recebidos</span>
+                <span class="ops-hero-pill"><?= count($waitingOrders) ?> em preparo</span>
+                <span class="ops-hero-pill"><?= count($readyOrders) ?> prontos para saída</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/orders')) ?>">Voltar para pedidos</a>
+            <a class="btn" href="#kitchenFlowBoard">Fluxo da cozinha</a>
+        </div>
+    </section>
 
     <section class="kitchen-kpis">
         <article class="kitchen-kpi">
@@ -200,7 +217,7 @@ $elapsedSince = static function (?string $value): string {
 
     <p class="kitchen-refresh-note">Atualizacao automatica da tela a cada 30 segundos.</p>
 
-    <div class="kitchen-tabs" role="tablist" aria-label="Fluxo da cozinha">
+    <div class="kitchen-tabs" id="kitchenFlowBoard" role="tablist" aria-label="Fluxo da cozinha">
         <?php $tabIndex = 0; ?>
         <?php foreach ($tabs as $tabKey => $tab): ?>
             <?php $isActiveTab = $tabIndex === 0; ?>

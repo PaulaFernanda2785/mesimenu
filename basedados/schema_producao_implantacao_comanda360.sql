@@ -359,6 +359,7 @@ CREATE TABLE IF NOT EXISTS company_themes (
     primary_color VARCHAR(20) NULL COMMENT 'Cor principal do sistema',
     secondary_color VARCHAR(20) NULL COMMENT 'Cor secundária',
     accent_color VARCHAR(20) NULL COMMENT 'Cor de destaque',
+    main_card_color VARCHAR(20) NULL COMMENT 'Cor do card principal das páginas',
     logo_path VARCHAR(255) NULL COMMENT 'Caminho do arquivo da logo',
     banner_path VARCHAR(255) NULL COMMENT 'Caminho do arquivo do banner',
     title VARCHAR(150) NULL COMMENT 'Título exibido na área pública',

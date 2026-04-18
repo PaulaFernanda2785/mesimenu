@@ -126,7 +126,7 @@ foreach ($ordersByTableNumber as $tablePanel) {
     }
 </style>
 
-<div class="tables-page">
+<div class="tables-page ops-page">
     <div class="topbar">
         <div>
             <h1>Mesas</h1>
@@ -136,6 +136,25 @@ foreach ($ordersByTableNumber as $tablePanel) {
             <a class="btn" href="<?= htmlspecialchars(base_url('/admin/tables/create')) ?>">Nova mesa</a>
         <?php endif; ?>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Salão e Atendimento</span>
+            <h1>Mesas</h1>
+            <p>Monitore ocupação, comandas e pedidos do salão a partir de um painel operacional alinhado ao padrão visual do dashboard.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= (int) ($summary['total'] ?? 0) ?> mesas cadastradas</span>
+                <span class="ops-hero-pill"><?= (int) ($summary['ocupada'] ?? 0) ?> em atendimento</span>
+                <span class="ops-hero-pill"><?= array_sum($operationalSummary) ?> pedidos ligados às mesas</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <?php if ($canManageTables): ?>
+                <a class="btn" href="<?= htmlspecialchars(base_url('/admin/tables/create')) ?>">Nova mesa</a>
+            <?php endif; ?>
+            <a class="btn secondary" href="#tablesGrid">Mapa operacional</a>
+        </div>
+    </section>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= (int) ($summary['total'] ?? 0) ?></strong><span>Total de mesas</span></div>

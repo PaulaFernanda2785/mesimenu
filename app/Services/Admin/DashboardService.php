@@ -72,6 +72,7 @@ final class DashboardService
     private const DEFAULT_PRIMARY_COLOR = '#1d4ed8';
     private const DEFAULT_SECONDARY_COLOR = '#0f172a';
     private const DEFAULT_ACCENT_COLOR = '#0ea5e9';
+    private const DEFAULT_MAIN_CARD_COLOR = '#0f172a';
     private const DEFAULT_FOOTER_TEXT = 'Comanda360 - Sistema de gestao de atendimento e vendas.';
 
     public function __construct(
@@ -349,6 +350,8 @@ final class DashboardService
         $primaryColor = $this->normalizeHexColor($input['primary_color'] ?? null, self::DEFAULT_PRIMARY_COLOR);
         $secondaryColor = $this->normalizeHexColor($input['secondary_color'] ?? null, self::DEFAULT_SECONDARY_COLOR);
         $accentColor = $this->normalizeHexColor($input['accent_color'] ?? null, self::DEFAULT_ACCENT_COLOR);
+        $mainCardColor = $this->normalizeHexColor($input['main_card_color'] ?? null, self::DEFAULT_MAIN_CARD_COLOR);
+        $this->assertReadableMainCardColor($mainCardColor);
 
         $currentLogoPath = $this->normalizeStoredAssetPath((string) ($companyProfile['logo_path'] ?? ''));
         $currentBannerPath = $this->normalizeStoredAssetPath((string) ($companyProfile['banner_path'] ?? ''));
@@ -389,6 +392,7 @@ final class DashboardService
             $primaryColor,
             $secondaryColor,
             $accentColor,
+            $mainCardColor,
             $logoPath,
             $bannerPath,
             $title,
@@ -400,6 +404,7 @@ final class DashboardService
                 'primary_color' => $primaryColor,
                 'secondary_color' => $secondaryColor,
                 'accent_color' => $accentColor,
+                'main_card_color' => $mainCardColor,
                 'logo_path' => $logoPath,
                 'banner_path' => $bannerPath,
                 'title' => $title !== '' ? $title : $companyName,
@@ -440,6 +445,7 @@ final class DashboardService
             'primary_color' => self::DEFAULT_PRIMARY_COLOR,
             'secondary_color' => self::DEFAULT_SECONDARY_COLOR,
             'accent_color' => self::DEFAULT_ACCENT_COLOR,
+            'main_card_color' => self::DEFAULT_MAIN_CARD_COLOR,
             'logo_path' => null,
             'banner_path' => null,
             'title' => $companyName,
@@ -1330,6 +1336,42 @@ final class DashboardService
         }
 
         return $color;
+    }
+
+    private function assertReadableMainCardColor(string $color): void
+    {
+        if ($this->contrastRatioWithWhite($color) < 4.5) {
+            throw new ValidationException('A cor do card principal precisa ser media ou escura para manter contraste com o texto branco.');
+        }
+    }
+
+    private function contrastRatioWithWhite(string $color): float
+    {
+        $luminance = $this->relativeLuminanceFromHex($color);
+        return 1.05 / ($luminance + 0.05);
+    }
+
+    private function relativeLuminanceFromHex(string $color): float
+    {
+        $hex = ltrim($color, '#');
+        if (strlen($hex) !== 6) {
+            return 0.0;
+        }
+
+        $channels = [
+            hexdec(substr($hex, 0, 2)) / 255,
+            hexdec(substr($hex, 2, 2)) / 255,
+            hexdec(substr($hex, 4, 2)) / 255,
+        ];
+
+        $linear = array_map(
+            static fn (float $channel): float => $channel <= 0.03928
+                ? $channel / 12.92
+                : (($channel + 0.055) / 1.055) ** 2.4,
+            $channels
+        );
+
+        return (0.2126 * $linear[0]) + (0.7152 * $linear[1]) + (0.0722 * $linear[2]);
     }
 
     private function isValidDate(string $date): bool

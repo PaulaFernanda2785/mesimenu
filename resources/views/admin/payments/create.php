@@ -76,7 +76,7 @@ foreach ($orders as $order) {
     }
 </style>
 
-<div class="payment-create-page">
+<div class="payment-create-page ops-page">
     <div class="topbar payment-create-topbar">
         <div>
             <h1>Registrar Pagamento</h1>
@@ -84,6 +84,23 @@ foreach ($orders as $order) {
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/payments')) ?>">Voltar para pagamentos</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Recebimento e Caixa</span>
+            <h1>Registrar Pagamento</h1>
+            <p>Selecione o pedido, confira saldo e conclua o recebimento em um fluxo guiado com a mesma hierarquia visual das páginas principais do ambiente.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= count($orders) ?> pedidos com saldo</span>
+                <span class="ops-hero-pill"><?= $formatMoney($totalReceivable) ?> a receber</span>
+                <span class="ops-hero-pill">Caixa <?= $hasOpenCashRegister ? 'aberto' : 'fechado' ?></span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/payments')) ?>">Voltar para pagamentos</a>
+            <a class="btn" href="#order_id">Registrar recebimento</a>
+        </div>
+    </section>
 
     <section class="payment-create-kpis">
         <article class="payment-create-kpi">

@@ -68,7 +68,7 @@ ksort($channelsSummary);
     @media (max-width:680px){.deliveries-kpi-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}.deliveries-board{grid-template-columns:1fr}.delivery-meta-grid,.delivery-actions-grid,.deliveries-filter-grid{grid-template-columns:1fr}}
 </style>
 
-<div class="deliveries-page">
+<div class="deliveries-page ops-page">
     <div class="topbar deliveries-topbar">
         <div>
             <h1>Painel de Entregas</h1>
@@ -76,6 +76,23 @@ ksort($channelsSummary);
         </div>
         <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/delivery-zones')) ?>">Gerenciar zonas e taxas</a>
     </div>
+
+    <section class="ops-hero">
+        <div class="ops-hero-copy">
+            <span class="ops-eyebrow">Rota e Expedição</span>
+            <h1>Entregas</h1>
+            <p>Gerencie despacho, rota, responsáveis e confirmação de entrega em um painel de operação alinhado ao padrão do dashboard.</p>
+            <div class="ops-hero-meta">
+                <span class="ops-hero-pill"><?= (int) ($deliveriesSummary['total'] ?? 0) ?> entregas monitoradas</span>
+                <span class="ops-hero-pill"><?= (int) ($deliveriesSummary['pending'] ?? 0) ?> pendentes</span>
+                <span class="ops-hero-pill"><?= (int) ($deliveriesSummary['in_route'] ?? 0) ?> em rota</span>
+            </div>
+        </div>
+        <div class="ops-hero-actions">
+            <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/delivery-zones')) ?>">Gerenciar zonas</a>
+            <a class="btn" href="#deliveriesBoard">Fila de entregas</a>
+        </div>
+    </section>
 
     <section class="deliveries-kpi-grid">
         <article class="deliveries-kpi"><strong><?= (int) ($deliveriesSummary['total'] ?? 0) ?></strong><span>Total</span></article>

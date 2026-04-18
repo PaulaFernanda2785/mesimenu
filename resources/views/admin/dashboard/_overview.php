@@ -62,12 +62,12 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
             .dash-sales-day-card .dash-value{font-size:11px}
         }
     </style>
-    <div class="card" style="background:linear-gradient(115deg,#0f172a 0%,#1e293b 55%,#334155 100%);color:#fff;overflow:hidden;position:relative">
+    <div class="card" style="background:linear-gradient(115deg,var(--theme-main-card,#0f172a) 0%,#1e293b 55%,#334155 100%);color:#fff;overflow:hidden;position:relative">
         <div style="position:absolute;top:-38px;right:-60px;width:220px;height:220px;border-radius:999px;background:rgba(56,189,248,.18)"></div>
         <div style="position:absolute;bottom:-50px;left:-42px;width:200px;height:200px;border-radius:999px;background:rgba(34,197,94,.15)"></div>
         <div style="position:relative;z-index:1">
             <h2 style="margin:0 0 8px">Painel Estatístico Inteligente</h2>
-            <p style="margin:0;color:#cbd5e1;max-width:840px">Visual moderno com filtros avançados, indicadores executivos e ação de gerar relatório em prévia na mesma aba com impressão integrada.</p>
+            <p style="margin:0;color:#cbd5e1;max-width:840px">Visual moderno com filtros avançados, indicadores executivos e a ação de gerar relatório em prévia na mesma aba com impressão integrada.</p>
         </div>
     </div>
 
@@ -145,7 +145,7 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
 
     <?php if (!$reportViews['ready']): ?>
         <div class="card" style="border:1px solid #fecaca;background:#fff1f2">
-            <h3 style="margin-top:0;color:#9f1239">Views de relatorio ausentes no banco</h3>
+            <h3 style="margin-top:0;color:#9f1239">Views de relatório ausentes no banco</h3>
             <p class="ticket-note">Execute `basedados/schema_views_relatorios_comanda360.sql` para liberar o painel.</p>
             <p class="ticket-note"><strong>Views faltantes:</strong> <?= htmlspecialchars(implode(', ', is_array($reportViews['missing'] ?? null) ? $reportViews['missing'] : [])) ?></p>
         </div>
@@ -157,7 +157,7 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
         <article class="dash-kpi"><strong><?= $formatInt($canceledOrders) ?></strong><span>Cancelados</span></article>
         <article class="dash-kpi"><strong><?= $formatMoney($closedCashAmount) ?></strong><span>Fechamento de caixa</span></article>
         <article class="dash-kpi"><strong><?= $formatInt($totalOrders) ?></strong><span>Total pedidos</span></article>
-        <article class="dash-kpi"><strong><?= $formatMoney($totalDifference) ?></strong><span>Divergência caixa</span></article>
+        <article class="dash-kpi"><strong><?= $formatMoney($totalDifference) ?></strong><span>Divergência de caixa</span></article>
     </div>
 
     <div class="dash-grid-2">

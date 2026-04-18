@@ -56,6 +56,7 @@ $statusOptions = [
     }
 </style>
 
+<div class="ops-page table-create-page">
 <div class="topbar">
     <div>
         <h1><?= $isEdit ? 'Editar Mesa' : 'Nova Mesa' ?></h1>
@@ -63,6 +64,23 @@ $statusOptions = [
     </div>
     <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables')) ?>">Voltar ao painel</a>
 </div>
+
+<section class="ops-hero">
+    <div class="ops-hero-copy">
+        <span class="ops-eyebrow">Estrutura do Salão</span>
+        <h1><?= $isEdit ? 'Editar Mesa' : 'Nova Mesa' ?></h1>
+        <p>Configure número, capacidade e status operacional da mesa em um fluxo de cadastro alinhado ao padrão executivo do dashboard.</p>
+        <div class="ops-hero-meta">
+            <span class="ops-hero-pill">Status <?= htmlspecialchars((string) ($statusOptions[$currentStatus]['label'] ?? 'Livre')) ?></span>
+            <span class="ops-hero-pill"><?= $capacityValue !== '' ? htmlspecialchars($capacityValue . ' lugares') : 'capacidade pendente' ?></span>
+            <span class="ops-hero-pill"><?= $isEdit ? 'mesa em edição' : 'novo cadastro' ?></span>
+        </div>
+    </div>
+    <div class="ops-hero-actions">
+        <a class="btn secondary" href="<?= htmlspecialchars(base_url('/admin/tables')) ?>">Voltar ao painel</a>
+        <a class="btn" href="#number"><?= $isEdit ? 'Atualizar mesa' : 'Cadastrar mesa' ?></a>
+    </div>
+</section>
 
 <form method="POST" action="<?= htmlspecialchars($formAction) ?>">
     <?= form_security_fields($isEdit ? 'tables.update' : 'tables.store') ?>
@@ -150,6 +168,7 @@ $statusOptions = [
         </div>
     </div>
 </form>
+</div>
 
 <script>
 (() => {

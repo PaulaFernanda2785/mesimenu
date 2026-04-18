@@ -83,13 +83,13 @@ $periodPresetOptions = [
     'yesterday' => 'Ontem',
     'last7' => 'Últimos 7 dias',
     'last30' => 'Últimos 30 dias',
-    'month_current' => 'Mes atual',
-    'month_previous' => 'Mes anterior',
+    'month_current' => 'Mês atual',
+    'month_previous' => 'Mês anterior',
 ];
 
 $supportPriorityLabels = [
     'low' => 'Baixa',
-    'medium' => 'Media',
+    'medium' => 'Média',
     'high' => 'Alta',
     'urgent' => 'Urgente',
 ];
@@ -138,7 +138,7 @@ $supportStatusLabels = [
     .dash-page-btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:8px;padding:7px 10px;cursor:pointer;min-width:36px}
     .dash-page-btn.is-active{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
     .dash-págination-info{font-size:12px;color:#475569}
-    .dash-overview-hero{background:linear-gradient(115deg,#0f172a 0%,#1e293b 55%,#334155 100%);color:#fff;overflow:hidden;position:relative}
+    .dash-overview-hero{background:linear-gradient(115deg,var(--theme-main-card,#0f172a) 0%,#1e293b 55%,#334155 100%);color:#fff;overflow:hidden;position:relative}
     .dash-overview-hero::before{content:"";position:absolute;top:-38px;right:-60px;width:220px;height:220px;border-radius:999px;background:rgba(56,189,248,.18)}
     .dash-overview-hero::after{content:"";position:absolute;bottom:-50px;left:-42px;width:200px;height:200px;border-radius:999px;background:rgba(34,197,94,.15)}
     .dash-overview-hero-body{position:relative;z-index:1}
