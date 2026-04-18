@@ -5,6 +5,7 @@ namespace App\Services\Saas;
 
 use App\Exceptions\ValidationException;
 use App\Repositories\PlanRepository;
+use App\Services\Shared\PlanFeatureCatalogService;
 
 final class PlanService
 {
@@ -15,16 +16,9 @@ final class PlanService
         'inativo',
     ];
 
-    private const FEATURE_FLAGS = [
-        'cardapio_digital',
-        'qrcode_mesa',
-        'caixa',
-        'delivery',
-        'relatorios',
-    ];
-
     public function __construct(
-        private readonly PlanRepository $plans = new PlanRepository()
+        private readonly PlanRepository $plans = new PlanRepository(),
+        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService()
     ) {}
 
     public function panel(array $filters): array
@@ -62,6 +56,7 @@ final class PlanService
                 'pages' => $this->buildPaginationPages($currentPage, $lastPage),
             ],
             'status_options' => self::ALLOWED_STATUS,
+            'feature_catalog' => $this->featureCatalog->catalog(),
         ];
     }
 
@@ -254,8 +249,12 @@ final class PlanService
             'recursos_negocio' => [
                 'cardapio_digital' => (bool) ($enabledFeatures['cardapio_digital'] ?? false),
                 'qrcode_mesa' => (bool) ($enabledFeatures['qrcode_mesa'] ?? false),
+                'comandas' => (bool) ($enabledFeatures['comandas'] ?? false),
+                'cozinha' => (bool) ($enabledFeatures['cozinha'] ?? false),
+                'pagamentos' => (bool) ($enabledFeatures['pagamentos'] ?? false),
                 'caixa' => (bool) ($enabledFeatures['caixa'] ?? false),
                 'delivery' => (bool) ($enabledFeatures['delivery'] ?? false),
+                'estoque' => (bool) ($enabledFeatures['estoque'] ?? false),
                 'relatorios' => (bool) ($enabledFeatures['relatorios'] ?? false),
             ],
             'precificacao' => [
@@ -366,13 +365,16 @@ final class PlanService
             : $existingFeatures;
 
         $resolved = [];
-        foreach (self::FEATURE_FLAGS as $flag) {
+        foreach ($this->featureCatalog->keys() as $flag) {
             if (array_key_exists($flag, $input)) {
                 $resolved[$flag] = $this->normalizeFeatureFlag($input[$flag]);
                 continue;
             }
 
-            $resolved[$flag] = (bool) ($existingBusiness[$flag] ?? false);
+            $defaults = $this->featureCatalog->defaultState();
+            $resolved[$flag] = array_key_exists($flag, $existingBusiness)
+                ? (bool) $existingBusiness[$flag]
+                : (bool) ($defaults[$flag] ?? false);
         }
 
         return $resolved;

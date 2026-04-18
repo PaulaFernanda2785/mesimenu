@@ -15,6 +15,7 @@ use App\Controllers\Admin\CashRegisterController;
 use App\Controllers\Admin\KitchenController;
 use App\Controllers\Admin\DeliveryZoneController;
 use App\Controllers\Admin\DeliveryController;
+use App\Controllers\Admin\StockController;
 use App\Controllers\Saas\DashboardController as SaasDashboardController;
 use App\Controllers\Saas\CompanyController as SaasCompanyController;
 use App\Controllers\Saas\PlanController as SaasPlanController;
@@ -23,6 +24,7 @@ use App\Controllers\Saas\SubscriptionController as SaasSubscriptionController;
 use App\Controllers\Saas\SubscriptionPaymentController as SaasSubscriptionPaymentController;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\CompanyBillingAccessMiddleware;
+use App\Middlewares\CompanyPlanFeatureMiddleware;
 use App\Middlewares\PermissionMiddleware;
 use App\Middlewares\RoleContextMiddleware;
 
@@ -37,6 +39,13 @@ $companyAccess = static fn (string $permissionSlug): array => [
 $saasAccess = static fn (string $permissionSlug): array => [
     AuthMiddleware::class,
     [RoleContextMiddleware::class, 'saas'],
+    [PermissionMiddleware::class, $permissionSlug],
+];
+$companyFeatureAccess = static fn (string $permissionSlug, string $featureKey): array => [
+    AuthMiddleware::class,
+    [RoleContextMiddleware::class, 'company'],
+    CompanyBillingAccessMiddleware::class,
+    [CompanyPlanFeatureMiddleware::class, $featureKey],
     [PermissionMiddleware::class, $permissionSlug],
 ];
 
@@ -120,6 +129,11 @@ $router->post('/admin/delivery-zones/delete', [DeliveryZoneController::class, 'd
 
 $router->get('/admin/deliveries', [DeliveryController::class, 'index'], $companyAccess('orders.view'));
 $router->post('/admin/deliveries/update', [DeliveryController::class, 'update'], $companyAccess('orders.status'));
+
+$router->get('/admin/stock', [StockController::class, 'index'], $companyFeatureAccess('stock.view', 'estoque'));
+$router->post('/admin/stock/items/store', [StockController::class, 'storeItem'], $companyFeatureAccess('stock.manage', 'estoque'));
+$router->post('/admin/stock/items/update', [StockController::class, 'updateItem'], $companyFeatureAccess('stock.manage', 'estoque'));
+$router->post('/admin/stock/movements/store', [StockController::class, 'storeMovement'], $companyFeatureAccess('stock.manage', 'estoque'));
 
 $router->get('/admin/payments', [PaymentController::class, 'index'], $companyAccess('payments.view'));
 $router->get('/admin/payments/create', [PaymentController::class, 'create'], $companyAccess('payments.create'));

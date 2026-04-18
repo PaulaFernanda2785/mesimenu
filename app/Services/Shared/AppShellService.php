@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Shared;
 
+use App\Services\Admin\CompanyPlanFeatureService;
 use App\Repositories\AppShellRepository;
 use App\Repositories\PermissionRepository;
 
@@ -10,7 +11,8 @@ final class AppShellService
 {
     public function __construct(
         private readonly AppShellRepository $repository = new AppShellRepository(),
-        private readonly PermissionRepository $permissions = new PermissionRepository()
+        private readonly PermissionRepository $permissions = new PermissionRepository(),
+        private readonly CompanyPlanFeatureService $planFeatures = new CompanyPlanFeatureService()
     ) {}
 
     public function resolveForUser(?array $user): array
@@ -84,6 +86,9 @@ final class AppShellService
         $roleId = (int) ($normalizedUser['role_id'] ?? 0);
         $roleSlug = strtolower(trim((string) ($normalizedUser['role_slug'] ?? '')));
         $permissionSet = $this->permissionSetForRole($roleId);
+        $companyFeatureState = $context === 'company'
+            ? $this->planFeatures->featureStateForCompany((int) ($normalizedUser['company_id'] ?? 0))
+            : [];
 
         $visibleItems = [];
         foreach ($items as $item) {
@@ -104,6 +109,11 @@ final class AppShellService
 
             $permission = trim((string) ($item['permission'] ?? ''));
             if ($permission !== '' && !isset($permissionSet[$permission])) {
+                continue;
+            }
+
+            $planFeature = trim((string) ($item['plan_feature'] ?? ''));
+            if ($context === 'company' && $planFeature !== '' && empty($companyFeatureState[$planFeature])) {
                 continue;
             }
 
@@ -226,6 +236,13 @@ final class AppShellService
                 'label' => 'Entregas',
                 'description' => 'Roteiro e status',
                 'permission' => 'orders.view',
+            ],
+            [
+                'href' => '/admin/stock',
+                'label' => 'Estoque',
+                'description' => 'Controle e movimentacao',
+                'permission' => 'stock.view',
+                'plan_feature' => 'estoque',
             ],
             [
                 'href' => '/admin/payments',

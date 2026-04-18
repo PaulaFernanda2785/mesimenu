@@ -1395,6 +1395,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', false,
         'relatorios', true
@@ -1414,6 +1417,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', true,
         'relatorios', true,
@@ -1435,6 +1441,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', true,
         'relatorios', true,
@@ -1543,7 +1552,9 @@ INSERT INTO permissions (id, module, action, slug, description) VALUES
 (35, 'subscriptions', 'view', 'subscriptions.view', 'Visualizar assinaturas'),
 (36, 'subscriptions', 'manage', 'subscriptions.manage', 'Gerenciar assinaturas'),
 (37, 'support', 'view', 'support.view', 'Visualizar chamados'),
-(38, 'support', 'manage', 'support.manage', 'Gerenciar chamados');
+(38, 'support', 'manage', 'support.manage', 'Gerenciar chamados'),
+(39, 'stock', 'view', 'stock.view', 'Visualizar estoque'),
+(40, 'stock', 'manage', 'stock.manage', 'Gerenciar estoque');
 
 -- Admin establishment: recebe todas as permissões
 INSERT INTO role_permissions (role_id, permission_id)
@@ -1571,6 +1582,8 @@ WHERE slug IN (
     'orders.cancel',
     'payments.view',
     'payments.create',
+    'stock.view',
+    'stock.manage',
     'cash_registers.open',
     'cash_registers.close',
     'reports.view',
@@ -1601,7 +1614,9 @@ WHERE slug IN (
     'orders.status',
     'orders.cancel',
     'payments.view',
-    'reports.view'
+    'reports.view',
+    'stock.view',
+    'stock.manage'
 );
 
 -- Cashier

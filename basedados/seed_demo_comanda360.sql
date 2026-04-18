@@ -27,6 +27,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', false,
         'relatorios', true
@@ -40,6 +43,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', true,
         'relatorios', true,
@@ -55,6 +61,9 @@ INSERT INTO plans (
     JSON_OBJECT(
         'cardapio_digital', true,
         'qrcode_mesa', true,
+        'comandas', true,
+        'cozinha', true,
+        'pagamentos', true,
         'caixa', true,
         'delivery', true,
         'relatorios', true,
@@ -196,7 +205,9 @@ INSERT INTO permissions (id, module, action, slug, description) VALUES
 (35, 'subscriptions', 'view', 'subscriptions.view', 'Visualizar assinaturas'),
 (36, 'subscriptions', 'manage', 'subscriptions.manage', 'Gerenciar assinaturas'),
 (37, 'support', 'view', 'support.view', 'Visualizar chamados'),
-(38, 'support', 'manage', 'support.manage', 'Gerenciar chamados')
+(38, 'support', 'manage', 'support.manage', 'Gerenciar chamados'),
+(39, 'stock', 'view', 'stock.view', 'Visualizar estoque'),
+(40, 'stock', 'manage', 'stock.manage', 'Gerenciar estoque')
 ON DUPLICATE KEY UPDATE
 module = VALUES(module),
 action = VALUES(action),
@@ -229,6 +240,8 @@ WHERE slug IN (
     'orders.cancel',
     'payments.view',
     'payments.create',
+    'stock.view',
+    'stock.manage',
     'cash_registers.open',
     'cash_registers.close',
     'reports.view',
@@ -245,7 +258,7 @@ WHERE slug IN (
     'dashboard.view','products.view','products.edit','products.pause','categories.view',
     'additionals.view','tables.view','tables.manage','commands.view','commands.create',
     'commands.edit','orders.view','orders.create','orders.status','orders.cancel',
-    'payments.view','reports.view'
+    'payments.view','reports.view','stock.view','stock.manage'
 );
 
 INSERT INTO role_permissions (role_id, permission_id)

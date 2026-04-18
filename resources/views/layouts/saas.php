@@ -271,7 +271,115 @@ $routeMatches = static function (string $path, array $routes): bool {
 <script>
 (() => {
     const idleTimeoutMs = <?= (int) $idleTimeoutSeconds ?> * 1000;
+    const scrollStateKey = 'comanda360:scroll-restore';
     const submitControls = (form) => Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
+    const getScrollTarget = () => {
+        const main = document.querySelector('main');
+        if (main instanceof HTMLElement) {
+            const style = window.getComputedStyle(main);
+            const overflowY = style.overflowY || style.overflow;
+            if (['auto', 'scroll', 'overlay'].includes(overflowY) && main.scrollHeight > main.clientHeight) {
+                return main;
+            }
+        }
+
+        return window;
+    };
+    const readScrollPosition = () => {
+        const target = getScrollTarget();
+        if (target === window) {
+            return { x: window.scrollX, y: window.scrollY };
+        }
+
+        return { x: target.scrollLeft, y: target.scrollTop };
+    };
+    const writeScrollPosition = (position) => {
+        const target = getScrollTarget();
+        const left = Number(position && Object.prototype.hasOwnProperty.call(position, 'x') ? position.x : 0);
+        const top = Number(position && Object.prototype.hasOwnProperty.call(position, 'y') ? position.y : 0);
+
+        if (target === window) {
+            window.scrollTo(left, top);
+            return;
+        }
+
+        target.scrollTo(left, top);
+    };
+    const persistScrollRestore = (targetPath) => {
+        if (typeof sessionStorage === 'undefined' || targetPath === '') {
+            return;
+        }
+
+        const position = readScrollPosition();
+        sessionStorage.setItem(scrollStateKey, JSON.stringify({
+            path: targetPath,
+            x: position.x,
+            y: position.y,
+            expires_at: Date.now() + 15000,
+        }));
+    };
+    const restoreScrollPosition = () => {
+        if (typeof sessionStorage === 'undefined') {
+            return;
+        }
+
+        const rawState = sessionStorage.getItem(scrollStateKey);
+        if (!rawState) {
+            return;
+        }
+
+        sessionStorage.removeItem(scrollStateKey);
+
+        try {
+            const state = JSON.parse(rawState);
+            if (!state || state.path !== window.location.pathname || Number(state.expires_at ?? 0) < Date.now()) {
+                return;
+            }
+
+            const runRestore = () => writeScrollPosition(state);
+            window.requestAnimationFrame(() => {
+                runRestore();
+                window.requestAnimationFrame(runRestore);
+            });
+            window.setTimeout(runRestore, 120);
+        } catch (_error) {
+            sessionStorage.removeItem(scrollStateKey);
+        }
+    };
+    const shouldPersistFormScroll = (form) => {
+        if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() !== 'get') {
+            return false;
+        }
+
+        if (form.dataset.preserveScroll === 'false' || form.target === '_blank') {
+            return false;
+        }
+
+        return true;
+    };
+    const shouldPersistLinkScroll = (link) => {
+        if (!(link instanceof HTMLAnchorElement)) {
+            return false;
+        }
+
+        if (link.dataset.preserveScroll === 'false' || link.target === '_blank' || link.hasAttribute('download')) {
+            return false;
+        }
+
+        const href = link.getAttribute('href') ?? '';
+        if (href === '' || href.startsWith('#')) {
+            return false;
+        }
+
+        const url = new URL(link.href, window.location.href);
+        if (url.origin !== window.location.origin || url.pathname !== window.location.pathname) {
+            return false;
+        }
+
+        return url.search !== window.location.search && url.search !== '';
+    };
+
+    restoreScrollPosition();
 
     const loading = (control) => {
         if (!control || control.dataset.processing === '1') {
@@ -292,7 +400,18 @@ $routeMatches = static function (string $path, array $routes): bool {
 
     document.addEventListener('submit', (event) => {
         const form = event.target;
-        if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() !== 'post') {
+        if (!(form instanceof HTMLFormElement)) {
+            return;
+        }
+
+        if (shouldPersistFormScroll(form)) {
+            const action = form.getAttribute('action') || window.location.pathname;
+            const url = new URL(action, window.location.href);
+            persistScrollRestore(url.pathname);
+            return;
+        }
+
+        if (form.method.toLowerCase() !== 'post') {
             return;
         }
         if (form.dataset.submitting === '1') {
@@ -311,6 +430,21 @@ $routeMatches = static function (string $path, array $routes): bool {
         if (preferred) {
             loading(preferred);
         }
+    });
+
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        const link = target.closest('a');
+        if (!shouldPersistLinkScroll(link)) {
+            return;
+        }
+
+        const url = new URL(link.href, window.location.href);
+        persistScrollRestore(url.pathname);
     });
 
     const logoutForm = document.querySelector('.logout-form');

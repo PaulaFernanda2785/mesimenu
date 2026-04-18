@@ -4,6 +4,7 @@ $plans = is_array($planPanel['plans'] ?? null) ? $planPanel['plans'] : [];
 $filters = is_array($planPanel['filters'] ?? null) ? $planPanel['filters'] : [];
 $summary = is_array($planPanel['summary'] ?? null) ? $planPanel['summary'] : [];
 $pagination = is_array($planPanel['pagination'] ?? null) ? $planPanel['pagination'] : [];
+$featureCatalog = is_array($planPanel['feature_catalog'] ?? null) ? $planPanel['feature_catalog'] : [];
 $canManagePlans = (bool) ($canManagePlans ?? false);
 
 $planSearch = trim((string) ($filters['search'] ?? ''));
@@ -84,17 +85,23 @@ $formatFeaturesPreview = static function (mixed $value): string {
     return is_string($pretty) && $pretty !== '' ? $pretty : $raw;
 };
 
-$featureStateFromJson = static function (mixed $value): array {
-    $defaults = [
-        'cardapio_digital' => false,
-        'qrcode_mesa' => false,
-        'caixa' => false,
-        'delivery' => false,
-        'relatorios' => false,
-    ];
+$featureStateFromJson = static function (mixed $value) use ($featureCatalog): array {
+    $defaults = [];
+    foreach ($featureCatalog as $feature) {
+        if (!is_array($feature)) {
+            continue;
+        }
+
+        $key = trim((string) ($feature['key'] ?? ''));
+        if ($key === '') {
+            continue;
+        }
+
+        $defaults[$key] = false;
+    }
 
     $raw = trim((string) $value);
-    if ($raw === '') {
+    if ($raw === '' || $defaults === []) {
         return $defaults;
     }
 
@@ -366,26 +373,22 @@ $featureStateFromJson = static function (mixed $value): array {
                                                     <div class="field full">
                                                         <label>Recursos de negocio</label>
                                                         <div class="saas-plan-feature-grid">
-                                                            <label class="saas-plan-feature-option">
-                                                                <input type="checkbox" name="cardapio_digital" value="1" <?= !empty($featureState['cardapio_digital']) ? 'checked' : '' ?>>
-                                                                <span><strong>Cardapio digital</strong><small>Habilita operacao de cardapio e catalogo comercial.</small></span>
-                                                            </label>
-                                                            <label class="saas-plan-feature-option">
-                                                                <input type="checkbox" name="qrcode_mesa" value="1" <?= !empty($featureState['qrcode_mesa']) ? 'checked' : '' ?>>
-                                                                <span><strong>QR Code de mesa</strong><small>Permite experiencia de salao vinculada a mesas e comandas.</small></span>
-                                                            </label>
-                                                            <label class="saas-plan-feature-option">
-                                                                <input type="checkbox" name="caixa" value="1" <?= !empty($featureState['caixa']) ? 'checked' : '' ?>>
-                                                                <span><strong>Caixa</strong><small>Habilita operacao financeira e fechamento de caixa.</small></span>
-                                                            </label>
-                                                            <label class="saas-plan-feature-option">
-                                                                <input type="checkbox" name="delivery" value="1" <?= !empty($featureState['delivery']) ? 'checked' : '' ?>>
-                                                                <span><strong>Delivery</strong><small>Habilita fluxo de entregas, zonas e acompanhamento.</small></span>
-                                                            </label>
-                                                            <label class="saas-plan-feature-option">
-                                                                <input type="checkbox" name="relatorios" value="1" <?= !empty($featureState['relatorios']) ? 'checked' : '' ?>>
-                                                                <span><strong>Relatorios</strong><small>Libera leitura gerencial e visoes consolidadas.</small></span>
-                                                            </label>
+                                                            <?php foreach ($featureCatalog as $feature): ?>
+                                                                <?php
+                                                                $featureKey = trim((string) ($feature['key'] ?? ''));
+                                                                if ($featureKey === '') {
+                                                                    continue;
+                                                                }
+                                                                ?>
+                                                                <label class="saas-plan-feature-option">
+                                                                    <input type="hidden" name="<?= htmlspecialchars($featureKey) ?>" value="0">
+                                                                    <input type="checkbox" name="<?= htmlspecialchars($featureKey) ?>" value="1" <?= !empty($featureState[$featureKey]) ? 'checked' : '' ?>>
+                                                                    <span>
+                                                                        <strong><?= htmlspecialchars((string) ($feature['label'] ?? $featureKey)) ?></strong>
+                                                                        <small><?= htmlspecialchars((string) ($feature['description'] ?? '')) ?></small>
+                                                                    </span>
+                                                                </label>
+                                                            <?php endforeach; ?>
                                                         </div>
                                                     </div>
                                                     <div class="field full">
@@ -520,26 +523,22 @@ $featureStateFromJson = static function (mixed $value): array {
                             <div class="field full">
                                 <label>Recursos de negocio</label>
                                 <div class="saas-plan-feature-grid">
-                                    <label class="saas-plan-feature-option">
-                                        <input type="checkbox" name="cardapio_digital" value="1" checked>
-                                        <span><strong>Cardapio digital</strong><small>Habilita operacao de cardapio e catalogo comercial.</small></span>
-                                    </label>
-                                    <label class="saas-plan-feature-option">
-                                        <input type="checkbox" name="qrcode_mesa" value="1" checked>
-                                        <span><strong>QR Code de mesa</strong><small>Permite experiencia de salao vinculada a mesas e comandas.</small></span>
-                                    </label>
-                                    <label class="saas-plan-feature-option">
-                                        <input type="checkbox" name="caixa" value="1" checked>
-                                        <span><strong>Caixa</strong><small>Habilita operacao financeira e fechamento de caixa.</small></span>
-                                    </label>
-                                    <label class="saas-plan-feature-option">
-                                        <input type="checkbox" name="delivery" value="1">
-                                        <span><strong>Delivery</strong><small>Habilita fluxo de entregas, zonas e acompanhamento.</small></span>
-                                    </label>
-                                    <label class="saas-plan-feature-option">
-                                        <input type="checkbox" name="relatorios" value="1" checked>
-                                        <span><strong>Relatorios</strong><small>Libera leitura gerencial e visoes consolidadas.</small></span>
-                                    </label>
+                                    <?php foreach ($featureCatalog as $feature): ?>
+                                        <?php
+                                        $featureKey = trim((string) ($feature['key'] ?? ''));
+                                        if ($featureKey === '') {
+                                            continue;
+                                        }
+                                        ?>
+                                        <label class="saas-plan-feature-option">
+                                            <input type="hidden" name="<?= htmlspecialchars($featureKey) ?>" value="0">
+                                            <input type="checkbox" name="<?= htmlspecialchars($featureKey) ?>" value="1" <?= !empty($feature['default']) ? 'checked' : '' ?>>
+                                            <span>
+                                                <strong><?= htmlspecialchars((string) ($feature['label'] ?? $featureKey)) ?></strong>
+                                                <small><?= htmlspecialchars((string) ($feature['description'] ?? '')) ?></small>
+                                            </span>
+                                        </label>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>

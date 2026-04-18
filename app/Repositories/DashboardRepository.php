@@ -24,6 +24,7 @@ final class DashboardRepository extends BaseRepository
         'tables',
         'commands',
         'orders',
+        'stock',
         'payments',
         'cash_registers',
         'reports',

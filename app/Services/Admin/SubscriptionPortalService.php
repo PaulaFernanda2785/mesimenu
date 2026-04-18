@@ -8,6 +8,7 @@ use App\Exceptions\ValidationException;
 use App\Repositories\CompanyRepository;
 use App\Repositories\SubscriptionPaymentRepository;
 use App\Repositories\SubscriptionRepository;
+use App\Services\Shared\PlanFeatureCatalogService;
 use DateTimeImmutable;
 use Throwable;
 
@@ -19,7 +20,8 @@ final class SubscriptionPortalService
         private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository(),
         private readonly SubscriptionPaymentRepository $subscriptionPayments = new SubscriptionPaymentRepository(),
         private readonly CompanyRepository $companies = new CompanyRepository(),
-        private readonly SubscriptionGatewayService $gatewayService = new SubscriptionGatewayService()
+        private readonly SubscriptionGatewayService $gatewayService = new SubscriptionGatewayService(),
+        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService()
     ) {}
 
     public function panel(int $companyId, array $filters = []): array
@@ -714,44 +716,7 @@ final class SubscriptionPortalService
 
     private function extractFeatureSummary(array $subscription): array
     {
-        $raw = trim((string) ($subscription['plan_features_json'] ?? ''));
-        if ($raw === '') {
-            return [];
-        }
-
-        $decoded = json_decode($raw, true);
-        if (!is_array($decoded)) {
-            return [];
-        }
-
-        $featureLabels = [
-            'cardapio_digital' => 'Cardapio digital',
-            'qrcode_mesa' => 'QR Code de mesa',
-            'caixa' => 'Caixa',
-            'delivery' => 'Delivery',
-            'relatorios' => 'Relatorios',
-        ];
-
-        $features = [];
-        foreach ($featureLabels as $key => $label) {
-            if (!empty($decoded[$key])) {
-                $features[] = $label;
-            }
-        }
-
-        $limitLabels = [
-            'usuarios_ilimitados' => 'Usuarios ilimitados',
-            'produtos_ilimitados' => 'Produtos ilimitados',
-            'mesas_ilimitadas' => 'Mesas ilimitadas',
-        ];
-
-        foreach ($limitLabels as $key => $label) {
-            if (!empty($decoded[$key])) {
-                $features[] = $label;
-            }
-        }
-
-        return $features;
+        return $this->featureCatalog->summaryFromJson($subscription['plan_features_json'] ?? null);
     }
 
     private function ensurePixPayload(array $payment): array

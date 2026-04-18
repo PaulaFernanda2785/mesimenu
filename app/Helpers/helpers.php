@@ -390,6 +390,15 @@ if (!function_exists('status_label')) {
                 'ativo' => 'Ativa',
                 'inativo' => 'Inativa',
             ],
+            'stock_item_status' => [
+                'ativo' => 'Ativo',
+                'inativo' => 'Inativo',
+            ],
+            'stock_movement_type' => [
+                'entry' => 'Entrada',
+                'exit' => 'Saida',
+                'adjustment' => 'Ajuste',
+            ],
             'company_status' => [
                 'ativa' => 'Ativa',
                 'active' => 'Ativa',
@@ -513,6 +522,15 @@ if (!function_exists('status_badge_class')) {
             'delivery_zone_status' => [
                 'ativo' => 'status-active',
                 'inativo' => 'status-inactive',
+            ],
+            'stock_item_status' => [
+                'ativo' => 'status-active',
+                'inativo' => 'status-inactive',
+            ],
+            'stock_movement_type' => [
+                'entry' => 'status-paid',
+                'exit' => 'status-overdue',
+                'adjustment' => 'status-preparing',
             ],
             'subscription_status' => [
                 'ativa' => 'status-active',
