@@ -11,7 +11,7 @@ use App\Services\Admin\SubscriptionPortalService;
 
 final class SubscriptionPaymentService
 {
-    private const PAYMENT_LIST_PER_PAGE = 12;
+    private const PAYMENT_LIST_PER_PAGE = 10;
 
     public function __construct(
         private readonly SubscriptionPaymentRepository $subscriptionPayments = new SubscriptionPaymentRepository(),

@@ -50,6 +50,18 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
 ?>
 
 <section class="dash-section<?= $activeSection === 'overview' ? ' active' : '' ?>" data-section="overview">
+    <style>
+        .dash-sales-day-card{display:grid;gap:8px}
+        .dash-sales-day-card .dash-bar-row{display:grid;grid-template-columns:46px minmax(0,1fr) 150px;gap:8px;align-items:center}
+        .dash-sales-day-card .dash-label,
+        .dash-sales-day-card .dash-value{white-space:nowrap;font-size:12px;line-height:1.2}
+        .dash-sales-day-card .dash-value{text-align:right;font-variant-numeric:tabular-nums}
+        @media (max-width:760px){
+            .dash-sales-day-card .dash-bar-row{grid-template-columns:42px minmax(0,1fr) 126px}
+            .dash-sales-day-card .dash-label,
+            .dash-sales-day-card .dash-value{font-size:11px}
+        }
+    </style>
     <div class="card" style="background:linear-gradient(115deg,#0f172a 0%,#1e293b 55%,#334155 100%);color:#fff;overflow:hidden;position:relative">
         <div style="position:absolute;top:-38px;right:-60px;width:220px;height:220px;border-radius:999px;background:rgba(56,189,248,.18)"></div>
         <div style="position:absolute;bottom:-50px;left:-42px;width:200px;height:200px;border-radius:999px;background:rgba(34,197,94,.15)"></div>
@@ -149,7 +161,7 @@ $donutBackground = $donutStops !== [] ? implode(', ', $donutStops) : '#e2e8f0 0%
     </div>
 
     <div class="dash-grid-2">
-        <div class="card">
+        <div class="card dash-sales-day-card">
             <h3 style="margin-top:0">Evolução de vendas por dia</h3>
             <?php if ($salesByDay === []): ?>
                 <div class="empty-state">Sem dados no período selecionado.</div>

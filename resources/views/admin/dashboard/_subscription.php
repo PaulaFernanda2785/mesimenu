@@ -150,7 +150,7 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
     <div class="sp-shell">
         <div class="sp-hero">
             <h2>Pague sua assinatura via PIX</h2>
-            <p>O caminho principal aqui ficou direto: gerar o PIX da próxima cobrança, pagar no banco e depois atualizar o status. O restante do histórico continua disponível para consulta e conferência.</p>
+            <p>O fluxo principal agora e simples: gerar o PIX da proxima cobranca, pagar no banco e deixar o sistema confirmar automaticamente. O botao de sincronizacao continua disponivel apenas como apoio quando voce quiser forcar uma consulta imediata.</p>
         </div>
 
         <?php if ($subscription === []): ?>
@@ -189,7 +189,7 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                         <div class="sp-head">
                             <div>
                                 <h3>Como pagar agora</h3>
-                                <p class="sp-note">Esse é o fluxo recomendado para a empresa. Sem termos técnicos e sem vários caminhos diferentes.</p>
+                                <p class="sp-note">Esse e o fluxo recomendado para a empresa. Um caminho principal, sem termos tecnicos e sem decisao operacional desnecessaria para o usuario.</p>
                             </div>
                         </div>
 
@@ -197,22 +197,22 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                             <div class="sp-step">
                                 <div class="sp-step-num">1</div>
                                 <div>
-                                    <strong>Gerar o PIX da próxima cobrança</strong>
-                                    <p>O sistema busca o QR real da cobrança atual para você pagar no aplicativo do banco.</p>
+                                    <strong>Gerar o PIX da proxima cobranca</strong>
+                                    <p>O sistema busca o QR real da cobranca atual para voce pagar no aplicativo do banco.</p>
                                 </div>
                             </div>
                             <div class="sp-step">
                                 <div class="sp-step-num">2</div>
                                 <div>
                                     <strong>Fazer o pagamento no banco</strong>
-                                    <p>Use o QR Code ou o código copia e cola. Não é preciso preencher cartão nem passar por autorização recorrente.</p>
+                                    <p>Use o QR Code ou o codigo copia e cola. Nao e preciso preencher cartao nem passar por autorizacao recorrente.</p>
                                 </div>
                             </div>
                             <div class="sp-step">
                                 <div class="sp-step-num">3</div>
                                 <div>
-                                    <strong>Atualizar o status no sistema</strong>
-                                    <p>Depois do pagamento, clique em atualizar status para o sistema consultar o gateway e confirmar se a cobrança já foi reconhecida.</p>
+                                    <strong>Aguardar a confirmacao automatica</strong>
+                                    <p>Depois do pagamento, a tela verifica o gateway sozinha e muda o status para pago. Se voce quiser acelerar a consulta, use o botao de sincronizacao.</p>
                                 </div>
                             </div>
                         </div>
@@ -222,10 +222,10 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                         <div class="sp-charge">
                             <div class="sp-charge-top">
                                 <div>
-                                    <strong>Pagar cobrança atual</strong>
+                                    <strong>Pagar cobranca atual</strong>
                                     <div class="sp-note">
-                                        Referência <?= htmlspecialchars(sprintf('%02d/%04d', (int) ($currentCharge['reference_month'] ?? 0), (int) ($currentCharge['reference_year'] ?? 0))) ?>
-                                        • vencimento em <?= htmlspecialchars($formatSubscriptionDate($currentCharge['due_date'] ?? null)) ?>
+                                        Referencia <?= htmlspecialchars(sprintf('%02d/%04d', (int) ($currentCharge['reference_month'] ?? 0), (int) ($currentCharge['reference_year'] ?? 0))) ?>
+                                        - vencimento em <?= htmlspecialchars($formatSubscriptionDate($currentCharge['due_date'] ?? null)) ?>
                                     </div>
                                 </div>
                                 <span class="badge <?= htmlspecialchars(status_badge_class('subscription_payment_status', (string) ($currentCharge['status'] ?? ''))) ?>">
@@ -239,12 +239,12 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                                     <strong><?= htmlspecialchars($formatSubscriptionMoney($currentCharge['amount'] ?? 0)) ?></strong>
                                 </div>
                                 <div class="sp-meta-box">
-                                    <span>Método atual</span>
+                                    <span>Metodo atual</span>
                                     <strong><?= htmlspecialchars($paymentMethodLabels[(string) ($currentCharge['payment_method'] ?? '')] ?? 'Pix') ?></strong>
                                 </div>
                                 <div class="sp-meta-box">
-                                    <span>Origem</span>
-                                    <strong><?= htmlspecialchars((string) ($currentCharge['charge_origin'] ?? 'pix')) ?></strong>
+                                    <span>Fluxo</span>
+                                    <strong><?= htmlspecialchars($currentGatewayPaymentId !== '' ? 'Automatico via gateway' : 'Manual sem vinculo') ?></strong>
                                 </div>
                             </div>
 
@@ -263,13 +263,13 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                                 <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/subscription/gateway/sync')) ?>">
                                     <?= form_security_fields('dashboard.subscription.gateway.sync') ?>
                                     <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnSubscriptionQuery) ?>">
-                                    <button class="btn secondary" type="submit">Atualizar status</button>
+                                    <button class="btn secondary" type="submit">Sincronizar agora</button>
                                 </form>
                             </div>
 
                             <?php if ($shouldAutoPollPixStatus): ?>
                                 <div class="sp-note" id="pix-auto-status-note">
-                                    Aguardando confirmacao automatica do pagamento no gateway. Esta tela verifica o status sozinha a cada 20 segundos.
+                                    Aguardando confirmacao automatica do pagamento no gateway. Esta tela consulta o status sozinha a cada 20 segundos.
                                 </div>
                             <?php endif; ?>
 
@@ -281,7 +281,7 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                                         <?php elseif ($currentPixFallbackImageUrl !== ''): ?>
                                             <img src="<?= htmlspecialchars($currentPixFallbackImageUrl) ?>" alt="QR Code PIX">
                                         <?php else: ?>
-                                            <span class="sp-note">QR real ainda não retornado pelo gateway.</span>
+                                            <span class="sp-note">QR real ainda nao retornado pelo gateway.</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="sp-qr-data">
@@ -289,7 +289,7 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                                             <label>PIX copia e cola</label>
                                             <textarea readonly><?= htmlspecialchars($currentPixPayload !== '' ? $currentPixPayload : (string) ($currentCharge['pix_code'] ?? '')) ?></textarea>
                                         </div>
-                                        <div class="sp-note">Se você já pagou e o status continuar pendente, clique em atualizar status. Se ainda assim não mudar, fale com a equipe técnica.</div>
+                                        <div class="sp-note">Depois do pagamento, aguarde alguns instantes para a confirmacao automatica. Se o status nao mudar, use sincronizar agora. Se ainda assim nao atualizar, fale com a equipe tecnica.</div>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -297,7 +297,7 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                     <?php else: ?>
                         <div class="card">
                             <div class="empty-state">
-                                Não existe cobrança em aberto agora. Se você já regularizou a assinatura, aguarde o próximo ciclo.
+                                Nao existe cobranca em aberto agora. Se voce ja regularizou a assinatura, aguarde o proximo ciclo.
                             </div>
                         </div>
                     <?php endif; ?>
@@ -464,15 +464,15 @@ $nextDueDate = $subscriptionSummary['next_due_date'] ?? ($subscriptionBillingAcc
                             <div class="sp-step">
                                 <div class="sp-step-num">A</div>
                                 <div>
-                                    <strong>Empresa paga via PIX</strong>
-                                    <p>Sem cartão e sem múltiplos caminhos na mesma tela.</p>
+                                    <strong>Sistema confirma automaticamente</strong>
+                                    <p>A tela da empresa e a rotina do servidor consultam o gateway para marcar a cobranca como paga sem depender de acao manual em toda cobranca.</p>
                                 </div>
                             </div>
                             <div class="sp-step">
                                 <div class="sp-step-num">B</div>
                                 <div>
-                                    <strong>Sistema consulta o status</strong>
-                                    <p>O botão atualizar status e o lote do servidor fazem a conciliação sem depender do webhook para a rotina principal.</p>
+                                    <strong>SaaS administra so as excecoes</strong>
+                                    <p>Quando precisar, o administrador acompanha atraso, sincroniza divergencias e trata apenas os casos fora do fluxo normal.</p>
                                 </div>
                             </div>
                             <div class="sp-step">
