@@ -2,8 +2,13 @@
 $summary = is_array($summary ?? null) ? $summary : [];
 $productTabs = is_array($productTabs ?? null) ? $productTabs : [];
 $categories = is_array($categories ?? null) ? $categories : [];
+$productPlanLimit = is_array($productPlanLimit ?? null) ? $productPlanLimit : [];
 $canManageProducts = !empty($canManageProducts);
 $canCreateProducts = !empty($canCreateProducts);
+$productPlanReached = !empty($productPlanLimit['reached']);
+$productPlanUsageLabel = trim((string) ($productPlanLimit['usage_label'] ?? ''));
+$productPlanName = trim((string) ($productPlanLimit['plan_name'] ?? 'Plano atual'));
+$productPlanLimitLabel = trim((string) ($productPlanLimit['limit_label'] ?? 'Ilimitado'));
 ?>
 
 <style>
@@ -52,8 +57,10 @@ $canCreateProducts = !empty($canCreateProducts);
             <h1>Produtos</h1>
             <p>Painel de catalogo com abas por categoria, filtro inteligente e acoes rapidas.</p>
         </div>
-        <?php if ($canCreateProducts): ?>
+        <?php if ($canCreateProducts && !$productPlanReached): ?>
             <a class="btn" href="<?= htmlspecialchars(base_url('/admin/products/create')) ?>">Novo produto</a>
+        <?php elseif ($canCreateProducts): ?>
+            <span class="btn secondary" style="opacity:.65;cursor:not-allowed">Limite do plano atingido</span>
         <?php endif; ?>
     </div>
 
@@ -66,17 +73,27 @@ $canCreateProducts = !empty($canCreateProducts);
                 <span class="ops-hero-pill"><?= (int) ($summary['total'] ?? 0) ?> produtos no painel</span>
                 <span class="ops-hero-pill"><?= (int) ($summary['categories_total'] ?? 0) ?> categorias estruturadas</span>
                 <span class="ops-hero-pill"><?= (int) ($summary['with_additionals'] ?? 0) ?> itens com adicionais</span>
+                <span class="ops-hero-pill"><?= htmlspecialchars($productPlanName) ?>: <?= htmlspecialchars($productPlanUsageLabel !== '' ? $productPlanUsageLabel : ((int) ($summary['total'] ?? 0) . ' cadastrados')) ?></span>
             </div>
         </div>
         <div class="ops-hero-actions">
-            <?php if ($canCreateProducts): ?>
+            <?php if ($canCreateProducts && !$productPlanReached): ?>
                 <a class="btn" href="<?= htmlspecialchars(base_url('/admin/products/create')) ?>">Novo produto</a>
+            <?php elseif ($canCreateProducts): ?>
+                <span class="btn secondary" style="opacity:.65;cursor:not-allowed">Limite: <?= htmlspecialchars($productPlanLimitLabel) ?></span>
             <?php endif; ?>
             <?php if ($canManageProducts): ?>
                 <a class="btn secondary" href="#productCategoriesPanel">Categorias</a>
             <?php endif; ?>
         </div>
     </section>
+
+    <?php if ($productPlanReached): ?>
+        <div class="card" style="border:1px solid #f59e0b;background:linear-gradient(135deg,#fff7ed 0%,#fffbeb 100%)">
+            <strong style="display:block;margin-bottom:6px;color:#9a3412">Limite de produtos atingido</strong>
+            <p style="margin:0;color:#7c2d12">O plano atual permite ate <?= htmlspecialchars($productPlanLimitLabel) ?> produtos cadastrados. Para incluir novos itens, ajuste o plano no SaaS ou reduza o catalogo atual.</p>
+        </div>
+    <?php endif; ?>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= (int) ($summary['total'] ?? 0) ?></strong><span>Produtos</span></div>

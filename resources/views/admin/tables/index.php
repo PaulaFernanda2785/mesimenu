@@ -1,9 +1,14 @@
 <?php
 $summary = is_array($summary ?? null) ? $summary : [];
 $tables = is_array($tables ?? null) ? $tables : [];
+$tablePlanLimit = is_array($tablePlanLimit ?? null) ? $tablePlanLimit : [];
 $ordersByTableNumber = is_array($ordersByTableNumber ?? null) ? $ordersByTableNumber : [];
 $commandsByTableNumber = is_array($commandsByTableNumber ?? null) ? $commandsByTableNumber : [];
 $canManageTables = !empty($canManageTables);
+$tablePlanReached = !empty($tablePlanLimit['reached']);
+$tablePlanUsageLabel = trim((string) ($tablePlanLimit['usage_label'] ?? ''));
+$tablePlanName = trim((string) ($tablePlanLimit['plan_name'] ?? 'Plano atual'));
+$tablePlanLimitLabel = trim((string) ($tablePlanLimit['limit_label'] ?? 'Ilimitado'));
 
 $operationalSummary = [
     'pending' => 0,
@@ -132,8 +137,10 @@ foreach ($ordersByTableNumber as $tablePanel) {
             <h1>Mesas</h1>
             <p>Painel operacional com status da mesa, comandas e pedidos ativos.</p>
         </div>
-        <?php if ($canManageTables): ?>
+        <?php if ($canManageTables && !$tablePlanReached): ?>
             <a class="btn" href="<?= htmlspecialchars(base_url('/admin/tables/create')) ?>">Nova mesa</a>
+        <?php elseif ($canManageTables): ?>
+            <span class="btn secondary" style="opacity:.65;cursor:not-allowed">Limite do plano atingido</span>
         <?php endif; ?>
     </div>
 
@@ -146,15 +153,25 @@ foreach ($ordersByTableNumber as $tablePanel) {
                 <span class="ops-hero-pill"><?= (int) ($summary['total'] ?? 0) ?> mesas cadastradas</span>
                 <span class="ops-hero-pill"><?= (int) ($summary['ocupada'] ?? 0) ?> em atendimento</span>
                 <span class="ops-hero-pill"><?= array_sum($operationalSummary) ?> pedidos ligados às mesas</span>
+                <span class="ops-hero-pill"><?= htmlspecialchars($tablePlanName) ?>: <?= htmlspecialchars($tablePlanUsageLabel !== '' ? $tablePlanUsageLabel : ((int) ($summary['total'] ?? 0) . ' cadastradas')) ?></span>
             </div>
         </div>
         <div class="ops-hero-actions">
-            <?php if ($canManageTables): ?>
+            <?php if ($canManageTables && !$tablePlanReached): ?>
                 <a class="btn" href="<?= htmlspecialchars(base_url('/admin/tables/create')) ?>">Nova mesa</a>
+            <?php elseif ($canManageTables): ?>
+                <span class="btn secondary" style="opacity:.65;cursor:not-allowed">Limite: <?= htmlspecialchars($tablePlanLimitLabel) ?></span>
             <?php endif; ?>
             <a class="btn secondary" href="#tablesGrid">Mapa operacional</a>
         </div>
     </section>
+
+    <?php if ($tablePlanReached): ?>
+        <div class="card" style="border:1px solid #f59e0b;background:linear-gradient(135deg,#fff7ed 0%,#fffbeb 100%)">
+            <strong style="display:block;margin-bottom:6px;color:#9a3412">Limite de mesas atingido</strong>
+            <p style="margin:0;color:#7c2d12">O plano atual permite ate <?= htmlspecialchars($tablePlanLimitLabel) ?> mesas cadastradas. Para criar novas mesas, ajuste o plano no SaaS ou reduza a estrutura atual.</p>
+        </div>
+    <?php endif; ?>
 
     <div class="kpi-grid">
         <div class="kpi-item"><strong><?= (int) ($summary['total'] ?? 0) ?></strong><span>Total de mesas</span></div>

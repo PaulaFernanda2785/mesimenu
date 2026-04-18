@@ -50,6 +50,18 @@ final class TableRepository extends BaseRepository
         return (int) $this->db()->lastInsertId();
     }
 
+    public function countByCompany(int $companyId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*)
+            FROM tables
+            WHERE company_id = :company_id
+        ");
+        $stmt->execute(['company_id' => $companyId]);
+
+        return (int) ($stmt->fetchColumn() ?: 0);
+    }
+
     public function findByNumber(int $companyId, int $number, ?int $ignoreTableId = null): ?array
     {
         $sql = "

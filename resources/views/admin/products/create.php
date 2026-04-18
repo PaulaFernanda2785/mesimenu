@@ -4,6 +4,7 @@ $mode = (string) ($mode ?? 'create');
 $isEdit = $mode === 'edit';
 $formAction = (string) ($formAction ?? base_url('/admin/products/store'));
 $submitLabel = (string) ($submitLabel ?? 'Salvar produto');
+$productPlanLimit = is_array($productPlanLimit ?? null) ? $productPlanLimit : [];
 $existingImagePath = product_image_url((string) ($product['image_path'] ?? ''));
 $operationalStatus = 'ativo';
 if (isset($product['is_paused']) && (int) $product['is_paused'] === 1) {
@@ -12,6 +13,10 @@ if (isset($product['is_paused']) && (int) $product['is_paused'] === 1) {
     $operationalStatus = 'inativo';
 }
 $hasCategories = !empty($categories);
+$productPlanReached = !empty($productPlanLimit['reached']) && !$isEdit;
+$productPlanUsageLabel = trim((string) ($productPlanLimit['usage_label'] ?? ''));
+$productPlanName = trim((string) ($productPlanLimit['plan_name'] ?? 'Plano atual'));
+$productPlanLimitLabel = trim((string) ($productPlanLimit['limit_label'] ?? 'Ilimitado'));
 ?>
 
 <style>
@@ -63,6 +68,7 @@ $hasCategories = !empty($categories);
             <span class="ops-hero-pill"><?= $hasCategories ? count(is_array($categories ?? null) ? $categories : []) : 0 ?> categorias disponíveis</span>
             <span class="ops-hero-pill">Status <?= htmlspecialchars($operationalStatus) ?></span>
             <span class="ops-hero-pill"><?= $existingImagePath !== '' ? 'com imagem cadastrada' : 'aguardando imagem' ?></span>
+            <span class="ops-hero-pill"><?= htmlspecialchars($productPlanName) ?>: <?= htmlspecialchars($productPlanUsageLabel !== '' ? $productPlanUsageLabel : 'uso em acompanhamento') ?></span>
         </div>
     </div>
     <div class="ops-hero-actions">
@@ -70,6 +76,13 @@ $hasCategories = !empty($categories);
         <a class="btn" href="#name"><?= $isEdit ? 'Revisar produto' : 'Cadastrar produto' ?></a>
     </div>
 </section>
+
+<?php if ($productPlanReached): ?>
+    <div class="card" style="border:1px solid #f59e0b;background:linear-gradient(135deg,#fff7ed 0%,#fffbeb 100%);margin-bottom:16px">
+        <strong style="display:block;margin-bottom:6px;color:#9a3412">Limite de produtos atingido</strong>
+        <p style="margin:0;color:#7c2d12">O plano atual permite ate <?= htmlspecialchars($productPlanLimitLabel) ?> produtos cadastrados. Este formulario fica apenas para consulta ate o plano ser ajustado ou a base ser reduzida.</p>
+    </div>
+<?php endif; ?>
 
 <form method="POST" action="<?= htmlspecialchars($formAction) ?>" enctype="multipart/form-data">
     <?= form_security_fields($isEdit ? 'products.update' : 'products.store') ?>
@@ -208,7 +221,7 @@ $hasCategories = !empty($categories);
             </div>
 
             <div style="margin-top:14px">
-                <button class="btn" type="submit" <?= !$hasCategories ? 'disabled' : '' ?>><?= htmlspecialchars($submitLabel) ?></button>
+                <button class="btn" type="submit" <?= (!$hasCategories || $productPlanReached) ? 'disabled' : '' ?>><?= htmlspecialchars($submitLabel) ?></button>
             </div>
 
             <?php if ($isEdit): ?>

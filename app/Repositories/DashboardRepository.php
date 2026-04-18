@@ -1088,6 +1088,22 @@ final class DashboardRepository extends BaseRepository
         return (int) ($stmt->fetchColumn() ?: 0);
     }
 
+    public function countUsersByCompany(int $companyId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*)
+            FROM users
+            WHERE company_id = :company_id
+              AND deleted_at IS NULL
+              AND is_saas_user = 0
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+        ]);
+
+        return (int) ($stmt->fetchColumn() ?: 0);
+    }
+
     public function listSupportTicketsByCompanyPaginated(int $companyId, array $filters, int $page, int $perPage): array
     {
         $page = max(1, $page);

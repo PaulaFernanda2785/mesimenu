@@ -31,6 +31,7 @@ final class ProductController extends Controller
             'summary' => $panel['summary'] ?? [],
             'productTabs' => $panel['tabs'] ?? [],
             'categories' => $panel['categories'] ?? [],
+            'productPlanLimit' => $panel['plan_limit'] ?? [],
             'canManageProducts' => $this->permissions->roleHasPermission($roleId, 'products.edit'),
             'canCreateProducts' => $this->permissions->roleHasPermission($roleId, 'products.create'),
         ]);
@@ -45,6 +46,7 @@ final class ProductController extends Controller
             'title' => 'Novo Produto',
             'user' => $user,
             'categories' => $this->service->categories($companyId),
+            'productPlanLimit' => $this->service->planLimit($companyId),
             'product' => null,
             'formAction' => base_url('/admin/products/store'),
             'submitLabel' => 'Salvar produto',
@@ -84,6 +86,7 @@ final class ProductController extends Controller
                 'title' => 'Editar Produto',
                 'user' => $user,
                 'categories' => $this->service->categories($companyId),
+                'productPlanLimit' => $this->service->planLimit($companyId),
                 'product' => $this->service->findForEdit($companyId, $productId),
                 'formAction' => base_url('/admin/products/update'),
                 'submitLabel' => 'Salvar alteracoes',

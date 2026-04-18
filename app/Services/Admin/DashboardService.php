@@ -92,7 +92,8 @@ final class DashboardService
         private readonly DashboardRepository $repository = new DashboardRepository(),
         private readonly SupportAttachmentService $supportAttachments = new SupportAttachmentService(),
         private readonly CompanyPlanFeatureService $companyPlanFeatures = new CompanyPlanFeatureService(),
-        private readonly PlanFeatureCatalogService $planFeatureCatalog = new PlanFeatureCatalogService()
+        private readonly PlanFeatureCatalogService $planFeatureCatalog = new PlanFeatureCatalogService(),
+        private readonly CompanyPlanLimitService $companyPlanLimits = new CompanyPlanLimitService()
     ) {}
 
     public function panel(int $companyId, array $filters): array
@@ -582,6 +583,8 @@ final class DashboardService
             throw new ValidationException('Empresa invalida para cadastro de usuario.');
         }
 
+        $this->companyPlanLimits->assertCanCreate($companyId, 'users', $this->repository->countUsersByCompany($companyId));
+
         $name = trim((string) ($input['name'] ?? ''));
         $email = strtolower(trim((string) ($input['email'] ?? '')));
         $phone = trim((string) ($input['phone'] ?? ''));
@@ -935,6 +938,7 @@ final class DashboardService
             'permissions_grouped' => $permissionGroups,
             'hidden_permission_modules' => $permissionAccess['hidden_modules'],
             'available_plan_features' => $permissionAccess['available_features'],
+            'plan_limit' => $this->companyPlanLimits->usageSummary($companyId, 'users', $this->repository->countUsersByCompany($companyId)),
             'users' => $items,
             'filters' => $normalizedFilters,
             'pagination' => [

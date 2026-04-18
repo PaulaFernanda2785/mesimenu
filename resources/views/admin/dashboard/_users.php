@@ -4,6 +4,7 @@ $roles = is_array($roles ?? null) ? $roles : [];
 $permissionsGrouped = is_array($permissionsGrouped ?? null) ? $permissionsGrouped : [];
 $hiddenPermissionModules = is_array($hiddenPermissionModules ?? null) ? $hiddenPermissionModules : [];
 $availablePlanFeatures = is_array($availablePlanFeatures ?? null) ? $availablePlanFeatures : [];
+$usersPlanLimit = is_array($usersPlanLimit ?? null) ? $usersPlanLimit : [];
 $usersFilters = is_array($usersFilters ?? null) ? $usersFilters : [];
 $usersPagination = is_array($usersPagination ?? null) ? $usersPagination : [];
 
@@ -119,6 +120,11 @@ $hiddenModuleLabels = array_values(array_filter(array_map(
     $hiddenPermissionModules
 )));
 $hiddenModuleLabels = array_map($moduleLabel, $hiddenModuleLabels);
+$usersPlanLimitUsed = (int) ($usersPlanLimit['used'] ?? 0);
+$usersPlanLimitLabel = trim((string) ($usersPlanLimit['limit_label'] ?? 'Ilimitado'));
+$usersPlanReached = !empty($usersPlanLimit['reached']);
+$usersPlanName = trim((string) ($usersPlanLimit['plan_name'] ?? 'Plano atual'));
+$usersPlanUsageLabel = trim((string) ($usersPlanLimit['usage_label'] ?? ''));
 
 $formatDateTime = static function (mixed $value): string {
     $raw = trim((string) $value);
@@ -253,6 +259,7 @@ $formatDateTime = static function (mixed $value): string {
                     <span class="iu-hero-pill">Usuários: <?= htmlspecialchars((string) $páginationTotal) ?></span>
                     <span class="iu-hero-pill">Perfis de fábrica: <?= htmlspecialchars((string) $totalFactoryRoles) ?></span>
                     <span class="iu-hero-pill">Perfis customizados: <?= htmlspecialchars((string) $totalCustomRoles) ?></span>
+                    <span class="iu-hero-pill"><?= htmlspecialchars($usersPlanName) ?>: <?= htmlspecialchars($usersPlanUsageLabel !== '' ? $usersPlanUsageLabel : ($usersPlanLimitUsed . ' cadastrados')) ?></span>
                 </div>
             </div>
         </div>
@@ -606,6 +613,18 @@ $formatDateTime = static function (mixed $value): string {
                         </div>
                     </div>
 
+                    <div class="iu-badges" style="margin-bottom:12px">
+                        <span class="badge status-default">Plano: <?= htmlspecialchars($usersPlanName) ?></span>
+                        <span class="badge status-default">Limite: <?= htmlspecialchars($usersPlanLimitLabel) ?></span>
+                        <span class="badge status-default">Uso atual: <?= htmlspecialchars($usersPlanUsageLabel !== '' ? $usersPlanUsageLabel : ($usersPlanLimitUsed . ' cadastrados')) ?></span>
+                    </div>
+
+                    <?php if ($usersPlanReached): ?>
+                        <div class="empty-state" style="margin-bottom:12px">
+                            O limite de usuarios internos do plano atual foi atingido. Para cadastrar novos usuarios, ajuste o plano no SaaS ou reduza a base atual.
+                        </div>
+                    <?php endif; ?>
+
                     <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/users/store')) ?>">
                         <?= form_security_fields('dashboard.users.store') ?>
                         <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnQuery) ?>">
@@ -646,7 +665,7 @@ $formatDateTime = static function (mixed $value): string {
                             </div>
                         </div>
 
-                        <button class="btn" type="submit" style="margin-top:12px">Cadastrar usuário</button>
+                        <button class="btn" type="submit" style="margin-top:12px" <?= $usersPlanReached ? 'disabled title="Limite do plano atingido"' : '' ?>>Cadastrar usuário</button>
                     </form>
                 </div>
 

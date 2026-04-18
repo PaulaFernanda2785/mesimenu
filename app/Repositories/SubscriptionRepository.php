@@ -145,6 +145,9 @@ final class SubscriptionRepository extends BaseRepository
                 p.name AS plan_name,
                 p.slug AS plan_slug,
                 p.description AS plan_description,
+                p.max_users AS plan_max_users,
+                p.max_products AS plan_max_products,
+                p.max_tables AS plan_max_tables,
                 p.features_json AS plan_features_json
             FROM subscriptions s
             INNER JOIN companies c ON c.id = s.company_id

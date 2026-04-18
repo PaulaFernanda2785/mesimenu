@@ -102,6 +102,19 @@ final class ProductRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    public function countByCompany(int $companyId): int
+    {
+        $stmt = $this->db()->prepare("
+            SELECT COUNT(*)
+            FROM products
+            WHERE company_id = :company_id
+              AND deleted_at IS NULL
+        ");
+        $stmt->execute(['company_id' => $companyId]);
+
+        return (int) ($stmt->fetchColumn() ?: 0);
+    }
+
     public function categoriesByCompany(int $companyId): array
     {
         $stmt = $this->db()->prepare("

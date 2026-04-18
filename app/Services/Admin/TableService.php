@@ -18,7 +18,8 @@ final class TableService
 
     public function __construct(
         private readonly TableRepository $tables = new TableRepository(),
-        private readonly CommandRepository $commands = new CommandRepository()
+        private readonly CommandRepository $commands = new CommandRepository(),
+        private readonly CompanyPlanLimitService $planLimits = new CompanyPlanLimitService()
     ) {}
 
     public function list(int $companyId): array
@@ -57,11 +58,13 @@ final class TableService
         return [
             'summary' => $summary,
             'tables' => $tables,
+            'plan_limit' => $this->planLimits->usageSummary($companyId, 'tables', (int) ($summary['total'] ?? 0)),
         ];
     }
 
     public function create(int $companyId, array $input): int
     {
+        $this->planLimits->assertCanCreate($companyId, 'tables', $this->tables->countByCompany($companyId));
         $payload = $this->normalizePayload($companyId, $input, null);
         $number = (int) $payload['number'];
         $token = 'mesa-' . $companyId . '-' . $number . '-' . bin2hex(random_bytes(4));
@@ -74,6 +77,11 @@ final class TableService
             'qr_code_token' => $token,
             'status' => $payload['status'],
         ]);
+    }
+
+    public function planLimit(int $companyId): array
+    {
+        return $this->planLimits->usageSummary($companyId, 'tables', $this->tables->countByCompany($companyId));
     }
 
     public function findForEdit(int $companyId, int $tableId): array

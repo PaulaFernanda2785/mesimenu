@@ -38,6 +38,7 @@ final class TableController extends Controller
             'user' => $user,
             'summary' => $panel['summary'] ?? [],
             'tables' => $panel['tables'] ?? [],
+            'tablePlanLimit' => $panel['plan_limit'] ?? [],
             'ordersByTableNumber' => $ordersByTableNumber,
             'commandsByTableNumber' => $commandsByTableNumber,
             'canManageTables' => $this->permissions->roleHasPermission($roleId, 'tables.manage'),
@@ -52,6 +53,7 @@ final class TableController extends Controller
         return $this->view('admin/tables/create', [
             'title' => 'Nova Mesa',
             'user' => Auth::user(),
+            'tablePlanLimit' => $this->service->planLimit((int) ((Auth::user() ?? [])['company_id'] ?? 0)),
             'table' => null,
             'formAction' => base_url('/admin/tables/store'),
             'submitLabel' => 'Salvar mesa',
@@ -87,6 +89,7 @@ final class TableController extends Controller
             return $this->view('admin/tables/create', [
                 'title' => 'Editar Mesa',
                 'user' => $user,
+                'tablePlanLimit' => $this->service->planLimit($companyId),
                 'table' => $this->service->findForEdit($companyId, $tableId),
                 'formAction' => base_url('/admin/tables/update'),
                 'submitLabel' => 'Salvar alteracoes',

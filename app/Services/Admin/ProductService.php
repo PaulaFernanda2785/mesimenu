@@ -11,7 +11,8 @@ final class ProductService
     private const MAX_IMAGE_SIZE_BYTES = 10485760; // 10MB
 
     public function __construct(
-        private readonly ProductRepository $products = new ProductRepository()
+        private readonly ProductRepository $products = new ProductRepository(),
+        private readonly CompanyPlanLimitService $planLimits = new CompanyPlanLimitService()
     ) {}
 
     public function list(int $companyId): array
@@ -91,6 +92,7 @@ final class ProductService
             'summary' => $summary,
             'tabs' => $tabs,
             'categories' => $categories,
+            'plan_limit' => $this->planLimits->usageSummary($companyId, 'products', (int) ($summary['total'] ?? 0)),
         ];
     }
 
@@ -104,8 +106,14 @@ final class ProductService
         return $this->products->categoriesWithProductCountByCompany($companyId);
     }
 
+    public function planLimit(int $companyId): array
+    {
+        return $this->planLimits->usageSummary($companyId, 'products', $this->products->countByCompany($companyId));
+    }
+
     public function create(int $companyId, array $input): int
     {
+        $this->planLimits->assertCanCreate($companyId, 'products', $this->products->countByCompany($companyId));
         $imageFile = $this->extractImageFileFromInput($input);
         $imagePath = $this->storeProductImage($companyId, $imageFile, $input);
         $data = $this->normalizeBaseProductInput($companyId, $input, $imagePath, null);

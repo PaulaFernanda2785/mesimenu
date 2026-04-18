@@ -4,6 +4,7 @@ $mode = (string) ($mode ?? 'create');
 $isEdit = $mode === 'edit';
 $formAction = (string) ($formAction ?? base_url('/admin/tables/store'));
 $submitLabel = (string) ($submitLabel ?? 'Salvar mesa');
+$tablePlanLimit = is_array($tablePlanLimit ?? null) ? $tablePlanLimit : [];
 $numberValue = isset($tableData['number']) ? (string) (int) $tableData['number'] : '';
 $capacityValue = isset($tableData['capacity']) && $tableData['capacity'] !== null ? (string) (int) $tableData['capacity'] : '';
 $nameValue = trim((string) ($tableData['name'] ?? ''));
@@ -11,6 +12,10 @@ $currentStatus = (string) ($tableData['status'] ?? 'livre');
 if ($currentStatus === '') {
     $currentStatus = 'livre';
 }
+$tablePlanReached = !empty($tablePlanLimit['reached']) && !$isEdit;
+$tablePlanUsageLabel = trim((string) ($tablePlanLimit['usage_label'] ?? ''));
+$tablePlanName = trim((string) ($tablePlanLimit['plan_name'] ?? 'Plano atual'));
+$tablePlanLimitLabel = trim((string) ($tablePlanLimit['limit_label'] ?? 'Ilimitado'));
 
 $statusOptions = [
     'livre' => [
@@ -74,6 +79,7 @@ $statusOptions = [
             <span class="ops-hero-pill">Status <?= htmlspecialchars((string) ($statusOptions[$currentStatus]['label'] ?? 'Livre')) ?></span>
             <span class="ops-hero-pill"><?= $capacityValue !== '' ? htmlspecialchars($capacityValue . ' lugares') : 'capacidade pendente' ?></span>
             <span class="ops-hero-pill"><?= $isEdit ? 'mesa em edição' : 'novo cadastro' ?></span>
+            <span class="ops-hero-pill"><?= htmlspecialchars($tablePlanName) ?>: <?= htmlspecialchars($tablePlanUsageLabel !== '' ? $tablePlanUsageLabel : 'uso em acompanhamento') ?></span>
         </div>
     </div>
     <div class="ops-hero-actions">
@@ -81,6 +87,13 @@ $statusOptions = [
         <a class="btn" href="#number"><?= $isEdit ? 'Atualizar mesa' : 'Cadastrar mesa' ?></a>
     </div>
 </section>
+
+<?php if ($tablePlanReached): ?>
+    <div class="card" style="border:1px solid #f59e0b;background:linear-gradient(135deg,#fff7ed 0%,#fffbeb 100%);margin-bottom:16px">
+        <strong style="display:block;margin-bottom:6px;color:#9a3412">Limite de mesas atingido</strong>
+        <p style="margin:0;color:#7c2d12">O plano atual permite ate <?= htmlspecialchars($tablePlanLimitLabel) ?> mesas cadastradas. Este formulario fica apenas para consulta ate o plano ser ajustado ou a base ser reduzida.</p>
+    </div>
+<?php endif; ?>
 
 <form method="POST" action="<?= htmlspecialchars($formAction) ?>">
     <?= form_security_fields($isEdit ? 'tables.update' : 'tables.store') ?>
@@ -134,7 +147,7 @@ $statusOptions = [
             </div>
 
             <div style="margin-top:14px">
-                <button class="btn" type="submit"><?= htmlspecialchars($submitLabel) ?></button>
+                <button class="btn" type="submit" <?= $tablePlanReached ? 'disabled title="Limite do plano atingido"' : '' ?>><?= htmlspecialchars($submitLabel) ?></button>
             </div>
 
             <div class="next-actions">
