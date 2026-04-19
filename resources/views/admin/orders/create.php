@@ -253,7 +253,7 @@ $canCreateOrder = $totalProducts > 0;
                                             <input id="customer_phone" name="customer_phone" type="text" placeholder="Opcional (delivery)" <?= $canCreateOrder ? '' : 'disabled' ?>>
                                         </div>
                                     </div>
-                                    <p class="channel-note">Use estes dados para identificar retirada e entrega sem poluir o restante do formulário operacional.</p>
+                                    <p class="channel-note" id="customerChannelNote">Use estes dados para identificar retirada, balcão e entrega sem poluir o restante do formulário operacional.</p>
                                 </div>
                             </div>
 
@@ -442,8 +442,10 @@ $canCreateOrder = $totalProducts > 0;
     const commandWarning = document.getElementById('commandWarning');
     const customerNameField = document.getElementById('customerNameField');
     const customerNameInput = document.getElementById('customer_name');
+    const customerNameLabel = customerNameField ? customerNameField.querySelector('label[for="customer_name"]') : null;
     const customerPhoneField = document.getElementById('customerPhoneField');
     const customerPhoneInput = document.getElementById('customer_phone');
+    const customerChannelNote = document.getElementById('customerChannelNote');
     const deliveryFields = document.getElementById('deliveryFields');
     const deliveryZoneSelect = document.getElementById('delivery_zone_id');
     const deliveryZoneRule = document.getElementById('deliveryZoneRule');
@@ -851,6 +853,7 @@ $canCreateOrder = $totalProducts > 0;
         const isTable = channel === 'table';
         const isDelivery = channel === 'delivery';
         const isPickup = channel === 'pickup';
+        const isCounter = channel === 'counter';
 
         if (commandField) {
             commandField.classList.toggle('channel-hidden', !isTable);
@@ -866,13 +869,37 @@ $canCreateOrder = $totalProducts > 0;
         }
 
         setElementRequired(commandSelect, isTable);
-        setElementRequired(customerNameInput, isDelivery || isPickup);
+        setElementRequired(customerNameInput, isDelivery || isPickup || isCounter);
         setElementRequired(deliveryZoneSelect, isDelivery);
         setElementRequired(deliveryStreetInput, isDelivery);
         setElementRequired(deliveryNumberInput, isDelivery);
         setElementRequired(deliveryNeighborhoodInput, isDelivery);
         setElementRequired(deliveryCityInput, isDelivery);
         setElementRequired(deliveryStateInput, isDelivery);
+
+        if (customerNameLabel) {
+            customerNameLabel.textContent = isDelivery
+                ? 'Cliente / recebedor'
+                : (isPickup || isCounter ? 'Cliente obrigatório' : 'Cliente');
+        }
+
+        if (customerNameInput) {
+            customerNameInput.placeholder = isPickup
+                ? 'Nome obrigatório para retirada'
+                : (isCounter
+                    ? 'Nome obrigatório para balcão'
+                    : (isDelivery ? 'Nome do cliente que vai receber' : 'Nome do cliente'));
+        }
+
+        if (customerChannelNote) {
+            customerChannelNote.textContent = isDelivery
+                ? 'Entrega exige nome do cliente, telefone e endereço completo para expedição.'
+                : (isPickup
+                    ? 'Retirada exige nome do cliente para identificação no balcão.'
+                    : (isCounter
+                        ? 'Balcão também exige nome do cliente para rastreabilidade e conferência de pagamento.'
+                        : 'Use estes dados para identificar retirada, balcão e entrega sem poluir o restante do formulário operacional.'));
+        }
 
         if (isTable && commandWarning) {
             const unavailable = !isTableChannelAvailable();

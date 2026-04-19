@@ -93,7 +93,8 @@ final class CommandRepository extends BaseRepository
     {
         $stmt = $this->db()->prepare("
             UPDATE commands
-            SET customer_name = :customer_name,
+            SET customer_id = :customer_id,
+                customer_name = :customer_name,
                 notes = :notes,
                 updated_at = NOW()
             WHERE company_id = :company_id
@@ -102,6 +103,7 @@ final class CommandRepository extends BaseRepository
             LIMIT 1
         ");
         $stmt->execute([
+            'customer_id' => $data['customer_id'],
             'customer_name' => $data['customer_name'],
             'notes' => $data['notes'],
             'company_id' => $companyId,

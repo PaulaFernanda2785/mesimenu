@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 
 use App\Exceptions\ValidationException;
 use App\Repositories\CommandRepository;
+use App\Repositories\CustomerRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\TableRepository;
 
@@ -13,7 +14,8 @@ final class CommandService
     public function __construct(
         private readonly CommandRepository $commands = new CommandRepository(),
         private readonly OrderRepository $orders = new OrderRepository(),
-        private readonly TableRepository $tables = new TableRepository()
+        private readonly TableRepository $tables = new TableRepository(),
+        private readonly CustomerRepository $customers = new CustomerRepository()
     ) {}
 
     public function listOpen(int $companyId): array
@@ -44,10 +46,12 @@ final class CommandService
             throw new ValidationException('Informe o nome do cliente.');
         }
 
+        $customerId = $this->resolveNamedCustomerId($companyId, $customerName);
+
         $commandId = $this->commands->create([
             'company_id' => $companyId,
             'table_id' => $tableId,
-            'customer_id' => null,
+            'customer_id' => $customerId,
             'opened_by_user_id' => $userId > 0 ? $userId : null,
             'customer_name' => $customerName,
             'notes' => $notes !== '' ? $notes : null,
@@ -76,7 +80,10 @@ final class CommandService
             throw new ValidationException('Informe o nome do cliente para editar a comanda.');
         }
 
+        $customerId = $this->resolveNamedCustomerId($companyId, $customerName);
+
         $this->commands->updateOpenCommand($companyId, $commandId, [
+            'customer_id' => $customerId,
             'customer_name' => $customerName,
             'notes' => $notes !== '' ? $notes : null,
         ]);
@@ -107,5 +114,21 @@ final class CommandService
                 $this->tables->updateStatusForCompany($companyId, $tableId, $openCommandsForTable > 0 ? 'ocupada' : 'livre');
             }
         }
+    }
+
+    private function resolveNamedCustomerId(int $companyId, string $customerName): int
+    {
+        $existing = $this->customers->findByNameForCompany($companyId, $customerName);
+        if ($existing !== null) {
+            return (int) ($existing['id'] ?? 0);
+        }
+
+        return $this->customers->create([
+            'company_id' => $companyId,
+            'name' => $customerName,
+            'phone' => null,
+            'email' => null,
+            'notes' => null,
+        ]);
     }
 }

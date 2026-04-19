@@ -228,6 +228,9 @@ final class OrderService
             $customerName = $command['customer_name'] !== null
                 ? $this->normalizeNullableText((string) $command['customer_name'])
                 : $customerName;
+            if ($customerId === null && $customerName !== null) {
+                $customerId = $this->resolveNamedCustomerId($companyId, $customerName);
+            }
             $deliveryFee = $this->parseMoney($input['delivery_fee'] ?? 0);
             if ($deliveryFee < 0) {
                 throw new ValidationException('A taxa de entrega nao pode ser negativa.');
@@ -275,6 +278,15 @@ final class OrderService
                     $input['customer_name'] ?? null,
                     'Informe o nome do cliente para retirada.'
                 );
+            } elseif ($channel === 'counter') {
+                $customerName = $this->normalizeRequiredText(
+                    $input['customer_name'] ?? null,
+                    'Informe o nome do cliente para pedidos no balcão.'
+                );
+            }
+
+            if ($customerName !== null) {
+                $customerId = $this->resolveNamedCustomerId($companyId, $customerName);
             }
         }
 
@@ -968,10 +980,31 @@ final class OrderService
             }
         }
 
+        $existingByName = $this->customers->findByNameForCompany($companyId, $customerName);
+        if ($existingByName !== null) {
+            return (int) ($existingByName['id'] ?? 0);
+        }
+
         return $this->customers->create([
             'company_id' => $companyId,
             'name' => $customerName,
             'phone' => $customerPhone,
+            'email' => null,
+            'notes' => null,
+        ]);
+    }
+
+    private function resolveNamedCustomerId(int $companyId, string $customerName): int
+    {
+        $existing = $this->customers->findByNameForCompany($companyId, $customerName);
+        if ($existing !== null) {
+            return (int) ($existing['id'] ?? 0);
+        }
+
+        return $this->customers->create([
+            'company_id' => $companyId,
+            'name' => $customerName,
+            'phone' => null,
             'email' => null,
             'notes' => null,
         ]);
