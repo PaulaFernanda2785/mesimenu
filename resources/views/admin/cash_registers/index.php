@@ -103,16 +103,17 @@ $openCurrentBalance = $openCashRegister !== null
 
     .cash-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.6);display:grid;place-items:center;padding:14px;z-index:1300}
     .cash-modal-backdrop[hidden]{display:none !important}
-    .cash-modal{width:min(920px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:14px;display:grid;gap:12px}
-    .cash-modal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+    .cash-modal{width:min(920px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:#fff;border:1px solid #cbd5e1;border-radius:16px;padding:18px;display:grid;gap:16px;box-shadow:0 24px 48px rgba(15,23,42,.22)}
+    .cash-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;padding-bottom:6px}
     .cash-modal-head h3{margin:0;color:#0f172a}
     .cash-modal-head p{margin:6px 0 0;color:#64748b;font-size:13px}
-    .cash-modal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-    .cash-modal-box{border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:8px}
+    .cash-modal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px}
+    .cash-modal-box{border:1px solid #e2e8f0;background:#f8fafc;border-radius:12px;padding:12px}
     .cash-modal-box span{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
     .cash-modal-box strong{display:block;font-size:13px;color:#0f172a;word-break:break-word}
-    .cash-modal-note{border:1px dashed #cbd5e1;background:#fff;border-radius:10px;padding:10px;font-size:12px;color:#475569}
-    .cash-modal-actions{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .cash-modal-note{border:1px dashed #cbd5e1;background:#fff;border-radius:12px;padding:12px;font-size:12px;color:#475569;margin-top:6px}
+    .cash-modal-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:6px;padding-top:10px;border-top:1px solid #e2e8f0;flex-wrap:wrap}
+    .cash-modal-actions .btn{margin-top:4px}
 
     @media (max-width:1200px){
         .cash-kpi-grid{grid-template-columns:repeat(3,minmax(130px,1fr))}
