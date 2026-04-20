@@ -158,6 +158,7 @@ final class PlanService
         $description = $this->nullableTrim($input['description'] ?? ($existing['description'] ?? null));
         $existingFeatures = $this->decodeExistingFeatures($existing['features_json'] ?? null);
         $enabledFeatures = $this->resolveBusinessFeatures($input, $existingFeatures);
+        $publicLanding = $this->resolvePublicLandingSettings($input, $existingFeatures);
         $featuresJson = $this->buildGeneratedFeaturesJson(
             $slug,
             $status,
@@ -166,7 +167,8 @@ final class PlanService
             $maxUsers,
             $maxProducts,
             $maxTables,
-            $enabledFeatures
+            $enabledFeatures,
+            $publicLanding
         );
 
         return [
@@ -239,7 +241,8 @@ final class PlanService
         ?int $maxUsers,
         ?int $maxProducts,
         ?int $maxTables,
-        array $enabledFeatures
+        array $enabledFeatures,
+        array $publicLanding
     ): string
     {
         $payload = [
@@ -275,6 +278,9 @@ final class PlanService
                 'usuarios_internos' => $maxUsers === null ? 'ilimitado' : $maxUsers,
                 'catalogo_produtos' => $maxProducts === null ? 'ilimitado' : $maxProducts,
                 'mesas_ativas' => $maxTables === null ? 'ilimitado' : $maxTables,
+            ],
+            'vitrine_publica' => [
+                'destaque' => (bool) ($publicLanding['destaque'] ?? false),
             ],
         ];
 
@@ -378,6 +384,23 @@ final class PlanService
         }
 
         return $resolved;
+    }
+
+    private function resolvePublicLandingSettings(array $input, array $existingFeatures): array
+    {
+        $existingPublic = is_array($existingFeatures['vitrine_publica'] ?? null)
+            ? $existingFeatures['vitrine_publica']
+            : [];
+
+        if (array_key_exists('landing_featured', $input)) {
+            return [
+                'destaque' => $this->normalizeFeatureFlag($input['landing_featured']),
+            ];
+        }
+
+        return [
+            'destaque' => (bool) ($existingPublic['destaque'] ?? false),
+        ];
     }
 
     private function normalizeFeatureFlag(mixed $value): bool

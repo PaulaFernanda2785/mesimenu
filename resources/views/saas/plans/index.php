@@ -120,6 +120,26 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
 
     return $defaults;
 };
+
+$landingStateFromJson = static function (mixed $value): array {
+    $raw = trim((string) $value);
+    if ($raw === '') {
+        return ['destaque' => false];
+    }
+
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded)) {
+        return ['destaque' => false];
+    }
+
+    $publicConfig = is_array($decoded['vitrine_publica'] ?? null)
+        ? $decoded['vitrine_publica']
+        : [];
+
+    return [
+        'destaque' => (bool) ($publicConfig['destaque'] ?? false),
+    ];
+};
 ?>
 
 <style>
@@ -279,6 +299,7 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                             $linkedSubscriptions = (int) ($plan['linked_subscriptions_count'] ?? 0);
                             $canDeletePlan = $linkedCompanies <= 0 && $linkedSubscriptions <= 0;
                             $featureState = $featureStateFromJson($plan['features_json'] ?? '');
+                            $landingState = $landingStateFromJson($plan['features_json'] ?? '');
                             ?>
                             <article class="saas-plan-card">
                                 <div class="saas-plan-card-top">
@@ -288,6 +309,9 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                     </div>
                                     <div class="saas-plan-badges">
                                         <span class="badge <?= htmlspecialchars($planStatusClass) ?>"><?= htmlspecialchars(status_label('plan_status', $planStatusValue)) ?></span>
+                                        <?php if (!empty($landingState['destaque'])): ?>
+                                            <span class="badge">Destaque na landing</span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
@@ -338,6 +362,17 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                                     <div class="field">
                                                         <label for="plan_slug_<?= $planId ?>">Slug</label>
                                                         <input id="plan_slug_<?= $planId ?>" name="slug" type="text" value="<?= htmlspecialchars((string) ($plan['slug'] ?? '')) ?>" placeholder="Opcional">
+                                                    </div>
+                                                    <div class="field">
+                                                        <label for="plan_landing_featured_<?= $planId ?>">Vitrine publica</label>
+                                                        <label class="saas-plan-feature-option" for="plan_landing_featured_<?= $planId ?>">
+                                                            <input type="hidden" name="landing_featured" value="0">
+                                                            <input id="plan_landing_featured_<?= $planId ?>" type="checkbox" name="landing_featured" value="1" <?= !empty($landingState['destaque']) ? 'checked' : '' ?>>
+                                                            <span>
+                                                                <strong>Destacar na landing</strong>
+                                                                <small>Publica o plano como destaque na pagina publica do SaaS.</small>
+                                                            </span>
+                                                        </label>
                                                     </div>
                                                     <div class="field full">
                                                         <label for="plan_description_<?= $planId ?>">Descrição comercial</label>
@@ -519,6 +554,17 @@ $featureStateFromJson = static function (mixed $value) use ($featureCatalog): ar
                                     <option value="ativo">Ativo</option>
                                     <option value="inativo">Inativo</option>
                                 </select>
+                            </div>
+                            <div class="field">
+                                <label for="new_plan_landing_featured">Vitrine publica</label>
+                                <label class="saas-plan-feature-option" for="new_plan_landing_featured">
+                                    <input type="hidden" name="landing_featured" value="0">
+                                    <input id="new_plan_landing_featured" type="checkbox" name="landing_featured" value="1">
+                                    <span>
+                                        <strong>Destacar na landing</strong>
+                                        <small>Exibe este plano como destaque na pagina publica do SaaS.</small>
+                                    </span>
+                                </label>
                             </div>
                             <div class="field full">
                                 <label>Recursos de negócio</label>

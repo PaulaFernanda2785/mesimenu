@@ -9,11 +9,16 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Services\Auth\LoginService;
+use App\Services\Marketing\LandingPageService;
 use App\Services\Shared\AppShellService;
 use RuntimeException;
 
 final class LoginController extends Controller
 {
+    public function __construct(
+        private readonly LandingPageService $landingPage = new LandingPageService()
+    ) {}
+
     public function show(Request $request): Response
     {
         if (Auth::check()) {
@@ -23,20 +28,16 @@ final class LoginController extends Controller
 
         $timedOut = Auth::consumeTimedOut();
 
-        return $this->view('auth/login', [
-            'title' => 'Login',
-            'error' => $timedOut ? 'Sessao encerrada com seguranca apos 30 minutos de inatividade. Entre novamente.' : null,
-        ], 'layouts/auth');
+        return $this->renderLandingPage(
+            $timedOut ? 'Sessao encerrada com seguranca apos 30 minutos de inatividade. Entre novamente.' : null
+        );
     }
 
     public function store(Request $request): Response
     {
         $guard = validate_form_submission($request->all(), 'auth.login', 2);
         if (($guard['ok'] ?? false) !== true) {
-            return $this->view('auth/login', [
-                'title' => 'Login',
-                'error' => (string) ($guard['message'] ?? 'Nao foi possivel validar o envio do login.'),
-            ], 'layouts/auth');
+            return $this->renderLandingPage((string) ($guard['message'] ?? 'Nao foi possivel validar o envio do login.'));
         }
 
         $email = trim((string) $request->input('email', ''));
@@ -55,10 +56,7 @@ final class LoginController extends Controller
 
             return $this->redirectAuthenticatedUser($user);
         } catch (RuntimeException $e) {
-            return $this->view('auth/login', [
-                'title' => 'Login',
-                'error' => $e->getMessage(),
-            ], 'layouts/auth');
+            return $this->renderLandingPage($e->getMessage());
         }
     }
 
@@ -98,6 +96,18 @@ final class LoginController extends Controller
         }
 
         return $this->redirect($landing);
+    }
+
+    private function renderLandingPage(?string $error = null): Response
+    {
+        $landingPage = $this->landingPage->build();
+
+        return $this->view('auth/login', [
+            'title' => 'Comanda360',
+            'seo' => $landingPage['seo'] ?? [],
+            'landingPage' => $landingPage,
+            'error' => $error,
+        ], 'layouts/public');
     }
 
     private function resolveLandingRoute(array $user): string

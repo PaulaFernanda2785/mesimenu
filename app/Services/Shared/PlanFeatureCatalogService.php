@@ -151,6 +151,24 @@ final class PlanFeatureCatalogService
         return $summary;
     }
 
+    public function publicLandingConfigFromJson(mixed $value): array
+    {
+        $decoded = $this->decodeJson($value);
+        $publicConfig = is_array($decoded['vitrine_publica'] ?? null)
+            ? $decoded['vitrine_publica']
+            : [];
+
+        return [
+            'destaque' => (bool) ($publicConfig['destaque'] ?? false),
+        ];
+    }
+
+    public function isFeaturedOnPublicLanding(mixed $value): bool
+    {
+        $config = $this->publicLandingConfigFromJson($value);
+        return !empty($config['destaque']);
+    }
+
     private function decodeJson(mixed $value): array
     {
         $raw = trim((string) ($value ?? ''));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\Auth\LoginController;
 use App\Controllers\Auth\AccountController;
 use App\Controllers\DigitalMenuController;
+use App\Controllers\Marketing\LeadController;
 use App\Controllers\MediaController;
 use App\Controllers\WebhookController;
 use App\Controllers\Admin\DashboardController;
@@ -53,6 +54,7 @@ $companyFeatureAccess = static fn (string $permissionSlug, string $featureKey): 
 $router->get('/', [LoginController::class, 'show']);
 $router->get('/login', [LoginController::class, 'show']);
 $router->post('/login', [LoginController::class, 'store']);
+$router->post('/contact', [LeadController::class, 'store']);
 $router->post('/logout', [LoginController::class, 'logout']);
 $router->get('/account/password', [AccountController::class, 'editPassword'], [AuthMiddleware::class, CompanyBillingAccessMiddleware::class]);
 $router->post('/account/password', [AccountController::class, 'updatePassword'], [AuthMiddleware::class, CompanyBillingAccessMiddleware::class]);

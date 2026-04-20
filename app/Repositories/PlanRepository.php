@@ -70,6 +70,32 @@ final class PlanRepository extends BaseRepository
         return is_array($page['items'] ?? null) ? $page['items'] : [];
     }
 
+    public function listActiveForPublicCatalog(): array
+    {
+        $stmt = $this->db()->prepare("
+            SELECT
+                p.id,
+                p.name,
+                p.slug,
+                p.description,
+                p.price_monthly,
+                p.price_yearly,
+                p.max_users,
+                p.max_products,
+                p.max_tables,
+                p.features_json,
+                p.status,
+                p.created_at,
+                p.updated_at
+            FROM plans p
+            WHERE p.status = 'ativo'
+            ORDER BY p.price_monthly ASC, p.id ASC
+        ");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
     public function summary(array $filters = []): array
     {
         [$whereSql, $params] = $this->buildSaasWhere($filters);
