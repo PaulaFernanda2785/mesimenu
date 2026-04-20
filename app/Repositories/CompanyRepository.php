@@ -72,6 +72,21 @@ final class CompanyRepository extends BaseRepository
         ]);
     }
 
+    public function updateStatus(int $companyId, string $status): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE companies
+            SET status = :status,
+                updated_at = NOW()
+            WHERE id = :company_id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'company_id' => $companyId,
+            'status' => $status,
+        ]);
+    }
+
     public function listForSaasPaginated(array $filters, int $page, int $perPage): array
     {
         $page = max(1, $page);

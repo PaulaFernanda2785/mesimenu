@@ -292,6 +292,7 @@ final class LandingPageService
                 : ($plan['price_yearly'] !== null ? (float) $plan['price_yearly'] : null);
             $yearlyBasePrice = round($priceMonthly * 12, 2);
             $yearlyDiscountPercent = round((float) ($pricing['desconto_anual_percentual'] ?? 0), 2);
+            $publicLanding = $this->featureCatalog->publicLandingConfigFromJson($featuresJson);
             $normalized[] = [
                 'id' => (int) ($plan['id'] ?? 0),
                 'name' => trim((string) ($plan['name'] ?? 'Plano')),
@@ -305,12 +306,19 @@ final class LandingPageService
                 'max_products' => $plan['max_products'] !== null ? (int) $plan['max_products'] : null,
                 'max_tables' => $plan['max_tables'] !== null ? (int) $plan['max_tables'] : null,
                 'feature_labels' => $featureLabels,
-                'is_featured' => $this->featureCatalog->isFeaturedOnPublicLanding($featuresJson),
-                'is_recommended' => $this->featureCatalog->isRecommendedOnPublicLanding($featuresJson),
+                'public_display_order' => $publicLanding['ordem_exibicao'] ?? null,
+                'is_featured' => !empty($publicLanding['destaque']),
+                'is_recommended' => !empty($publicLanding['recomendado']),
             ];
         }
 
         usort($normalized, static function (array $left, array $right): int {
+            $leftOrder = isset($left['public_display_order']) ? (int) $left['public_display_order'] : PHP_INT_MAX;
+            $rightOrder = isset($right['public_display_order']) ? (int) $right['public_display_order'] : PHP_INT_MAX;
+            if ($leftOrder !== $rightOrder) {
+                return $leftOrder <=> $rightOrder;
+            }
+
             $leftRecommended = !empty($left['is_recommended']) ? 0 : 1;
             $rightRecommended = !empty($right['is_recommended']) ? 0 : 1;
             if ($leftRecommended !== $rightRecommended) {

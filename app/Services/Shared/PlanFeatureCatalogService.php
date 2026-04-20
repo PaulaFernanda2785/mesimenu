@@ -178,6 +178,9 @@ final class PlanFeatureCatalogService
         return [
             'destaque' => (bool) ($publicConfig['destaque'] ?? false),
             'recomendado' => (bool) ($publicConfig['recomendado'] ?? false),
+            'ordem_exibicao' => isset($publicConfig['ordem_exibicao']) && is_numeric((string) $publicConfig['ordem_exibicao'])
+                ? max(1, (int) $publicConfig['ordem_exibicao'])
+                : null,
         ];
     }
 

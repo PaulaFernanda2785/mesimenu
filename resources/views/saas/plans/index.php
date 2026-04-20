@@ -155,6 +155,9 @@ $landingStateFromJson = static function (mixed $value): array {
     return [
         'destaque' => (bool) ($publicConfig['destaque'] ?? false),
         'recomendado' => (bool) ($publicConfig['recomendado'] ?? false),
+        'ordem_exibicao' => isset($publicConfig['ordem_exibicao']) && is_numeric((string) $publicConfig['ordem_exibicao'])
+            ? max(1, (int) $publicConfig['ordem_exibicao'])
+            : null,
     ];
 };
 
@@ -244,6 +247,12 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
     .saas-plan-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .saas-plan-form-grid .field{margin:0}
     .saas-plan-form-grid .field.full{grid-column:1 / -1}
+    .saas-plan-create-form{display:grid;gap:14px}
+    .saas-plan-form-section{border:1px solid #dbeafe;background:linear-gradient(180deg,#ffffff,#f8fbff);border-radius:16px;padding:14px;display:grid;gap:12px}
+    .saas-plan-form-section-head{display:grid;gap:4px}
+    .saas-plan-form-section-head strong{font-size:14px;color:#0f172a}
+    .saas-plan-form-section-head span{font-size:12px;line-height:1.45;color:#64748b}
+    .saas-plan-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .saas-plan-form-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
     .saas-plan-form-note{font-size:12px;color:#64748b;line-height:1.45;max-width:760px}
     .saas-plan-danger{display:flex;justify-content:flex-end}
@@ -261,6 +270,44 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
     .saas-plan-summary-item span{padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e3a8a;font-size:11px;font-weight:700}
 
     .saas-plan-create-card{display:grid;gap:12px}
+    .saas-plan-create-form .saas-plan-form-grid{gap:12px 14px}
+    .saas-plan-create-form .field{
+        padding:12px;
+        border:1px solid #dbeafe;
+        border-radius:14px;
+        background:linear-gradient(180deg,#ffffff,#f8fbff);
+        box-shadow:0 8px 18px rgba(15,23,42,.04);
+    }
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(1){order:1}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(2){order:2}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(11){order:3}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(3){order:4}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(4){order:5}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(12){order:6}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(13){order:7}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(5){order:8}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(6){order:9}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(7){order:10}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(8){order:11}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(9){order:12}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(10){order:13}
+    .saas-plan-create-form .saas-plan-form-grid > .field:nth-child(14){order:14}
+    .saas-plan-create-form .field.full{
+        padding:14px;
+    }
+    .saas-plan-create-form .field textarea{
+        min-height:110px;
+    }
+    .saas-plan-create-form .field .saas-plan-feature-option{
+        margin-top:2px;
+        border:0;
+        background:transparent;
+        padding:0;
+    }
+    .saas-plan-create-form .field small.muted{
+        display:block;
+        margin-top:6px;
+    }
     .saas-plan-governance{border:1px solid #c7d2fe;background:linear-gradient(130deg,#eef2ff 0%,#f8fafc 100%);border-radius:14px;padding:14px}
     .saas-plan-governance h3{margin:0 0 8px;color:#1e1b4b;font-size:16px}
     .saas-plan-governance p{margin:0;color:#3730a3;font-size:13px;line-height:1.5}
@@ -281,6 +328,7 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
     @media (max-width:760px){
         .saas-plan-filter-grid,.saas-plan-info,.saas-plan-form-grid{grid-template-columns:1fr}
         .saas-plan-feature-grid{grid-template-columns:1fr}
+        .saas-plan-check-grid{grid-template-columns:1fr}
         .saas-plan-hero h1{font-size:22px}
     }
 </style>
@@ -368,6 +416,9 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                                     </div>
                                     <div class="saas-plan-badges">
                                         <span class="badge <?= htmlspecialchars($planStatusClass) ?>"><?= htmlspecialchars(status_label('plan_status', $planStatusValue)) ?></span>
+                                        <?php if (($landingState['ordem_exibicao'] ?? null) !== null): ?>
+                                            <span class="badge">Ordem publica #<?= htmlspecialchars((string) $landingState['ordem_exibicao']) ?></span>
+                                        <?php endif; ?>
                                         <?php if (!empty($landingState['destaque'])): ?>
                                             <span class="badge">Destaque na landing</span>
                                         <?php endif; ?>
@@ -427,6 +478,18 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                                                         <input id="plan_slug_<?= $planId ?>" name="slug" type="text" value="<?= htmlspecialchars((string) ($plan['slug'] ?? '')) ?>" placeholder="Opcional">
                                                     </div>
                                                     <div class="field">
+                                                        <label for="plan_status_edit_<?= $planId ?>">Status</label>
+                                                        <select id="plan_status_edit_<?= $planId ?>" name="status" required>
+                                                            <option value="ativo" <?= $planStatusValue === 'ativo' ? 'selected' : '' ?>>Ativo</option>
+                                                            <option value="inativo" <?= $planStatusValue === 'inativo' ? 'selected' : '' ?>>Inativo</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label for="plan_landing_display_order_<?= $planId ?>">Ordem publica</label>
+                                                        <input id="plan_landing_display_order_<?= $planId ?>" name="landing_display_order" type="number" min="1" step="1" value="<?= htmlspecialchars((string) ($landingState['ordem_exibicao'] ?? '')) ?>" placeholder="Ex.: 1">
+                                                        <small class="muted">Nao pode repetir com outro plano.</small>
+                                                    </div>
+                                                    <div class="field">
                                                         <label for="plan_landing_featured_<?= $planId ?>">Vitrine publica</label>
                                                         <label class="saas-plan-feature-option" for="plan_landing_featured_<?= $planId ?>">
                                                             <input type="hidden" name="landing_featured" value="0">
@@ -477,13 +540,6 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                                                     <div class="field">
                                                         <label for="plan_max_tables_<?= $planId ?>">Limite de mesas</label>
                                                         <input id="plan_max_tables_<?= $planId ?>" name="max_tables" type="number" min="0" step="1" value="<?= $plan['max_tables'] !== null ? (int) $plan['max_tables'] : '' ?>" placeholder="Vazio = ilimitado">
-                                                    </div>
-                                                    <div class="field">
-                                                        <label for="plan_status_edit_<?= $planId ?>">Status</label>
-                                                        <select id="plan_status_edit_<?= $planId ?>" name="status" required>
-                                                            <option value="ativo" <?= $planStatusValue === 'ativo' ? 'selected' : '' ?>>Ativo</option>
-                                                            <option value="inativo" <?= $planStatusValue === 'inativo' ? 'selected' : '' ?>>Inativo</option>
-                                                        </select>
                                                     </div>
                                                     <div class="field full">
                                                         <label>Recursos de negócio</label>
@@ -592,7 +648,7 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                         </div>
                     </div>
 
-                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/plans/store')) ?>">
+                    <form method="POST" action="<?= htmlspecialchars(base_url('/saas/plans/store')) ?>" class="saas-plan-create-form">
                         <?= form_security_fields('saas.plans.store') ?>
 
                         <div class="saas-plan-form-grid">
@@ -603,6 +659,11 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                             <div class="field">
                                 <label for="new_plan_slug">Slug</label>
                                 <input id="new_plan_slug" name="slug" type="text" placeholder="Opcional">
+                            </div>
+                            <div class="field">
+                                <label for="new_plan_landing_display_order">Ordem publica</label>
+                                <input id="new_plan_landing_display_order" name="landing_display_order" type="number" min="1" step="1" placeholder="Ex.: 1">
+                                <small class="muted">Nao pode repetir com outro plano.</small>
                             </div>
                             <div class="field full">
                                 <label for="new_plan_description">Descrição comercial</label>
@@ -710,6 +771,7 @@ $pricingStateFromJson = static function (mixed $value, mixed $fallbackMonthly = 
                     <li>Plano com histórico comercial deve ser inativado, não apagado.</li>
                     <li>Limites precisam refletir o contrato vendido de verdade.</li>
                     <li>Apenas um plano recomendado ativo pode existir por vez.</li>
+                    <li>A ordem de exibicao publica precisa ser unica entre os planos.</li>
                     <li>JSON de recursos deve permanecer consistente com os módulos que o produto realmente entrega.</li>
                 </ul>
             </section>

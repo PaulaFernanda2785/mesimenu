@@ -113,6 +113,41 @@ final class PlanRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    public function findActivePublicBySlug(string $slug): ?array
+    {
+        $normalizedSlug = strtolower(trim($slug));
+        if ($normalizedSlug === '') {
+            return null;
+        }
+
+        $stmt = $this->db()->prepare("
+            SELECT
+                p.id,
+                p.name,
+                p.slug,
+                p.description,
+                p.price_monthly,
+                p.price_yearly,
+                p.max_users,
+                p.max_products,
+                p.max_tables,
+                p.features_json,
+                p.status,
+                p.created_at,
+                p.updated_at
+            FROM plans p
+            WHERE p.status = 'ativo'
+              AND p.slug = :slug
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'slug' => $normalizedSlug,
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function summary(array $filters = []): array
     {
         [$whereSql, $params] = $this->buildSaasWhere($filters);
@@ -349,6 +384,58 @@ final class PlanRepository extends BaseRepository
                 'features_json' => $encoded,
             ]);
         }
+    }
+
+    public function findByPublicDisplayOrder(int $displayOrder, ?int $exceptPlanId = null): ?array
+    {
+        if ($displayOrder <= 0) {
+            return null;
+        }
+
+        $sql = "
+            SELECT
+                p.id,
+                p.name,
+                p.status,
+                p.features_json
+            FROM plans p
+        ";
+        $params = [];
+
+        if (($exceptPlanId ?? 0) > 0) {
+            $sql .= " WHERE p.id <> :except_plan_id";
+            $params['except_plan_id'] = $exceptPlanId;
+        }
+
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute($params);
+
+        $plans = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        foreach ($plans as $plan) {
+            $rawFeatures = trim((string) ($plan['features_json'] ?? ''));
+            if ($rawFeatures === '') {
+                continue;
+            }
+
+            $decoded = json_decode($rawFeatures, true);
+            if (!is_array($decoded)) {
+                continue;
+            }
+
+            $publicConfig = is_array($decoded['vitrine_publica'] ?? null)
+                ? $decoded['vitrine_publica']
+                : [];
+
+            $currentOrder = isset($publicConfig['ordem_exibicao']) && is_numeric((string) $publicConfig['ordem_exibicao'])
+                ? (int) $publicConfig['ordem_exibicao']
+                : null;
+
+            if ($currentOrder === $displayOrder) {
+                return $plan;
+            }
+        }
+
+        return null;
     }
 
     public function delete(int $planId): void

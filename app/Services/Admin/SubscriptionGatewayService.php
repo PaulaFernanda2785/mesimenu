@@ -8,6 +8,7 @@ use App\Repositories\CompanyRepository;
 use App\Repositories\SubscriptionPaymentRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Services\Billing\MercadoPagoGateway;
+use App\Services\Shared\CompanyAccessProvisioningService;
 
 final class SubscriptionGatewayService
 {
@@ -15,7 +16,8 @@ final class SubscriptionGatewayService
         private readonly MercadoPagoGateway $gateway = new MercadoPagoGateway(),
         private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository(),
         private readonly SubscriptionPaymentRepository $subscriptionPayments = new SubscriptionPaymentRepository(),
-        private readonly CompanyRepository $companies = new CompanyRepository()
+        private readonly CompanyRepository $companies = new CompanyRepository(),
+        private readonly CompanyAccessProvisioningService $accessProvisioning = new CompanyAccessProvisioningService()
     ) {}
 
     public function isConfigured(): bool
@@ -89,7 +91,7 @@ final class SubscriptionGatewayService
         ]);
     }
 
-    public function createRecurringCheckout(int $companyId): void
+    public function createRecurringCheckout(int $companyId, ?string $backUrl = null): string
     {
         $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
         if ($subscription === null) {
@@ -103,7 +105,7 @@ final class SubscriptionGatewayService
         $gatewayCheckoutUrl = trim((string) ($subscription['gateway_checkout_url'] ?? ''));
         if ($gatewaySubscriptionId !== '' && !in_array($gatewayStatus, ['cancelled', 'cancelled_by_payer', 'canceled'], true)) {
             if ($gatewayCheckoutUrl !== '') {
-                return;
+                return $gatewayCheckoutUrl;
             }
 
             $response = $this->gateway->getSubscription($gatewaySubscriptionId);
@@ -117,7 +119,7 @@ final class SubscriptionGatewayService
             ]);
 
             if (trim((string) ($response['init_point'] ?? '')) !== '') {
-                return;
+                return (string) $response['init_point'];
             }
         }
 
@@ -130,7 +132,9 @@ final class SubscriptionGatewayService
             'reason' => 'Assinatura ' . trim((string) ($subscription['plan_name'] ?? 'Comanda360')),
             'external_reference' => 'subscription:' . (int) ($subscription['id'] ?? 0),
             'payer_email' => $companyEmail,
-            'back_url' => app_url('/admin/dashboard?section=subscription'),
+            'back_url' => $backUrl !== null && trim($backUrl) !== ''
+                ? $backUrl
+                : app_url('/admin/dashboard?section=subscription'),
             'status' => 'pending',
             'auto_recurring' => [
                 'frequency' => $frequency,
@@ -149,6 +153,8 @@ final class SubscriptionGatewayService
             'gateway_webhook_payload_json' => json_encode($response, JSON_UNESCAPED_SLASHES),
             'gateway_last_synced_at' => date('Y-m-d H:i:s'),
         ]);
+
+        return trim((string) ($response['init_point'] ?? ''));
     }
 
     public function syncSubscriptionByCompany(int $companyId): void
@@ -290,6 +296,8 @@ final class SubscriptionGatewayService
                     'gateway_webhook_payload_json' => json_encode($paymentResponse, JSON_UNESCAPED_SLASHES),
                     'gateway_last_synced_at' => date('Y-m-d H:i:s'),
                 ]);
+
+                $this->accessProvisioning->activateIfEligible((int) ($payment['company_id'] ?? 0));
             }
 
             return ['type' => 'payment', 'data_id' => $dataId];
@@ -328,6 +336,8 @@ final class SubscriptionGatewayService
                         'card_last_digits' => $subscription['card_last_digits'] ?? null,
                     ]);
                 }
+
+                $this->accessProvisioning->activateIfEligible((int) ($subscription['company_id'] ?? 0));
             }
 
             return ['type' => 'preapproval', 'data_id' => $dataId];

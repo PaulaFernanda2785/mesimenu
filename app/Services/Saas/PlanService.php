@@ -172,6 +172,10 @@ final class PlanService
         $existingFeatures = $this->decodeExistingFeatures($existing['features_json'] ?? null);
         $enabledFeatures = $this->resolveBusinessFeatures($input, $existingFeatures);
         $publicLanding = $this->resolvePublicLandingSettings($input, $existingFeatures);
+        $this->assertUniquePublicDisplayOrder(
+            $publicLanding['ordem_exibicao'] ?? null,
+            $existing !== null ? (int) ($existing['id'] ?? 0) : null
+        );
         $featuresJson = $this->buildGeneratedFeaturesJson(
             $slug,
             $status,
@@ -256,6 +260,25 @@ final class PlanService
         return (int) $raw;
     }
 
+    private function normalizeNullableDisplayOrder(mixed $value): ?int
+    {
+        $raw = trim((string) ($value ?? ''));
+        if ($raw === '') {
+            return null;
+        }
+
+        if (!ctype_digit($raw)) {
+            throw new ValidationException('Informe uma ordem de exibicao valida para a pagina publica.');
+        }
+
+        $displayOrder = (int) $raw;
+        if ($displayOrder <= 0) {
+            throw new ValidationException('A ordem de exibicao publica deve ser maior que zero.');
+        }
+
+        return $displayOrder;
+    }
+
     private function buildGeneratedFeaturesJson(
         string $slug,
         string $status,
@@ -307,6 +330,7 @@ final class PlanService
             'vitrine_publica' => [
                 'destaque' => (bool) ($publicLanding['destaque'] ?? false),
                 'recomendado' => (bool) ($publicLanding['recomendado'] ?? false),
+                'ordem_exibicao' => $publicLanding['ordem_exibicao'] ?? null,
             ],
         ];
 
@@ -422,12 +446,16 @@ final class PlanService
             return [
                 'destaque' => $this->normalizeFeatureFlag($input['landing_featured']),
                 'recomendado' => $this->normalizeFeatureFlag($input['landing_recommended'] ?? ($existingPublic['recomendado'] ?? false)),
+                'ordem_exibicao' => $this->normalizeNullableDisplayOrder($input['landing_display_order'] ?? ($existingPublic['ordem_exibicao'] ?? null)),
             ];
         }
 
         return [
             'destaque' => (bool) ($existingPublic['destaque'] ?? false),
             'recomendado' => (bool) ($existingPublic['recomendado'] ?? false),
+            'ordem_exibicao' => isset($existingPublic['ordem_exibicao']) && is_numeric((string) $existingPublic['ordem_exibicao'])
+                ? max(1, (int) $existingPublic['ordem_exibicao'])
+                : null,
         ];
     }
 
@@ -453,5 +481,22 @@ final class PlanService
         }
 
         $this->plans->clearRecommendedFlagFromOtherActivePlans($planId);
+    }
+
+    private function assertUniquePublicDisplayOrder(?int $displayOrder, ?int $exceptPlanId = null): void
+    {
+        if (($displayOrder ?? 0) <= 0) {
+            return;
+        }
+
+        $conflict = $this->plans->findByPublicDisplayOrder($displayOrder, $exceptPlanId);
+        if ($conflict === null) {
+            return;
+        }
+
+        $conflictName = trim((string) ($conflict['name'] ?? 'Plano'));
+        throw new ValidationException(
+            'A ordem de exibicao publica #' . $displayOrder . ' ja esta em uso pelo plano "' . $conflictName . '". Defina outra ordem.'
+        );
     }
 }

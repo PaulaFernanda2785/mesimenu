@@ -418,7 +418,7 @@ $formatLimitValue = static function (?int $value): string {
     .problems-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     .solutions-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .plans-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .plans-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
     .blog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .contact-grid{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr)}
     .footer-grid{grid-template-columns:minmax(0,1.1fr) repeat(3,minmax(0,.5fr))}
@@ -585,8 +585,10 @@ $formatLimitValue = static function (?int $value): string {
     .pricing-hint{font-size:13px;color:#5c6b7c}
     .plan-card{
         position:relative;
-        display:grid;
+        display:flex;
+        flex-direction:column;
         gap:18px;
+        height:100%;
         align-content:start;
         transition:transform .24s ease, box-shadow .24s ease;
     }
@@ -638,13 +640,19 @@ $formatLimitValue = static function (?int $value): string {
     .plan-card.is-recommended .plan-features li::before{
         background:linear-gradient(135deg,#facc15,#fff7cc);
     }
-    .plan-badges{display:flex;gap:10px;flex-wrap:wrap}
+    .plan-card .btn.is-disabled{
+        opacity:.56;
+        pointer-events:none;
+        box-shadow:none;
+    }
+    .plan-badges{display:flex;gap:10px;flex-wrap:wrap;min-height:32px;align-items:flex-start}
+    .plan-copy{display:grid;gap:10px;min-height:108px}
     .plan-card h3{
         white-space:nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
     }
-    .plan-card > div p{
+    .plan-copy p{
         display:-webkit-box;
         -webkit-line-clamp:2;
         -webkit-box-orient:vertical;
@@ -713,8 +721,18 @@ $formatLimitValue = static function (?int $value): string {
         overflow:hidden;
         text-overflow:ellipsis;
     }
-    .plan-actions{display:flex;gap:12px;flex-wrap:nowrap}
-    .plan-actions .btn{flex:1;min-width:0}
+    .plan-actions{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+        margin-top:auto;
+    }
+    .plan-actions .btn{
+        width:100%;
+        min-width:0;
+        padding-inline:14px;
+        white-space:nowrap;
+    }
     .plan-disclaimer{
         font-size:12px;
         color:#66788b;
@@ -722,6 +740,7 @@ $formatLimitValue = static function (?int $value): string {
         white-space:nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
+        margin-top:2px;
     }
 
     .blog-card a,
@@ -870,7 +889,7 @@ $formatLimitValue = static function (?int $value): string {
         .plan-features{grid-template-columns:1fr}
         .plans-head{align-items:flex-start}
         .plan-price strong{font-size:34px}
-        .plan-actions{flex-wrap:wrap}
+        .plan-actions{grid-template-columns:1fr}
     }
 </style>
 
@@ -1114,13 +1133,13 @@ $formatLimitValue = static function (?int $value): string {
                             $priceYearlyBase = isset($plan['price_yearly_base']) ? (float) $plan['price_yearly_base'] : ($priceMonthly * 12);
                             $yearlyDiscountPercent = (float) ($plan['price_yearly_discount_percent'] ?? 0);
                             ?>
-                            <article class="plan-card reveal<?= !empty($plan['is_featured']) ? ' is-featured' : '' ?><?= !empty($plan['is_recommended']) ? ' is-recommended' : '' ?>" data-plan-card data-monthly="<?= htmlspecialchars(number_format($priceMonthly, 2, '.', '')) ?>" data-yearly="<?= htmlspecialchars($priceYearly !== null ? number_format($priceYearly, 2, '.', '') : '') ?>" data-yearly-base="<?= htmlspecialchars(number_format($priceYearlyBase, 2, '.', '')) ?>" data-yearly-discount="<?= htmlspecialchars((string) $yearlyDiscountPercent) ?>">
+                            <article class="plan-card reveal<?= !empty($plan['is_featured']) ? ' is-featured' : '' ?><?= !empty($plan['is_recommended']) ? ' is-recommended' : '' ?>" data-plan-card data-plan-slug="<?= htmlspecialchars((string) ($plan['slug'] ?? '')) ?>" data-monthly="<?= htmlspecialchars(number_format($priceMonthly, 2, '.', '')) ?>" data-yearly="<?= htmlspecialchars($priceYearly !== null ? number_format($priceYearly, 2, '.', '') : '') ?>" data-yearly-base="<?= htmlspecialchars(number_format($priceYearlyBase, 2, '.', '')) ?>" data-yearly-discount="<?= htmlspecialchars((string) $yearlyDiscountPercent) ?>">
                                 <div class="plan-badges">
                                     <?php if (!empty($plan['is_recommended'])): ?>
                                         <span class="plan-badge">Plano recomendado</span>
                                     <?php endif; ?>
                                 </div>
-                                <div>
+                                <div class="plan-copy">
                                     <h3><?= htmlspecialchars($planName) ?></h3>
                                     <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao SaaS com cobranca recorrente.') ?></p>
                                 </div>
@@ -1157,7 +1176,7 @@ $formatLimitValue = static function (?int $value): string {
                                 <?php endif; ?>
 
                                 <div class="plan-actions">
-                                    <a class="btn btn-primary" href="#contato">Quero este plano</a>
+                                    <a class="btn btn-primary" href="<?= htmlspecialchars(base_url('/cadastro/empresa?plano=' . rawurlencode((string) ($plan['slug'] ?? '')) . '&ciclo=mensal')) ?>" data-plan-signup>Quero este plano</a>
                                     <a class="btn btn-secondary" href="#acesso">Ja sou cliente</a>
                                 </div>
 
@@ -1420,6 +1439,7 @@ $formatLimitValue = static function (?int $value): string {
             const priceNode = card.querySelector('[data-plan-price]');
             const cycleNode = card.querySelector('[data-plan-cycle]');
             const noteNode = card.querySelector('[data-plan-note]');
+            const signupNode = card.querySelector('[data-plan-signup]');
             if (!(priceNode instanceof HTMLElement) || !(cycleNode instanceof HTMLElement) || !(noteNode instanceof HTMLElement)) {
                 return;
             }
@@ -1428,6 +1448,7 @@ $formatLimitValue = static function (?int $value): string {
             const yearly = card.getAttribute('data-yearly') || '';
             const yearlyBase = card.getAttribute('data-yearly-base') || '';
             const yearlyDiscount = card.getAttribute('data-yearly-discount') || '0';
+            const planSlug = card.getAttribute('data-plan-slug') || '';
             const useYearly = cycle === 'anual' && yearly !== '';
 
             priceNode.textContent = formatMoney(useYearly ? yearly : monthly);
@@ -1439,6 +1460,18 @@ $formatLimitValue = static function (?int $value): string {
             }
 
             noteNode.textContent = `Anual: ${formatMoney(yearly)} com ${formatDiscount(yearlyDiscount)}% OFF`;
+
+            if (signupNode instanceof HTMLAnchorElement) {
+                if (cycle === 'anual' && yearly === '') {
+                    signupNode.classList.add('is-disabled');
+                    signupNode.href = '#planos';
+                    signupNode.textContent = 'Anual indisponivel';
+                } else {
+                    signupNode.classList.remove('is-disabled');
+                    signupNode.href = `${<?= json_encode(base_url('/cadastro/empresa')) ?>}?plano=${encodeURIComponent(planSlug)}&ciclo=${encodeURIComponent(useYearly ? 'anual' : 'mensal')}`;
+                    signupNode.textContent = 'Quero este plano';
+                }
+            }
         });
     };
 
