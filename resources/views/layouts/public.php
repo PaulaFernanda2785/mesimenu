@@ -41,5 +41,77 @@ $structuredData = is_array($seo['structured_data'] ?? null) ? $seo['structured_d
 </head>
 <body>
 <?= $content ?>
+<button class="back-to-top" type="button" aria-label="Voltar ao topo" data-back-to-top hidden>
+    <span class="back-to-top-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" role="img">
+            <path d="M12 19V5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 11L12 5L18 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </span>
+</button>
+<style>
+    .back-to-top{
+        position:fixed;
+        right:22px;
+        bottom:22px;
+        width:56px;
+        height:56px;
+        border:0;
+        border-radius:18px;
+        background:rgba(8,27,46,.86);
+        box-shadow:0 18px 32px rgba(7,21,35,.22);
+        display:grid;
+        place-items:center;
+        color:#fff;
+        cursor:pointer;
+        z-index:60;
+        backdrop-filter:blur(16px);
+        transition:transform .2s ease, opacity .2s ease, background .2s ease;
+    }
+    .back-to-top:hover{
+        transform:translateY(-2px);
+        background:rgba(255,122,24,.92);
+    }
+    .back-to-top-icon{
+        display:grid;
+        place-items:center;
+        width:24px;
+        height:24px;
+    }
+    .back-to-top-icon svg{
+        width:22px;
+        height:22px;
+        display:block;
+    }
+    .back-to-top[hidden]{display:none}
+    @media (max-width:720px){
+        .back-to-top{
+            right:14px;
+            bottom:14px;
+            width:52px;
+            height:52px;
+            border-radius:16px;
+        }
+    }
+</style>
+<script>
+(() => {
+    const trigger = document.querySelector('[data-back-to-top]');
+    if (!(trigger instanceof HTMLButtonElement)) {
+        return;
+    }
+
+    const syncVisibility = () => {
+        trigger.hidden = window.scrollY < 420;
+    };
+
+    trigger.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    syncVisibility();
+    window.addEventListener('scroll', syncVisibility, { passive: true });
+})();
+</script>
 </body>
 </html>

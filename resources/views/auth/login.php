@@ -74,7 +74,10 @@ $formatLimitValue = static function (?int $value): string {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    html{
+        scroll-behavior:smooth;
+        scroll-padding-top:128px;
+    }
     body{
         margin:0;
         color:var(--text);
@@ -87,7 +90,11 @@ $formatLimitValue = static function (?int $value): string {
 
     a{color:inherit}
     img{max-width:100%;display:block}
-    .page-shell{position:relative;overflow:hidden}
+    .page-shell{
+        position:relative;
+        overflow:hidden;
+        padding-top:108px;
+    }
     .page-shell::before,
     .page-shell::after{
         content:"";
@@ -148,19 +155,32 @@ $formatLimitValue = static function (?int $value): string {
     }
 
     .site-header{
-        position:sticky;
-        top:0;
-        z-index:20;
-        padding:18px 0;
-        backdrop-filter:blur(18px);
-        background:rgba(244,239,231,.68);
-        border-bottom:1px solid rgba(16,34,53,.08);
+        position:fixed;
+        top:16px;
+        left:0;
+        right:0;
+        z-index:28;
+        padding:0;
+        background:transparent;
     }
     .site-header-inner{
         display:flex;
         align-items:center;
         justify-content:space-between;
         gap:16px;
+        padding:14px 18px;
+        border-radius:28px;
+        background:rgba(255,255,255,.42);
+        border:1px solid rgba(255,255,255,.58);
+        box-shadow:0 18px 42px rgba(8,27,46,.10);
+        backdrop-filter:blur(22px);
+        transition:background .24s ease, border-color .24s ease, box-shadow .24s ease, transform .24s ease;
+    }
+    .site-header.is-scrolled .site-header-inner{
+        background:rgba(255,255,255,.78);
+        border-color:rgba(255,255,255,.84);
+        box-shadow:0 24px 54px rgba(8,27,46,.14);
+        transform:translateY(-1px);
     }
     .brand{
         display:flex;
@@ -200,6 +220,10 @@ $formatLimitValue = static function (?int $value): string {
         align-items:center;
         gap:10px;
         flex-wrap:wrap;
+        padding:6px;
+        border-radius:999px;
+        background:rgba(255,255,255,.16);
+        border:1px solid rgba(255,255,255,.18);
     }
     .site-nav a{
         text-decoration:none;
@@ -216,6 +240,12 @@ $formatLimitValue = static function (?int $value): string {
         transform:translateY(-1px);
     }
     .header-actions{display:flex;align-items:center;gap:12px}
+    .header-actions .btn-secondary{
+        min-height:48px;
+        padding:0 18px;
+        background:rgba(255,255,255,.84);
+        border-color:rgba(8,27,46,.08);
+    }
     .menu-toggle{
         display:none;
         width:48px;
@@ -316,9 +346,9 @@ $formatLimitValue = static function (?int $value): string {
     }
     .hero-copy h1{
         margin:10px 0 14px;
-        font:700 clamp(30px,3.7vw,56px)/1 "Space Grotesk","Manrope",sans-serif;
+        font:700 clamp(26px,3vw,44px)/1.04 "Space Grotesk","Manrope",sans-serif;
         letter-spacing:-.05em;
-        max-width:560px;
+        max-width:520px;
         text-shadow:0 12px 30px rgba(0,0,0,.28);
     }
     .hero-copy p{
@@ -837,12 +867,26 @@ $formatLimitValue = static function (?int $value): string {
         .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
 
-    @media (max-width:860px){
+    @media (max-width:1080px){
+        html{scroll-padding-top:96px}
+        .page-shell{padding-top:12px}
+        .site-header{
+            position:sticky;
+            top:12px;
+            left:auto;
+            right:auto;
+            margin-bottom:14px;
+        }
+        .brand-mark img{
+            height:50px;
+            max-width:min(260px, 34vw);
+        }
         .site-nav{
             position:absolute;
             top:100%;
-            left:16px;
             right:16px;
+            left:auto;
+            width:min(420px, calc(100vw - 32px));
             padding:16px;
             border-radius:24px;
             background:rgba(255,255,255,.96);
@@ -851,19 +895,27 @@ $formatLimitValue = static function (?int $value): string {
             display:none;
             flex-direction:column;
             align-items:stretch;
+            padding:16px;
         }
         .site-nav.is-open{display:flex}
         .site-nav a{padding:14px 16px;border-radius:16px}
         .menu-toggle{display:inline-flex;align-items:center;justify-content:center}
         .header-actions .btn-secondary{display:none}
+        .site-header-inner{
+            padding:14px 16px;
+            border-radius:24px;
+            background:rgba(255,255,255,.72);
+            border-color:rgba(255,255,255,.84);
+        }
         .hero-copy{padding:28px}
-        .hero-copy h1{font-size:42px}
+        .hero-copy h1{font-size:36px}
         .hero-copy-top{grid-template-columns:1fr}
     }
 
     @media (max-width:720px){
         .section{padding:72px 0}
         .container{width:min(calc(100% - 22px), var(--max))}
+        .site-header{top:10px}
         .content-card,
         .feature-card,
         .problem-card,
@@ -886,7 +938,7 @@ $formatLimitValue = static function (?int $value): string {
         .plans-head{align-items:flex-start}
         .plan-price strong{font-size:34px}
         .plan-actions{grid-template-columns:1fr}
-        .hero-copy h1{font-size:34px}
+        .hero-copy h1{font-size:30px}
         .hero-copy p{font-size:16px}
         .hero-actions .btn{width:100%}
     }
@@ -1331,11 +1383,21 @@ $formatLimitValue = static function (?int $value): string {
 
 <script>
 (() => {
+    const header = document.querySelector('.site-header');
     const nav = document.querySelector('[data-site-nav]');
     const toggle = document.querySelector('[data-menu-toggle]');
     const revealItems = Array.from(document.querySelectorAll('.reveal'));
     const pricingToggle = document.querySelector('[data-pricing-toggle]');
     const planCards = Array.from(document.querySelectorAll('[data-plan-card]'));
+
+    const syncHeaderState = () => {
+        if (!(header instanceof HTMLElement)) {
+            return;
+        }
+
+        const shouldElevate = window.scrollY > 28;
+        header.classList.toggle('is-scrolled', shouldElevate);
+    };
 
     if (toggle instanceof HTMLButtonElement && nav instanceof HTMLElement) {
         toggle.addEventListener('click', () => {
@@ -1346,6 +1408,9 @@ $formatLimitValue = static function (?int $value): string {
             link.addEventListener('click', () => nav.classList.remove('is-open'));
         });
     }
+
+    syncHeaderState();
+    window.addEventListener('scroll', syncHeaderState, { passive: true });
 
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
