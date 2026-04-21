@@ -126,6 +126,44 @@ if (!function_exists('public_logo_url')) {
     }
 }
 
+if (!function_exists('public_embedded_image_url')) {
+    function public_embedded_image_url(string $relativePath, string $fallbackMime = 'image/png'): string
+    {
+        static $cache = [];
+
+        $normalized = ltrim(str_replace('\\', '/', $relativePath), '/');
+        if ($normalized === '') {
+            return '';
+        }
+
+        if (isset($cache[$normalized]) && is_string($cache[$normalized]) && $cache[$normalized] !== '') {
+            return $cache[$normalized];
+        }
+
+        $absolutePath = BASE_PATH . '/public/' . $normalized;
+        if (is_file($absolutePath) && is_readable($absolutePath)) {
+            $contents = @file_get_contents($absolutePath);
+            if (is_string($contents) && $contents !== '') {
+                $mime = function_exists('mime_content_type')
+                    ? (string) (mime_content_type($absolutePath) ?: $fallbackMime)
+                    : $fallbackMime;
+
+                $cache[$normalized] = 'data:' . $mime . ';base64,' . base64_encode($contents);
+                return $cache[$normalized];
+            }
+        }
+
+        $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+        $resolvedPath = str_contains($scriptName, '/public/')
+            || str_ends_with($scriptName, '/public/index.php')
+            ? '/' . $normalized
+            : '/public/' . $normalized;
+
+        $cache[$normalized] = base_url($resolvedPath);
+        return $cache[$normalized];
+    }
+}
+
 if (!function_exists('product_image_url')) {
     function product_image_url(?string $path): string
     {

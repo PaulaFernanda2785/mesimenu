@@ -279,7 +279,7 @@ $formatLimit = static function (?int $value, string $label): string {
             <aside class="card plan-card">
                 <span class="plan-badge">Plano escolhido</span>
                 <h2><?= htmlspecialchars((string) ($selectedPlan['name'] ?? 'Plano')) ?></h2>
-                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ativo publicado para contratacao no ambiente SaaS.')) ?></p>
+                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ativo publicado para contratacao no ambiente Comanda360.')) ?></p>
                 <div class="plan-price">
                     <strong><?= htmlspecialchars($formatMoney(isset($selectedPlan['amount']) ? (float) $selectedPlan['amount'] : null)) ?></strong>
                     <span>/ <?= htmlspecialchars((string) ($selectedPlan['billing_cycle'] ?? 'mensal')) ?></span>

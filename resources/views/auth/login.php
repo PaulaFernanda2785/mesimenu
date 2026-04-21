@@ -15,6 +15,7 @@ $blogArticles = is_array($landingPage['blog_articles'] ?? null) ? $landingPage['
 $faqItems = is_array($landingPage['faq'] ?? null) ? $landingPage['faq'] : [];
 
 $logoUrl = public_logo_url();
+$heroPanelImageUrl = public_embedded_image_url('img/painel-descktop.png');
 $currentUrl = app_url((string) ($_SERVER['REQUEST_URI'] ?? '/'));
 
 $formatMoney = static function (?float $amount): string {
@@ -261,65 +262,94 @@ $formatLimitValue = static function (?int $value): string {
     .hero{padding:48px 0 36px}
     .hero-grid{
         display:grid;
-        grid-template-columns:minmax(0,1.2fr) minmax(340px,.82fr);
+        grid-template-columns:minmax(0,1fr);
         gap:24px;
         align-items:stretch;
     }
     .hero-copy{
         position:relative;
-        padding:38px;
+        padding:34px;
         min-height:100%;
         border-radius:var(--radius-xl);
         background:
-            linear-gradient(140deg, rgba(6,19,32,.98) 0%, rgba(13,48,74,.96) 48%, rgba(14,165,164,.92) 100%);
+            linear-gradient(120deg, rgba(3,11,28,.92) 0%, rgba(6,22,56,.84) 32%, rgba(7,24,63,.68) 52%, rgba(7,24,63,.36) 72%, rgba(255,122,24,.14) 100%),
+            url('<?= htmlspecialchars($heroPanelImageUrl) ?>') center center/cover no-repeat;
         color:#f7fbff;
         box-shadow:0 36px 72px rgba(4,17,29,.26);
         overflow:hidden;
+        border:1px solid rgba(255,255,255,.14);
     }
     .hero-copy::before,
     .hero-copy::after{
         content:"";
         position:absolute;
         border-radius:999px;
-        background:rgba(255,255,255,.08);
+        pointer-events:none;
     }
-    .hero-copy::before{width:260px;height:260px;top:-60px;right:-50px}
-    .hero-copy::after{width:180px;height:180px;bottom:-60px;left:-40px}
+    .hero-copy::before{
+        inset:0;
+        border-radius:inherit;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 22%),
+            linear-gradient(90deg, rgba(3,11,28,.82) 0%, rgba(3,11,28,.58) 36%, rgba(3,11,28,.18) 62%, rgba(3,11,28,.52) 100%);
+    }
+    .hero-copy::after{
+        width:320px;
+        height:320px;
+        right:-120px;
+        top:-110px;
+        background:radial-gradient(circle, rgba(255,160,64,.40) 0%, rgba(255,160,64,0) 72%);
+        filter:blur(10px);
+    }
     .hero-copy > *{position:relative;z-index:1}
+    .hero-copy-top{
+        display:grid;
+        grid-template-columns:minmax(0,1fr);
+        gap:18px;
+        align-items:start;
+    }
+    .hero-kicker{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        max-width:560px;
+    }
     .hero-copy h1{
-        margin:18px 0 18px;
-        font:700 clamp(38px,5vw,72px)/.95 "Space Grotesk","Manrope",sans-serif;
-        letter-spacing:-.06em;
-        max-width:760px;
+        margin:10px 0 14px;
+        font:700 clamp(30px,3.7vw,56px)/1 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.05em;
+        max-width:560px;
+        text-shadow:0 12px 30px rgba(0,0,0,.28);
     }
     .hero-copy p{
-        max-width:700px;
+        max-width:540px;
         margin:0;
-        font-size:19px;
-        line-height:1.72;
-        color:rgba(240,245,250,.86);
+        font-size:17px;
+        line-height:1.68;
+        color:rgba(240,245,250,.88);
     }
     .hero-actions{
         display:flex;
         gap:14px;
         flex-wrap:wrap;
-        margin:28px 0 32px;
+        margin:22px 0 28px;
     }
     .hero-metrics{
         display:grid;
         grid-template-columns:repeat(4,minmax(0,1fr));
-        gap:12px;
+        gap:14px;
     }
     .hero-metric{
-        padding:16px;
-        border-radius:18px;
-        background:rgba(255,255,255,.08);
-        border:1px solid rgba(255,255,255,.12);
-        backdrop-filter:blur(10px);
+        padding:18px 18px 16px;
+        border-radius:20px;
+        background:linear-gradient(180deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.08) 100%);
+        border:1px solid rgba(255,255,255,.14);
+        backdrop-filter:blur(16px);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     }
     .hero-metric strong{
         display:block;
-        font:700 22px/1 "Space Grotesk","Manrope",sans-serif;
+        font:700 24px/1 "Space Grotesk","Manrope",sans-serif;
         color:#fff;
     }
     .hero-metric span{
@@ -327,44 +357,13 @@ $formatLimitValue = static function (?int $value): string {
         margin-top:8px;
         font-size:13px;
         line-height:1.45;
-        color:rgba(240,245,250,.72);
+        color:rgba(240,245,250,.82);
     }
-
-    .panel{
-        padding:28px;
-        border-radius:var(--radius-xl);
-        background:rgba(255,255,255,.86);
-        border:1px solid rgba(255,255,255,.94);
-        box-shadow:var(--shadow);
-        backdrop-filter:blur(18px);
-    }
-    .login-panel{
+    .hero-meta-row{
         display:grid;
-        gap:18px;
-        align-self:start;
+        grid-template-columns:minmax(0,1fr);
+        gap:16px;
     }
-    .panel-header h2,
-    .panel-header h3{
-        margin:0;
-        font:700 30px/1.02 "Space Grotesk","Manrope",sans-serif;
-        letter-spacing:-.04em;
-        color:#081b2e;
-    }
-    .panel-header p{
-        margin:10px 0 0;
-        color:var(--muted);
-        line-height:1.65;
-    }
-    .flash-stack{display:grid;gap:10px}
-    .flash{
-        padding:14px 16px;
-        border-radius:16px;
-        font-size:14px;
-        line-height:1.5;
-        border:1px solid transparent;
-    }
-    .flash.success{background:#ecfdf3;color:#0f6b46;border-color:#b7ebcf}
-    .flash.error{background:#fff0ef;color:#9c2a10;border-color:#f7c2b7}
 
     .field{display:grid;gap:8px}
     .field label{
@@ -400,16 +399,6 @@ $formatLimitValue = static function (?int $value): string {
         gap:14px;
     }
     .form-grid .field.full{grid-column:1 / -1}
-    .helper-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-    .helper-list li{
-        padding:12px 14px;
-        border-radius:16px;
-        background:#f6f8fb;
-        color:#365067;
-        line-height:1.5;
-        border:1px solid rgba(12,34,56,.08);
-    }
-
     .about-grid,
     .feature-grid,
     .problems-grid,
@@ -869,12 +858,12 @@ $formatLimitValue = static function (?int $value): string {
         .header-actions .btn-secondary{display:none}
         .hero-copy{padding:28px}
         .hero-copy h1{font-size:42px}
+        .hero-copy-top{grid-template-columns:1fr}
     }
 
     @media (max-width:720px){
         .section{padding:72px 0}
         .container{width:min(calc(100% - 22px), var(--max))}
-        .panel,
         .content-card,
         .feature-card,
         .problem-card,
@@ -897,6 +886,9 @@ $formatLimitValue = static function (?int $value): string {
         .plans-head{align-items:flex-start}
         .plan-price strong{font-size:34px}
         .plan-actions{grid-template-columns:1fr}
+        .hero-copy h1{font-size:34px}
+        .hero-copy p{font-size:16px}
+        .hero-actions .btn{width:100%}
     }
 </style>
 
@@ -929,41 +921,31 @@ $formatLimitValue = static function (?int $value): string {
         <section class="hero">
             <div class="container hero-grid">
                 <div class="hero-copy reveal is-visible">
-                    <span class="eyebrow">SaaS com foco em atracao, operacao e recorrencia</span>
-                    <h1>Transforme vendas manuais em um fluxo digital que vende, cobra e escala.</h1>
-                    <p>O Comanda360 posiciona sua operacao com mais clareza comercial, entrada de novos clientes, planos ativos prontos para vitrine publica, assinaturas recorrentes e pagamento via PIX ou cartao. Tudo em uma pagina preparada para SEO, indexacao no Google e conversao.</p>
+                    <div class="hero-copy-top">
+                        <div class="hero-kicker">
+                            <span class="eyebrow">Comanda360 com foco em atracao, operacao e recorrencia</span>
+                            <h1>Transforme vendas manuais em um fluxo digital que vende, cobra e escala.</h1>
+                            <p>O Comanda360 posiciona sua operacao com mais clareza comercial, entrada de novos clientes, planos ativos prontos para vitrine publica, assinaturas recorrentes e pagamento via PIX ou cartao. Tudo em uma pagina preparada para SEO, indexacao no Google e conversao.</p>
 
-                    <div class="hero-actions">
-                        <a class="btn btn-primary" href="#planos">Ver planos ativos</a>
-                        <a class="btn btn-ghost" href="#contato">Quero falar com o comercial</a>
+                            <div class="hero-actions">
+                                <a class="btn btn-primary" href="#planos">Ver planos ativos</a>
+                                <a class="btn btn-ghost" href="#contato">Quero falar com o comercial</a>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="hero-metrics">
-                        <?php foreach ($heroMetrics as $metric): ?>
-                            <?php if (!is_array($metric)): continue; endif; ?>
-                            <div class="hero-metric">
-                                <strong><?= htmlspecialchars((string) ($metric['value'] ?? '-')) ?></strong>
-                                <span><?= htmlspecialchars((string) ($metric['label'] ?? '')) ?></span>
-                            </div>
-                        <?php endforeach; ?>
+                    <div class="hero-meta-row">
+                        <div class="hero-metrics">
+                            <?php foreach ($heroMetrics as $metric): ?>
+                                <?php if (!is_array($metric)): continue; endif; ?>
+                                <div class="hero-metric">
+                                    <strong><?= htmlspecialchars((string) ($metric['value'] ?? '-')) ?></strong>
+                                    <span><?= htmlspecialchars((string) ($metric['label'] ?? '')) ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
-
-                <aside class="panel login-panel reveal">
-                    <div class="panel-header">
-                        <span class="eyebrow">Clientes ja ativos</span>
-                        <h2>Acesso separado da pagina comercial</h2>
-                        <p>Quem ja tem empresa liberada ou usuario interno agora entra por uma tela exclusiva. A landing publica fica focada em conversao, nao em autenticacao.</p>
-                    </div>
-
-                    <a class="btn btn-primary" href="<?= htmlspecialchars(base_url('/login')) ?>" style="width:100%">Ir para a tela de login</a>
-
-                    <ul class="helper-list">
-                        <li>Clientes novos continuam entrando pelo fluxo de plano, cadastro e pagamento.</li>
-                        <li>Usuarios operacionais e SaaS acessam a plataforma pela nova pagina dedicada.</li>
-                        <li>Separacao de acessos por contexto: empresa, operacao e ambiente SaaS.</li>
-                    </ul>
-                </aside>
             </div>
         </section>
 
@@ -971,7 +953,7 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Sobre</span>
-                    <h2>Uma pagina publica que nao so apresenta o produto, mas organiza a entrada comercial do SaaS.</h2>
+                    <h2>Uma pagina publica que nao so apresenta o produto, mas organiza a entrada comercial do Comanda360.</h2>
                     <p>Se a homepage publica nao vende, ela so ocupa espaco. Aqui a proposta foi estruturar uma landing com discurso comercial, foco em publicidade digital e uma narrativa clara para busca organica, campanhas pagas e decisao de compra.</p>
                 </div>
 
@@ -988,7 +970,7 @@ $formatLimitValue = static function (?int $value): string {
                         <ul class="feature-card" style="margin-top:16px;padding:0;box-shadow:none;border:0;background:transparent">
                             <li>Arquitetura semantica com H1, H2, FAQ e blocos textuais ricos em contexto.</li>
                             <li>CTA de acesso e CTA de contato em pontos diferentes da jornada.</li>
-                            <li>Planos dinamicos baseados no cadastro ativo do SaaS.</li>
+                            <li>Planos dinamicos baseados no cadastro ativo do Comanda360.</li>
                             <li>Formulario de lead com captura de origem e parametros UTM.</li>
                         </ul>
                     </article>
@@ -1022,7 +1004,7 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="section-head reveal">
                     <span class="eyebrow">Solucoes</span>
                     <h2>O caminho mais consistente nao e improvisar mais, e padronizar melhor.</h2>
-                    <p>A solucao aqui nao foi desenhar uma pagina genrica. Foi alinhar marketing, produto e operacao para que a experiencia publica seja coerente com o que o SaaS realmente entrega.</p>
+                    <p>A solucao aqui nao foi desenhar uma pagina genrica. Foi alinhar marketing, produto e operacao para que a experiencia publica seja coerente com o que o Comanda360 realmente entrega.</p>
                 </div>
 
                 <div class="solutions-grid">
@@ -1078,7 +1060,7 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Planos</span>
-                    <h2>Os planos desta pagina seguem o cadastro ativo do SaaS.</h2>
+                    <h2>Os planos desta pagina seguem o cadastro ativo do Comanda360.</h2>
                     <p>Isso evita promessa comercial fora da realidade. O que aparece aqui respeita o catalogo vigente e aplica os marcadores comerciais de destaque e recomendado definidos na administracao interna.</p>
                 </div>
 
@@ -1096,7 +1078,7 @@ $formatLimitValue = static function (?int $value): string {
                 <?php if ($plans === []): ?>
                     <article class="content-card reveal">
                         <h3>Nenhum plano publico disponivel</h3>
-                        <p>O catalogo ainda nao possui planos ativos para exibicao. A proxima acao correta e ativar os planos no painel SaaS antes de escalar trafego para esta pagina.</p>
+                        <p>O catalogo ainda nao possui planos ativos para exibicao. A proxima acao correta e ativar os planos no painel Comanda360 antes de escalar trafego para esta pagina.</p>
                     </article>
                 <?php else: ?>
                     <div class="plans-grid">
@@ -1118,7 +1100,7 @@ $formatLimitValue = static function (?int $value): string {
                                 </div>
                                 <div class="plan-copy">
                                     <h3><?= htmlspecialchars($planName) ?></h3>
-                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao SaaS com cobranca recorrente.') ?></p>
+                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao Comanda360 com cobranca recorrente.') ?></p>
                                 </div>
 
                                 <div class="plan-price">
@@ -1258,7 +1240,7 @@ $formatLimitValue = static function (?int $value): string {
 
                     <aside class="contact-card is-dark reveal">
                         <h3>O que essa pagina ja sustenta</h3>
-                        <p>Mais do que apresentacao. Ela sustenta descoberta, avaliacao, comparacao e entrada comercial com narrativa coerente para venda SaaS.</p>
+                        <p>Mais do que apresentacao. Ela sustenta descoberta, avaliacao, comparacao e entrada comercial com narrativa coerente para o Comanda360.</p>
 
                         <div class="contact-pillars">
                             <div class="contact-pillar">

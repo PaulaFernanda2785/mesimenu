@@ -80,7 +80,7 @@ final class LandingPageService
             'solutions' => [
                 [
                     'eyebrow' => 'Operacao',
-                    'title' => 'Fluxo comercial e operacional no mesmo SaaS',
+                    'title' => 'Fluxo comercial e operacional no Comanda360',
                     'description' => 'Da captura de interesse ate o uso diario da plataforma, o Comanda360 conecta login, plano, assinatura, cobranca e operacao sem quebrar a jornada.',
                 ],
                 [
@@ -145,7 +145,7 @@ final class LandingPageService
             'faq' => [
                 [
                     'question' => 'Os planos exibidos na pagina publica sao automaticos?',
-                    'answer' => 'Sim. A landing publica lista apenas planos ativos cadastrados no painel SaaS e aplica os marcadores de destaque e recomendado definidos no catalogo.',
+                    'answer' => 'Sim. A landing publica lista apenas planos ativos cadastrados no painel Comanda360 e aplica os marcadores de destaque e recomendado definidos no catalogo.',
                 ],
                 [
                     'question' => 'A plataforma trabalha com pagamento via PIX e cartao?',
@@ -174,7 +174,7 @@ final class LandingPageService
                 'name' => 'Os planos exibidos na pagina publica sao automaticos?',
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text' => 'A pagina publica lista apenas planos ativos cadastrados no painel SaaS e aplica os marcadores de destaque e recomendado definidos no catalogo.',
+                    'text' => 'A pagina publica lista apenas planos ativos cadastrados no painel Comanda360 e aplica os marcadores de destaque e recomendado definidos no catalogo.',
                 ],
             ],
             [
@@ -188,9 +188,9 @@ final class LandingPageService
         ];
 
         return [
-            'title' => 'Comanda360 | SaaS para vendas, operacao e assinaturas com SEO e cobranca recorrente',
-            'description' => 'Sistema SaaS para digitalizar vendas, comandas, operacao e cobranca recorrente com planos mensais ou anuais, PIX, cartao e pagina publica preparada para SEO.',
-            'keywords' => 'sistema para restaurante, saas para delivery, comanda digital, cobranca recorrente pix, pagina de login seo, software de vendas',
+            'title' => 'Comanda360 | Plataforma para vendas, operacao e assinaturas com SEO e cobranca recorrente',
+            'description' => 'Comanda360 para digitalizar vendas, comandas, operacao e cobranca recorrente com planos mensais ou anuais, PIX, cartao e pagina publica preparada para SEO.',
+            'keywords' => 'sistema para restaurante, comanda360 para delivery, comanda digital, cobranca recorrente pix, pagina de login seo, software de vendas',
             'canonical' => $canonical,
             'robots' => 'index,follow,max-image-preview:large',
             'og_image' => $logoUrl,
@@ -215,7 +215,7 @@ final class LandingPageService
                     'applicationCategory' => 'BusinessApplication',
                     'operatingSystem' => 'Web',
                     'url' => $canonical,
-                    'description' => 'SaaS para operacao comercial, assinaturas, pagamentos via PIX e cartao e digitalizacao de vendas.',
+                    'description' => 'Comanda360 para operacao comercial, assinaturas, pagamentos via PIX e cartao e digitalizacao de vendas.',
                 ],
                 [
                     '@context' => 'https://schema.org',
@@ -253,7 +253,7 @@ final class LandingPageService
                 ],
             ],
             [
-                'title' => 'Gestao do cliente SaaS',
+                'title' => 'Gestao do cliente Comanda360',
                 'items' => [
                     'Cadastro de empresas com contexto comercial',
                     'Assinaturas vinculadas ao plano contratado',

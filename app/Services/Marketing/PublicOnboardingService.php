@@ -579,7 +579,7 @@ final class PublicOnboardingService
         return [
             'title' => $title,
             'description' => $description,
-            'keywords' => 'cadastro empresa saas, pagamento pix cartao, onboarding assinatura comanda360',
+            'keywords' => 'cadastro empresa comanda360, pagamento pix cartao, onboarding assinatura comanda360',
             'canonical' => app_url((string) ($_SERVER['REQUEST_URI'] ?? '/')),
             'robots' => 'noindex,nofollow',
             'og_image' => asset_url('/img/logo-comanda360.png'),

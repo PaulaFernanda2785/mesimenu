@@ -181,7 +181,7 @@ $logoUrl = public_logo_url();
                 <h1>Entre na plataforma sem disputar espaco com a narrativa comercial.</h1>
                 <p>A landing publica deve vender. O login deve acelerar acesso. Separar essas jornadas reduz friccao, evita distracao e deixa cada pagina com uma funcao clara.</p>
                 <div class="hero-points">
-                    <div>Acesso centralizado para empresa, operacao e usuarios SaaS.</div>
+                    <div>Acesso centralizado para empresa, operacao e usuarios Comanda360.</div>
                     <div>Redirecionamento automatico conforme o perfil autorizado.</div>
                     <div>Mesmo endpoint de autenticacao, agora com tela exclusiva.</div>
                 </div>
