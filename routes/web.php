@@ -99,6 +99,8 @@ $router->post('/admin/dashboard/subscription/pix', [DashboardController::class, 
 $router->post('/admin/dashboard/subscription/gateway/checkout', [DashboardController::class, 'createSubscriptionRecurringCheckout'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/gateway/sync', [DashboardController::class, 'refreshSubscriptionGatewayStatus'], $companyAccess('dashboard.view'));
 $router->post('/admin/dashboard/subscription/auto-charge/disable', [DashboardController::class, 'disableSubscriptionAutoCharge'], $companyAccess('dashboard.view'));
+$router->get('/admin/dashboard/subscription/plan-migration/preview', [DashboardController::class, 'previewSubscriptionPlanMigration'], $companyAccess('dashboard.view'));
+$router->post('/admin/dashboard/subscription/plan-migration/apply', [DashboardController::class, 'applySubscriptionPlanMigration'], $companyAccess('dashboard.view'));
 
 $router->get('/admin/products', [ProductController::class, 'index'], $companyAccess('products.view'));
 $router->get('/admin/products/create', [ProductController::class, 'create'], $companyAccess('products.create'));

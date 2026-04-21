@@ -6,9 +6,11 @@ namespace App\Services\Admin;
 use App\Core\Database;
 use App\Exceptions\ValidationException;
 use App\Repositories\CompanyRepository;
+use App\Repositories\PlanRepository;
 use App\Repositories\SubscriptionPaymentRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Services\Shared\PlanFeatureCatalogService;
+use App\Services\Shared\SubscriptionPlanMigrationService;
 use DateTimeImmutable;
 use Throwable;
 
@@ -20,8 +22,10 @@ final class SubscriptionPortalService
         private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository(),
         private readonly SubscriptionPaymentRepository $subscriptionPayments = new SubscriptionPaymentRepository(),
         private readonly CompanyRepository $companies = new CompanyRepository(),
+        private readonly PlanRepository $plans = new PlanRepository(),
         private readonly SubscriptionGatewayService $gatewayService = new SubscriptionGatewayService(),
-        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService()
+        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService(),
+        private readonly SubscriptionPlanMigrationService $planMigration = new SubscriptionPlanMigrationService()
     ) {}
 
     public function panel(int $companyId, array $filters = []): array
@@ -66,12 +70,44 @@ final class SubscriptionPortalService
             'history_pagination' => $this->buildPaginationPayload($historyPagination),
             'features' => $this->extractFeatureSummary($subscription),
             'summary' => $this->buildSummary($subscription, $this->subscriptionPayments->listBySubscriptionId((int) $subscription['id'], 120), $openPayments),
+            'plan_migration' => $this->buildPlanMigrationContext($subscription, $openPayments),
             'billing_access' => $this->resolveAccessState($companyId),
             'gateway' => [
                 'configured' => $this->gatewayService->isConfigured(),
                 'provider' => $this->gatewayService->providerName(),
             ],
         ];
+    }
+
+    public function previewPlanMigration(int $companyId, array $input): array
+    {
+        [$subscription, $plan, $targetSubscription, $preparedMigration] = $this->preparePlanMigration($companyId, $input);
+
+        return $this->buildPlanMigrationPreviewPayload($subscription, $plan, $targetSubscription, $preparedMigration);
+    }
+
+    public function applyPlanMigration(int $companyId, array $input): array
+    {
+        [$subscription, $plan, $targetSubscription, $preparedMigration] = $this->preparePlanMigration($companyId, $input);
+
+        $this->companies->transaction(function () use ($companyId, $subscription, $preparedMigration): void {
+            $preparedSubscription = is_array($preparedMigration['subscription'] ?? null)
+                ? $preparedMigration['subscription']
+                : [];
+
+            $this->planMigration->applyMigration($subscription, $preparedMigration);
+            $this->companies->updateSubscriptionSnapshot($companyId, [
+                'plan_id' => $preparedSubscription['plan_id'] ?? null,
+                'subscription_status' => 'ativa',
+                'trial_ends_at' => null,
+                'subscription_starts_at' => $preparedSubscription['starts_at'] ?? null,
+                'subscription_ends_at' => $preparedSubscription['ends_at'] ?? null,
+            ]);
+        });
+
+        $this->synchronizeByCompany($companyId);
+
+        return $this->buildPlanMigrationPreviewPayload($subscription, $plan, $targetSubscription, $preparedMigration);
     }
 
     public function receiptContext(int $companyId, int $paymentId): array
@@ -499,6 +535,7 @@ final class SubscriptionPortalService
             }
         }
 
+        $this->applyCreditBalanceToOpenPayments($subscriptionId);
         $this->ensureNextOpenCharge($subscription, $usesAutoCard);
 
         $payments = $this->subscriptionPayments->listBySubscriptionId($subscriptionId, 240);
@@ -596,22 +633,35 @@ final class SubscriptionPortalService
         $pixPayload = $usesAutoCard
             ? ['pix_code' => null, 'pix_qr_payload' => null]
             : $this->buildPixPayload($companyId, $subscriptionId, $targetReferenceYear, $targetReferenceMonth, $amount);
+        $creditConsumption = $this->consumeCreditBalance($subscriptionId, $amount);
+        $chargeAmount = $creditConsumption['amount'];
+        $paymentStatus = $chargeAmount <= 0 ? 'pago' : 'pendente';
+        $paymentMethod = $paymentStatus === 'pago'
+            ? 'pix'
+            : ($usesAutoCard ? trim((string) ($subscription['preferred_payment_method'] ?? '')) : 'pix');
+        $paymentDetails = $creditConsumption['applied'] > 0
+            ? json_encode([
+                'source' => 'billing_credit_balance',
+                'credit_applied' => round($creditConsumption['applied'], 2),
+                'credit_applied_at' => date('c'),
+            ], JSON_UNESCAPED_SLASHES)
+            : null;
 
         $this->subscriptionPayments->create([
             'subscription_id' => $subscriptionId,
             'company_id' => $companyId,
             'reference_month' => $targetReferenceMonth,
             'reference_year' => $targetReferenceYear,
-            'amount' => $amount,
-            'status' => 'pendente',
-            'payment_method' => $usesAutoCard ? trim((string) ($subscription['preferred_payment_method'] ?? '')) : 'pix',
-            'paid_at' => null,
+            'amount' => $chargeAmount,
+            'status' => $paymentStatus,
+            'payment_method' => $paymentMethod,
+            'paid_at' => $paymentStatus === 'pago' ? date('Y-m-d H:i:s') : null,
             'due_date' => $targetDueDate,
-            'transaction_reference' => null,
-            'charge_origin' => $usesAutoCard ? 'auto' : 'pix',
+            'transaction_reference' => $paymentStatus === 'pago' ? $this->buildChargeReference('CREDIT', $subscriptionId, 'saldo') : null,
+            'charge_origin' => $creditConsumption['applied'] > 0 ? 'migracao' : ($usesAutoCard ? 'auto' : 'pix'),
             'pix_code' => $pixPayload['pix_code'],
             'pix_qr_payload' => $pixPayload['pix_qr_payload'],
-            'payment_details_json' => null,
+            'payment_details_json' => $paymentDetails,
         ]);
     }
 
@@ -754,6 +804,7 @@ final class SubscriptionPortalService
             'next_due_date' => $nextDueDate,
             'plan_name' => $subscription['plan_name'] ?? null,
             'billing_cycle' => $subscription['billing_cycle'] ?? null,
+            'credit_balance' => round((float) ($subscription['billing_credit_balance'] ?? 0), 2),
             'preferred_payment_method' => $subscription['preferred_payment_method'] ?? null,
             'auto_charge_enabled' => !empty($subscription['auto_charge_enabled']),
         ];
@@ -775,8 +826,268 @@ final class SubscriptionPortalService
             'auto' => 'Recorrencia automatica',
             'pix' => 'Cobranca PIX',
             'manual' => 'Baixa manual',
+            'migracao' => 'Migracao de plano',
             default => trim($origin) !== '' ? trim($origin) : 'Nao informado',
         };
+    }
+
+    private function buildPlanMigrationOffers(array $subscription): array
+    {
+        $currentPlanId = (int) ($subscription['plan_id'] ?? 0);
+        $offers = [];
+
+        foreach ($this->plans->listActiveForPublicCatalog() as $plan) {
+            $planId = (int) ($plan['id'] ?? 0);
+            if ($planId <= 0) {
+                continue;
+            }
+
+            $features = $this->featureCatalog->summaryFromJson($plan['features_json'] ?? null);
+            $offers[] = [
+                'id' => $planId,
+                'name' => (string) ($plan['name'] ?? 'Plano'),
+                'description' => (string) ($plan['description'] ?? ''),
+                'price_monthly' => round((float) ($plan['price_monthly'] ?? 0), 2),
+                'price_yearly' => round((float) ($plan['price_yearly'] ?? 0), 2),
+                'supports_monthly' => round((float) ($plan['price_monthly'] ?? 0), 2) > 0,
+                'supports_yearly' => round((float) ($plan['price_yearly'] ?? 0), 2) > 0,
+                'is_current_plan' => $planId === $currentPlanId,
+                'features' => array_slice($features, 0, 8),
+            ];
+        }
+
+        return $offers;
+    }
+
+    private function buildPlanMigrationContext(array $subscription, array $openPayments): array
+    {
+        $offers = $this->buildPlanMigrationOffers($subscription);
+        $alternativeOffers = array_values(array_filter(
+            $offers,
+            static fn (array $offer): bool => empty($offer['is_current_plan'])
+        ));
+
+        $today = new DateTimeImmutable('today');
+        $blockers = [];
+        foreach ($openPayments as $payment) {
+            $dueDate = $this->dateOrToday((string) ($payment['due_date'] ?? ''));
+            if ($dueDate <= $today) {
+                $blockers[] = 'A migracao esta bloqueada porque existe cobranca do ciclo atual em aberto ou vencida.';
+                break;
+            }
+        }
+
+        if ($alternativeOffers === []) {
+            $blockers[] = 'Nao existe outro plano ativo disponivel para autoatendimento neste momento.';
+        }
+
+        $notes = [];
+        if (!empty($subscription['auto_charge_enabled']) && in_array((string) ($subscription['preferred_payment_method'] ?? ''), self::CARD_METHODS, true)) {
+            $notes[] = 'Se a empresa usa cartao recorrente, a nova recorrencia precisara de nova autorizacao no valor atualizado.';
+        }
+
+        $creditBalance = round((float) ($subscription['billing_credit_balance'] ?? 0), 2);
+        if ($creditBalance > 0) {
+            $notes[] = 'A assinatura ja possui saldo de credito acumulado de R$ ' . number_format($creditBalance, 2, ',', '.') . ' para abatimento.';
+        }
+
+        return [
+            'offers' => $offers,
+            'can_self_migrate' => $blockers === [],
+            'blockers' => $blockers,
+            'notes' => $notes,
+            'current_credit_balance' => $creditBalance,
+        ];
+    }
+
+    private function applyCreditBalanceToOpenPayments(int $subscriptionId): void
+    {
+        $subscription = $this->subscriptions->findById($subscriptionId);
+        if ($subscription === null) {
+            return;
+        }
+
+        $remainingCredit = round((float) ($subscription['billing_credit_balance'] ?? 0), 2);
+        if ($remainingCredit <= 0) {
+            return;
+        }
+
+        foreach ($this->subscriptionPayments->listOpenBySubscriptionId($subscriptionId) as $payment) {
+            if ($remainingCredit <= 0) {
+                break;
+            }
+
+            $paymentId = (int) ($payment['id'] ?? 0);
+            $amount = round((float) ($payment['amount'] ?? 0), 2);
+            if ($paymentId <= 0 || $amount <= 0) {
+                continue;
+            }
+
+            $applied = round(min($amount, $remainingCredit), 2);
+            $newAmount = round(max(0, $amount - $applied), 2);
+            $details = $this->mergePaymentDetails($payment, [
+                'credit_balance_application' => [
+                    'applied' => $applied,
+                    'applied_at' => date('c'),
+                ],
+            ]);
+
+            $this->subscriptionPayments->updateAmount($paymentId, $newAmount, json_encode($details, JSON_UNESCAPED_SLASHES));
+            if ($newAmount <= 0) {
+                $this->subscriptionPayments->updateRecord($paymentId, [
+                    'status' => 'pago',
+                    'payment_method' => 'pix',
+                    'paid_at' => date('Y-m-d H:i:s'),
+                    'due_date' => (string) ($payment['due_date'] ?? date('Y-m-d')),
+                    'transaction_reference' => $this->buildChargeReference('CREDIT', $paymentId, 'saldo'),
+                    'charge_origin' => 'migracao',
+                    'pix_code' => null,
+                    'pix_qr_payload' => null,
+                    'pix_qr_image_base64' => null,
+                    'pix_ticket_url' => null,
+                    'payment_details_json' => json_encode($details, JSON_UNESCAPED_SLASHES),
+                    'gateway_payment_id' => null,
+                    'gateway_payment_url' => null,
+                    'gateway_status' => null,
+                    'gateway_webhook_payload_json' => null,
+                    'gateway_last_synced_at' => null,
+                ]);
+            }
+
+            $remainingCredit = round(max(0, $remainingCredit - $applied), 2);
+        }
+
+        $this->subscriptions->updateBillingCreditBalance($subscriptionId, $remainingCredit);
+    }
+
+    private function consumeCreditBalance(int $subscriptionId, float $amount): array
+    {
+        $subscription = $this->subscriptions->findById($subscriptionId);
+        if ($subscription === null) {
+            return ['amount' => round($amount, 2), 'applied' => 0.0];
+        }
+
+        $creditBalance = round((float) ($subscription['billing_credit_balance'] ?? 0), 2);
+        if ($creditBalance <= 0 || $amount <= 0) {
+            return ['amount' => round($amount, 2), 'applied' => 0.0];
+        }
+
+        $applied = round(min($creditBalance, $amount), 2);
+        $remainingCredit = round(max(0, $creditBalance - $applied), 2);
+        $this->subscriptions->updateBillingCreditBalance($subscriptionId, $remainingCredit);
+
+        return [
+            'amount' => round(max(0, $amount - $applied), 2),
+            'applied' => $applied,
+        ];
+    }
+
+    private function preparePlanMigration(int $companyId, array $input): array
+    {
+        if ($companyId <= 0) {
+            throw new ValidationException('Empresa invalida para trocar o plano.');
+        }
+
+        $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
+        if ($subscription === null) {
+            throw new ValidationException('Assinatura nao encontrada para troca de plano.');
+        }
+
+        $planId = (int) ($input['plan_id'] ?? 0);
+        if ($planId <= 0) {
+            throw new ValidationException('Selecione um plano valido para visualizar a migracao.');
+        }
+
+        $billingCycle = strtolower(trim((string) ($input['billing_cycle'] ?? '')));
+        if (!in_array($billingCycle, ['mensal', 'anual'], true)) {
+            throw new ValidationException('Selecione um ciclo valido para a migracao do plano.');
+        }
+
+        $plan = $this->plans->findById($planId);
+        if ($plan === null || strtolower(trim((string) ($plan['status'] ?? ''))) !== 'ativo') {
+            throw new ValidationException('O plano selecionado nao esta disponivel para migracao no momento.');
+        }
+
+        $targetAmount = $billingCycle === 'anual'
+            ? round((float) ($plan['price_yearly'] ?? 0), 2)
+            : round((float) ($plan['price_monthly'] ?? 0), 2);
+        if ($targetAmount <= 0) {
+            throw new ValidationException('O ciclo selecionado ainda nao esta precificado para autoatendimento. Escolha outro ciclo ou fale com o comercial.');
+        }
+
+        $currentPlanId = (int) ($subscription['plan_id'] ?? 0);
+        $currentBillingCycle = strtolower(trim((string) ($subscription['billing_cycle'] ?? '')));
+        $currentAmount = round((float) ($subscription['amount'] ?? 0), 2);
+        if ($currentPlanId === $planId && $currentBillingCycle === $billingCycle && $currentAmount === $targetAmount) {
+            throw new ValidationException('Esse ja e o plano atual da empresa. Escolha outro plano ou outro ciclo.');
+        }
+
+        $targetSubscription = [
+            'plan_id' => $planId,
+            'status' => 'ativa',
+            'billing_cycle' => $billingCycle,
+            'amount' => $targetAmount,
+            'starts_at' => (string) ($subscription['starts_at'] ?? date('Y-m-d H:i:s')),
+            'ends_at' => (string) ($subscription['ends_at'] ?? date('Y-m-d H:i:s')),
+            'canceled_at' => null,
+        ];
+
+        $preparedMigration = $this->planMigration->previewMigration(
+            $subscription,
+            $targetSubscription,
+            isset($input['charge_due_date']) ? (string) $input['charge_due_date'] : null
+        );
+
+        return [$subscription, $plan, $targetSubscription, $preparedMigration];
+    }
+
+    private function buildPlanMigrationPreviewPayload(
+        array $currentSubscription,
+        array $targetPlan,
+        array $targetSubscription,
+        array $preparedMigration
+    ): array {
+        $migrationMeta = is_array($preparedMigration['migration_meta'] ?? null)
+            ? $preparedMigration['migration_meta']
+            : [];
+        $preparedSubscription = is_array($preparedMigration['subscription'] ?? null)
+            ? $preparedMigration['subscription']
+            : [];
+        $targetFeatures = $this->featureCatalog->summaryFromJson($targetPlan['features_json'] ?? null);
+        $chargeAmount = round((float) ($preparedMigration['charge_amount'] ?? 0), 2);
+        $carryCredit = round((float) ($migrationMeta['carry_credit'] ?? 0), 2);
+        $unusedCredit = round((float) ($migrationMeta['unused_credit'] ?? 0), 2);
+        $creditBalanceAfter = round((float) ($preparedSubscription['billing_credit_balance'] ?? 0), 2);
+
+        return [
+            'current' => [
+                'plan_name' => (string) ($currentSubscription['plan_name'] ?? 'Plano atual'),
+                'billing_cycle' => (string) ($currentSubscription['billing_cycle'] ?? ''),
+                'billing_cycle_label' => status_label('billing_cycle', (string) ($currentSubscription['billing_cycle'] ?? '')),
+                'amount' => round((float) ($currentSubscription['amount'] ?? 0), 2),
+            ],
+            'target' => [
+                'plan_id' => (int) ($targetPlan['id'] ?? 0),
+                'plan_name' => (string) ($targetPlan['name'] ?? 'Novo plano'),
+                'billing_cycle' => (string) ($targetSubscription['billing_cycle'] ?? ''),
+                'billing_cycle_label' => status_label('billing_cycle', (string) ($targetSubscription['billing_cycle'] ?? '')),
+                'amount' => round((float) ($targetSubscription['amount'] ?? 0), 2),
+                'features' => array_slice($targetFeatures, 0, 8),
+            ],
+            'proration' => [
+                'unused_credit' => $unusedCredit,
+                'charge_amount' => $chargeAmount,
+                'carry_credit' => $carryCredit,
+                'credit_balance_after' => $creditBalanceAfter,
+                'charge_due_date' => (string) ($preparedMigration['charge_due_date'] ?? date('Y-m-d')),
+                'new_cycle_start' => (string) ($preparedSubscription['starts_at'] ?? ''),
+                'new_cycle_end' => (string) ($preparedSubscription['ends_at'] ?? ''),
+            ],
+            'rules' => [
+                'requires_payment' => $chargeAmount > 0,
+                'requires_gateway_reauthorization' => !empty($migrationMeta['gateway_reauthorization_required']),
+            ],
+        ];
     }
 
     private function resolveReceiptSaasSignature(?array $paymentDetails): array
@@ -933,6 +1244,20 @@ final class SubscriptionPortalService
         return $text !== '' ? $text : null;
     }
 
+    private function mergePaymentDetails(array $payment, array $merge): array
+    {
+        $details = [];
+        $raw = trim((string) ($payment['payment_details_json'] ?? ''));
+        if ($raw !== '') {
+            $decoded = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $details = $decoded;
+            }
+        }
+
+        return array_replace_recursive($details, $merge);
+    }
+
     private function buildChargeReference(string $prefix, int $paymentId, string $method): string
     {
         return sprintf('%s-%s-%06d', strtoupper($prefix), strtoupper($method), max(0, $paymentId));
@@ -983,6 +1308,7 @@ final class SubscriptionPortalService
                 'next_due_date' => null,
                 'plan_name' => null,
                 'billing_cycle' => null,
+                'credit_balance' => 0.0,
                 'preferred_payment_method' => null,
                 'auto_charge_enabled' => false,
             ],

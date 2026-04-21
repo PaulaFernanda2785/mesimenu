@@ -14,7 +14,7 @@ $workflow = is_array($landingPage['workflow'] ?? null) ? $landingPage['workflow'
 $blogArticles = is_array($landingPage['blog_articles'] ?? null) ? $landingPage['blog_articles'] : [];
 $faqItems = is_array($landingPage['faq'] ?? null) ? $landingPage['faq'] : [];
 
-$logoUrl = asset_url('/img/logo-comanda360.png');
+$logoUrl = public_logo_url();
 $currentUrl = app_url((string) ($_SERVER['REQUEST_URI'] ?? '/'));
 
 $formatMoney = static function (?float $amount): string {
@@ -164,17 +164,24 @@ $formatLimitValue = static function (?int $value): string {
     .brand{
         display:flex;
         align-items:center;
-        gap:14px;
         text-decoration:none;
         min-width:0;
+        flex:0 0 auto;
     }
     .brand-mark{
-        width:50px;
-        height:50px;
-        border-radius:16px;
-        background:linear-gradient(145deg,#081b2e 0%,#163450 100%);
-        padding:10px;
-        box-shadow:0 14px 30px rgba(8,27,46,.22);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        min-width:0;
+        flex:0 0 auto;
+    }
+    .brand-mark img{
+        display:block;
+        height:54px;
+        width:auto;
+        max-width:min(300px, 32vw);
+        object-fit:contain;
+        flex:0 0 auto;
     }
     .brand-copy strong{
         display:block;
@@ -900,10 +907,6 @@ $formatLimitValue = static function (?int $value): string {
                 <span class="brand-mark">
                     <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
                 </span>
-                <span class="brand-copy">
-                    <strong>Comanda360</strong>
-                    <span>SaaS comercial, operacional e financeiro</span>
-                </span>
             </a>
 
             <nav class="site-nav" data-site-nav>
@@ -1328,10 +1331,6 @@ $formatLimitValue = static function (?int $value): string {
                     <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
                         <span class="brand-mark">
                             <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
-                        </span>
-                        <span class="brand-copy">
-                            <strong>Comanda360</strong>
-                            <span>Login, marketing, planos, assinatura e operacao no mesmo ecossistema.</span>
                         </span>
                     </a>
                     <p>Landing publica desenhada para atrair novos clientes, sustentar indexacao e transformar visitas em operacoes comerciais rastreaveis.</p>

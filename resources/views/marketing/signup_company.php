@@ -1,6 +1,7 @@
 <?php
 $selectedPlan = is_array($selectedPlan ?? null) ? $selectedPlan : [];
 $formData = is_array($formData ?? null) ? $formData : [];
+$logoUrl = public_logo_url();
 
 $formatMoney = static function (?float $amount): string {
     if ($amount === null) {
@@ -57,12 +58,10 @@ $formatLimit = static function (?int $value, string $label): string {
     .brand{
         display:inline-flex;
         align-items:center;
-        gap:14px;
         text-decoration:none;
-        font:800 22px/1 "Space Grotesk","Manrope",sans-serif;
-        color:#081b2e;
+        flex:0 0 auto;
     }
-    .brand img{width:48px;height:48px;border-radius:14px;object-fit:cover}
+    .brand img{display:block;height:54px;width:auto;max-width:min(300px, 40vw);object-fit:contain;flex:0 0 auto}
     .topbar-links{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
     .topbar-links a{
         text-decoration:none;
@@ -257,8 +256,7 @@ $formatLimit = static function (?int $value, string $label): string {
     <div class="container">
         <div class="topbar">
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
-                <img src="<?= htmlspecialchars(asset_url('/img/logo-comanda360.png')) ?>" alt="Comanda360">
-                <span>Comanda360</span>
+                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
             </a>
             <div class="topbar-links">
                 <a href="<?= htmlspecialchars(base_url('/#planos')) ?>">Voltar aos planos</a>

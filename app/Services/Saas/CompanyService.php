@@ -10,6 +10,7 @@ use App\Repositories\DashboardRepository;
 use App\Repositories\PlanRepository;
 use DateInterval;
 use DateTimeImmutable;
+use App\Services\Shared\SubscriptionPlanMigrationService;
 
 final class CompanyService
 {
@@ -40,7 +41,8 @@ final class CompanyService
         private readonly CompanyRepository $companies = new CompanyRepository(),
         private readonly DashboardRepository $dashboard = new DashboardRepository(),
         private readonly PlanRepository $plans = new PlanRepository(),
-        private readonly SubscriptionPortalService $subscriptionPortal = new SubscriptionPortalService()
+        private readonly SubscriptionPortalService $subscriptionPortal = new SubscriptionPortalService(),
+        private readonly SubscriptionPlanMigrationService $planMigration = new SubscriptionPlanMigrationService()
     ) {}
 
     public function panel(array $filters): array
@@ -122,8 +124,29 @@ final class CompanyService
 
         $currentSubscription = $this->companies->findCurrentSubscriptionByCompanyId($companyId);
         $payload = $this->normalizePayload($input, $existing);
+        $migration = null;
 
-        $this->companies->transaction(function () use ($companyId, $payload, $currentSubscription, $existing): void {
+        if (
+            $currentSubscription !== null
+            && $this->planMigration->shouldApply(
+                $currentSubscription,
+                $payload['subscription'] ?? [],
+                (string) ($payload['company']['subscription_status'] ?? '')
+            )
+        ) {
+            $migration = $this->planMigration->previewMigration(
+                $currentSubscription,
+                $payload['subscription'],
+                $payload['next_charge_due_date']
+            );
+
+            $payload['subscription'] = is_array($migration['subscription'] ?? null) ? $migration['subscription'] : $payload['subscription'];
+            $payload['company']['subscription_starts_at'] = $payload['subscription']['starts_at'] ?? $payload['company']['subscription_starts_at'];
+            $payload['company']['subscription_ends_at'] = $payload['subscription']['ends_at'] ?? $payload['company']['subscription_ends_at'];
+            $payload['company']['trial_ends_at'] = null;
+        }
+
+        $this->companies->transaction(function () use ($companyId, $payload, $currentSubscription, $existing, $migration): void {
             $this->companies->updateCompany($companyId, $payload['company']);
 
             $subscription = $payload['subscription'];
@@ -132,7 +155,11 @@ final class CompanyService
             }
 
             if ($currentSubscription !== null) {
-                $this->companies->updateSubscription((int) $currentSubscription['id'], $subscription);
+                if ($migration !== null) {
+                    $this->planMigration->applyMigration($currentSubscription, $migration);
+                } else {
+                    $this->companies->updateSubscription((int) $currentSubscription['id'], $subscription);
+                }
                 $this->syncInitialAdminUser($companyId, $existing, $payload['company']);
                 return;
             }
@@ -142,7 +169,7 @@ final class CompanyService
             $this->syncInitialAdminUser($companyId, $existing, $payload['company']);
         });
 
-        $this->syncBillingSchedule($companyId, $payload['next_charge_due_date']);
+        $this->syncBillingSchedule($companyId, $migration !== null ? null : $payload['next_charge_due_date']);
     }
 
     public function cancelCompany(int $companyId): void

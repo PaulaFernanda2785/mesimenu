@@ -112,6 +112,7 @@ CREATE TABLE subscriptions (
     status VARCHAR(20) NOT NULL DEFAULT 'trial' COMMENT 'Situação da assinatura',
     billing_cycle VARCHAR(20) NOT NULL COMMENT 'Periodicidade de cobrança',
     amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Valor contratado',
+    billing_credit_balance DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Saldo de credito acumulado para abatimento nas proximas cobrancas',
     starts_at DATETIME NOT NULL COMMENT 'Data inicial da assinatura',
     ends_at DATETIME NULL COMMENT 'Data final prevista',
     canceled_at DATETIME NULL COMMENT 'Data de cancelamento',
@@ -142,7 +143,8 @@ CREATE TABLE subscriptions (
     CONSTRAINT chk_subscriptions_billing_cycle CHECK (
         billing_cycle IN ('mensal', 'anual')
     ),
-    CONSTRAINT chk_subscriptions_amount CHECK (amount >= 0)
+    CONSTRAINT chk_subscriptions_amount CHECK (amount >= 0),
+    CONSTRAINT chk_subscriptions_billing_credit_balance CHECK (billing_credit_balance >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='Histórico de assinaturas por empresa';
 

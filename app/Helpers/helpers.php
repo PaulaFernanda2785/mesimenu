@@ -98,6 +98,34 @@ if (!function_exists('asset_url')) {
     }
 }
 
+if (!function_exists('public_logo_url')) {
+    function public_logo_url(): string
+    {
+        static $cached = null;
+        if (is_string($cached) && $cached !== '') {
+            return $cached;
+        }
+
+        $logoFile = BASE_PATH . '/public/img/logo-comanda360.png';
+        if (is_file($logoFile) && is_readable($logoFile)) {
+            $contents = @file_get_contents($logoFile);
+            if (is_string($contents) && $contents !== '') {
+                $cached = 'data:image/png;base64,' . base64_encode($contents);
+                return $cached;
+            }
+        }
+
+        $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+        $logoRelativePath = str_contains($scriptName, '/public/')
+            || str_ends_with($scriptName, '/public/index.php')
+            ? '/img/logo-comanda360.png'
+            : '/public/img/logo-comanda360.png';
+
+        $cached = base_url($logoRelativePath);
+        return $cached;
+    }
+}
+
 if (!function_exists('product_image_url')) {
     function product_image_url(?string $path): string
     {

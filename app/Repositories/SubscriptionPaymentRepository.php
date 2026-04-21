@@ -698,6 +698,24 @@ final class SubscriptionPaymentRepository extends BaseRepository
         ]);
     }
 
+    public function updateAmount(int $paymentId, float $amount, ?string $paymentDetailsJson = null): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE subscription_payments
+            SET
+                amount = :amount,
+                payment_details_json = :payment_details_json,
+                updated_at = NOW()
+            WHERE id = :id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'id' => $paymentId,
+            'amount' => round(max(0, $amount), 2),
+            'payment_details_json' => $paymentDetailsJson,
+        ]);
+    }
+
     public function listBySubscriptionIdPaginated(int $subscriptionId, array $filters, int $page, int $perPage): array
     {
         $page = max(1, $page);

@@ -556,6 +556,74 @@ final class DashboardController extends Controller
         }
     }
 
+    public function previewSubscriptionPlanMigration(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return Response::make(json_encode([
+                'ok' => false,
+                'message' => 'Nao autenticado.',
+            ], JSON_UNESCAPED_SLASHES), 401, ['Content-Type' => 'application/json']);
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+        $companyId = (int) ($user['company_id'] ?? 0);
+
+        try {
+            $preview = $this->subscriptionService->previewPlanMigration($companyId, $request->query);
+            return Response::make(json_encode([
+                'ok' => true,
+                'preview' => $preview,
+            ], JSON_UNESCAPED_SLASHES), 200, ['Content-Type' => 'application/json']);
+        } catch (ValidationException $e) {
+            return Response::make(json_encode([
+                'ok' => false,
+                'message' => $e->getMessage(),
+            ], JSON_UNESCAPED_SLASHES), 422, ['Content-Type' => 'application/json']);
+        }
+    }
+
+    public function applySubscriptionPlanMigration(Request $request): Response
+    {
+        if (!Auth::check()) {
+            return $this->redirect('/login');
+        }
+
+        $redirectTo = $this->resolveSubscriptionRedirect($request);
+        $planId = (int) ($request->input('plan_id', 0));
+        $billingCycle = strtolower(trim((string) ($request->input('billing_cycle', ''))));
+        $guard = $this->guardSingleSubmit($request, 'dashboard.subscription.plan_migration.' . $planId . '.' . $billingCycle, $redirectTo);
+        if ($guard !== null) {
+            return $guard;
+        }
+
+        $user = Auth::user() ?? [];
+        $this->ensureAccess($user);
+        $companyId = (int) ($user['company_id'] ?? 0);
+
+        try {
+            $result = $this->subscriptionService->applyPlanMigration($companyId, $request->all());
+            $target = is_array($result['target'] ?? null) ? $result['target'] : [];
+            $rules = is_array($result['rules'] ?? null) ? $result['rules'] : [];
+            $chargeAmount = round((float) ($result['proration']['charge_amount'] ?? 0), 2);
+
+            $message = 'Plano alterado com sucesso para ' . trim((string) ($target['plan_name'] ?? 'o novo plano')) . ' (' . trim((string) ($target['billing_cycle_label'] ?? '')) . ').';
+            if ($chargeAmount > 0) {
+                $message .= ' Foi gerada uma cobranca proporcional de R$ ' . number_format($chargeAmount, 2, ',', '.') . '.';
+            } else {
+                $message .= ' Nao houve cobranca imediata nesta migracao.';
+            }
+
+            if (!empty($rules['requires_gateway_reauthorization'])) {
+                $message .= ' Se a empresa usava cartao recorrente, sera necessario autorizar novamente a recorrencia no novo valor.';
+            }
+
+            return $this->backWithSuccess($message, $redirectTo);
+        } catch (ValidationException $e) {
+            return $this->backWithError($e->getMessage(), $redirectTo);
+        }
+    }
+
     private function ensureAccess(array $user): void
     {
         $roleSlug = strtolower(trim((string) ($user['role_slug'] ?? '')));

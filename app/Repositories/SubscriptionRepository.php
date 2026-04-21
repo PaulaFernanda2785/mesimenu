@@ -17,6 +17,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.canceled_at,
@@ -76,6 +77,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.canceled_at,
@@ -119,6 +121,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.canceled_at,
@@ -188,6 +191,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.canceled_at,
@@ -225,6 +229,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.preferred_payment_method,
@@ -268,6 +273,7 @@ final class SubscriptionRepository extends BaseRepository
                 s.status,
                 s.billing_cycle,
                 s.amount,
+                s.billing_credit_balance,
                 s.starts_at,
                 s.ends_at,
                 s.preferred_payment_method,
@@ -353,6 +359,22 @@ final class SubscriptionRepository extends BaseRepository
         $stmt->execute([
             'subscription_id' => $subscriptionId,
             'status' => $status,
+        ]);
+    }
+
+    public function updateBillingCreditBalance(int $subscriptionId, float $balance): void
+    {
+        $stmt = $this->db()->prepare("
+            UPDATE subscriptions
+            SET
+                billing_credit_balance = :billing_credit_balance,
+                updated_at = NOW()
+            WHERE id = :subscription_id
+            LIMIT 1
+        ");
+        $stmt->execute([
+            'subscription_id' => $subscriptionId,
+            'billing_credit_balance' => round(max(0, $balance), 2),
         ]);
     }
 }

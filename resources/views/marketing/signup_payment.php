@@ -6,6 +6,7 @@ $currentPayment = is_array($currentPayment ?? null) ? $currentPayment : [];
 $paymentHistory = is_array($paymentHistory ?? null) ? $paymentHistory : [];
 $gateway = is_array($gateway ?? null) ? $gateway : [];
 $paymentState = is_array($paymentState ?? null) ? $paymentState : [];
+$logoUrl = public_logo_url();
 
 $formatMoney = static function (?float $amount): string {
     if ($amount === null) {
@@ -90,12 +91,10 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
     .brand{
         display:inline-flex;
         align-items:center;
-        gap:14px;
         text-decoration:none;
-        font:800 22px/1 "Space Grotesk","Manrope",sans-serif;
-        color:#081b2e;
+        flex:0 0 auto;
     }
-    .brand img{width:48px;height:48px;border-radius:14px;object-fit:cover}
+    .brand img{display:block;height:54px;width:auto;max-width:min(300px, 40vw);object-fit:contain;flex:0 0 auto}
     .btn{
         display:inline-flex;
         align-items:center;
@@ -425,8 +424,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
     <div class="container">
         <div class="topbar">
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
-                <img src="<?= htmlspecialchars(asset_url('/img/logo-comanda360.png')) ?>" alt="Comanda360">
-                <span>Comanda360</span>
+                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
             </a>
             <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login#acesso')) ?>">Ja sou cliente</a>
         </div>

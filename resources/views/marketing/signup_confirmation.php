@@ -1,5 +1,6 @@
 <?php
 $confirmation = is_array($confirmation ?? null) ? $confirmation : [];
+$logoUrl = public_logo_url();
 
 $formatMoney = static function (?float $amount): string {
     if ($amount === null) {
@@ -47,8 +48,30 @@ $formatDate = static function (?string $value): string {
             linear-gradient(180deg,#f3f8f5 0%, #eef5fb 44%, #f8fbff 100%);
         font-family:"Manrope","Segoe UI",sans-serif;
     }
+    a{color:inherit}
     .page-shell{padding:38px 0 70px}
     .container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
+    .topbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:18px;
+        padding:0 0 22px;
+    }
+    .brand{
+        display:inline-flex;
+        align-items:center;
+        text-decoration:none;
+        flex:0 0 auto;
+    }
+    .brand img{
+        display:block;
+        height:56px;
+        width:auto;
+        max-width:min(300px, 40vw);
+        object-fit:contain;
+        flex:0 0 auto;
+    }
     .panel{
         background:rgba(255,255,255,.92);
         border:1px solid rgba(255,255,255,.76);
@@ -157,12 +180,19 @@ $formatDate = static function (?string $value): string {
     }
     @media (max-width:860px){
         .content{grid-template-columns:1fr}
+        .topbar{padding-bottom:18px}
         .hero,.content{padding:22px}
     }
 </style>
 
 <div class="page-shell">
     <div class="container">
+        <div class="topbar">
+            <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
+                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
+            </a>
+            <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login#acesso')) ?>">Ir para o login</a>
+        </div>
         <section class="panel">
             <div class="hero">
                 <span class="eyebrow">Assinatura confirmada</span>
