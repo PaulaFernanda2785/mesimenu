@@ -702,9 +702,9 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
         <section class="auth-stage">
             <article class="context-panel">
                 <div class="context-copy">
-                    <span class="eyebrow">Acesso interno do Comanda360</span>
+                    <span class="eyebrow">Acesso interno da Comanda360</span>
                     <h1>Entrar no ambiente certo, com o perfil certo e sem misturar contextos de uso.</h1>
-                    <p>O login interno do Comanda360 separa operacao do estabelecimento, gestao da empresa assinante e ambiente institucional da plataforma. O cliente final do QR Code continua no fluxo publico do cardapio e do pedido.</p>
+                    <p>O login interno da Comanda360 separa operacao do estabelecimento, gestao da empresa assinante e ambiente institucional da plataforma. O cliente final do QR Code continua no fluxo publico do cardapio e do pedido.</p>
                 </div>
 
                 <div class="context-grid">
@@ -723,7 +723,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                     <article class="context-card">
                         <span>Ambiente institucional</span>
                         <strong>Empresas, planos e cobrancas</strong>
-                        <p>Usuarios do Comanda360 acessam governanca da plataforma, assinaturas, cobrancas, suporte e operacao global do SaaS.</p>
+                        <p>Usuarios da Comanda360 acessam governanca da plataforma, assinaturas, cobrancas, suporte e operacao global da Comanda360.</p>
                     </article>
 
                     <article class="context-card">
@@ -742,7 +742,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                 <div class="login-hero">
                     <span class="eyebrow">Acesso dedicado</span>
                     <h2>Entre com seu usuario interno e siga para o modulo que pertence ao seu perfil.</h2>
-                    <p>O destino do acesso respeita o contexto permitido para o usuario: operacao, administracao da empresa ou ambiente institucional do Comanda360.</p>
+                    <p>O destino do acesso respeita o contexto permitido para o usuario: operacao, administracao da empresa ou ambiente institucional da Comanda360.</p>
 
                     <div class="login-pills">
                         <span>Pedidos e cozinha</span>
@@ -758,7 +758,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                 <div class="login-body">
                     <div class="login-head">
                         <h3>Acessar agora</h3>
-                        <p>Informe o e-mail e a senha do usuario cadastrado no Comanda360. O redirecionamento e definido automaticamente pelo perfil, empresa vinculada e escopo autorizado.</p>
+                        <p>Informe o e-mail e a senha do usuario cadastrado na Comanda360. O redirecionamento e definido automaticamente pelo perfil, empresa vinculada e escopo autorizado.</p>
                     </div>
 
                     <div class="flash-stack">
@@ -803,7 +803,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
         <footer class="page-footer">
             <div class="page-footer-topline">
                 <div class="page-footer-kicker">Autenticacao interna com contexto controlado</div>
-                <span>Entrada central para equipes operacionais, gestores da empresa e escopo institucional do Comanda360.</span>
+                <span>Entrada central para equipes operacionais, gestores da empresa e escopo institucional da Comanda360.</span>
             </div>
 
             <div class="page-footer-main">
@@ -841,7 +841,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                     <ul class="page-footer-list">
                         <li>Mesas, comandas, pedidos, cozinha, caixa e entregas da empresa.</li>
                         <li>Catalogo, adicionais, estoque, usuarios e acompanhamento gerencial da unidade.</li>
-                        <li>Empresas, planos, assinaturas, cobrancas e suporte do Comanda360.</li>
+                        <li>Empresas, planos, assinaturas, cobrancas e suporte da Comanda360.</li>
                     </ul>
                 </div>
 
@@ -856,7 +856,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
             </div>
 
             <div class="page-footer-bottom">
-                <span>Login interno do Comanda360 desenhado para separar atendimento ao cliente, operacao do estabelecimento e governanca da plataforma.</span>
+                <span>Login interno da Comanda360 desenhado para separar atendimento ao cliente, operacao do estabelecimento e governanca da plataforma.</span>
                 <span>Interface de acesso alinhada a contexto, permissao e responsabilidade operacional.</span>
             </div>
         </footer>

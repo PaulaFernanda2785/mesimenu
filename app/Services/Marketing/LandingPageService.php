@@ -59,6 +59,52 @@ final class LandingPageService
                     'label' => 'estrutura pronta para indexacao',
                 ],
             ],
+            'about_highlights' => [
+                [
+                    'value' => '4 areas',
+                    'label' => 'publico, operacional, administrativo e SaaS',
+                ],
+                [
+                    'value' => 'Multiempresa',
+                    'label' => 'cada cliente opera com identidade, catalogo e regras proprias',
+                ],
+                [
+                    'value' => 'PIX + cartao',
+                    'label' => 'pagamentos do negocio e cobranca recorrente em um mesmo ecossistema',
+                ],
+            ],
+            'about_capabilities' => [
+                'Cardapio digital responsivo',
+                'QR Code por mesa',
+                'Comandas, pedidos e cozinha',
+                'Caixa, pagamentos e fechamento',
+                'Delivery com zonas de entrega',
+                'Estoque, produtos e adicionais',
+                'Usuarios, suporte e permissoes',
+                'Planos, assinaturas e cobranca',
+            ],
+            'about_modules' => [
+                [
+                    'eyebrow' => 'Cliente final',
+                    'title' => 'Cardapio, QR Code e pedido guiado',
+                    'description' => 'O consumidor entra por link ou QR da mesa, navega por categorias, escolhe adicionais e envia pedidos com menos dependencia do atendimento manual.',
+                ],
+                [
+                    'eyebrow' => 'Operacao',
+                    'title' => 'Comandas, cozinha, caixa e entrega em sincronia',
+                    'description' => 'A equipe acompanha mesas, comandas, status de preparo, tickets, pagamentos e entregas sem quebrar o fluxo operacional do estabelecimento.',
+                ],
+                [
+                    'eyebrow' => 'Gestao da empresa',
+                    'title' => 'Catalogo, estoque, usuarios e leitura gerencial',
+                    'description' => 'O negocio administra produtos, adicionais, identidade visual, estoque, usuarios internos, relatorios e configuracoes comerciais em um unico ambiente.',
+                ],
+                [
+                    'eyebrow' => 'Governanca SaaS',
+                    'title' => 'Empresas, planos, assinaturas e suporte',
+                    'description' => 'A Comanda360 tambem opera como produto recorrente, com gestao de empresas assinantes, catalogo publico de planos, cobranca e acompanhamento institucional.',
+                ],
+            ],
             'problem_points' => [
                 [
                     'title' => 'Vendas sem rastreabilidade',

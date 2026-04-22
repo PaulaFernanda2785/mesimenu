@@ -3,6 +3,9 @@ $landingPage = is_array($landingPage ?? null) ? $landingPage : [];
 $seo = is_array($seo ?? null) ? $seo : [];
 $navigation = is_array($landingPage['navigation'] ?? null) ? $landingPage['navigation'] : [];
 $heroMetrics = is_array($landingPage['hero_metrics'] ?? null) ? $landingPage['hero_metrics'] : [];
+$aboutHighlights = is_array($landingPage['about_highlights'] ?? null) ? $landingPage['about_highlights'] : [];
+$aboutCapabilities = is_array($landingPage['about_capabilities'] ?? null) ? $landingPage['about_capabilities'] : [];
+$aboutModules = is_array($landingPage['about_modules'] ?? null) ? $landingPage['about_modules'] : [];
 $problemPoints = is_array($landingPage['problem_points'] ?? null) ? $landingPage['problem_points'] : [];
 $solutions = is_array($landingPage['solutions'] ?? null) ? $landingPage['solutions'] : [];
 $featureGroups = is_array($landingPage['feature_groups'] ?? null) ? $landingPage['feature_groups'] : [];
@@ -16,6 +19,7 @@ $faqItems = is_array($landingPage['faq'] ?? null) ? $landingPage['faq'] : [];
 
 $logoUrl = public_logo_url();
 $heroPanelImageUrl = public_embedded_image_url('img/painel-descktop.png');
+$aboutPanelImageUrl = public_embedded_image_url('img/painel-tablet.png');
 $currentUrl = app_url((string) ($_SERVER['REQUEST_URI'] ?? '/'));
 
 $formatMoney = static function (?float $amount): string {
@@ -144,6 +148,10 @@ $formatLimitValue = static function (?int $value): string {
         color:#061320;
     }
     .section-head p{margin:0;font-size:18px;line-height:1.65;color:var(--muted)}
+    #sobre .section-head h2{
+        font-size:clamp(24px,3vw,38px);
+        line-height:1.08;
+    }
     .reveal{
         opacity:0;
         transform:translateY(28px);
@@ -440,7 +448,7 @@ $formatLimitValue = static function (?int $value): string {
         display:grid;
         gap:18px;
     }
-    .about-grid{grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);align-items:start}
+    .about-grid{grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);align-items:stretch}
     .problems-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     .solutions-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -487,6 +495,249 @@ $formatLimitValue = static function (?int $value): string {
         margin:12px 0 0;
         color:var(--muted);
         line-height:1.72;
+    }
+    .about-panel{
+        position:relative;
+        min-height:100%;
+        padding:32px;
+        border-radius:30px;
+        overflow:hidden;
+    }
+    .about-panel h3{
+        margin:0;
+        font:700 clamp(22px,2.4vw,30px)/1.08 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.05em;
+    }
+    .about-panel p{
+        margin:0;
+        line-height:1.72;
+    }
+    .about-story{
+        background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(247,250,255,.82) 100%);
+        border:1px solid rgba(255,255,255,.95);
+        box-shadow:var(--shadow);
+        backdrop-filter:blur(20px);
+    }
+    .about-story::before{
+        content:"";
+        position:absolute;
+        inset:-80px auto auto -60px;
+        width:220px;
+        height:220px;
+        border-radius:999px;
+        background:radial-gradient(circle, rgba(14,165,164,.18) 0%, rgba(14,165,164,0) 72%);
+        pointer-events:none;
+    }
+    .about-story > *{position:relative;z-index:1}
+    .about-kicker{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:9px 14px;
+        border-radius:999px;
+        background:#eef6ff;
+        border:1px solid rgba(17,24,39,.06);
+        color:#10324d;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .about-kicker::before{
+        content:"";
+        width:9px;
+        height:9px;
+        border-radius:999px;
+        background:linear-gradient(135deg,var(--primary),var(--accent));
+        box-shadow:0 0 0 5px rgba(255,122,24,.1);
+    }
+    .about-kicker.is-contrast{
+        background:rgba(255,255,255,.1);
+        border-color:rgba(255,255,255,.16);
+        color:#f8fbff;
+    }
+    .about-lead{
+        display:grid;
+        gap:18px;
+    }
+    .about-lead p{
+        color:#526476;
+        font-size:17px;
+    }
+    .about-highlights{
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:12px;
+        margin-top:24px;
+    }
+    .about-highlight{
+        display:grid;
+        gap:6px;
+        padding:18px;
+        border-radius:22px;
+        background:#fff;
+        border:1px solid rgba(12,34,56,.08);
+        box-shadow:0 18px 30px rgba(8,27,46,.06);
+    }
+    .about-highlight strong{
+        font:700 20px/1.1 "Space Grotesk","Manrope",sans-serif;
+        color:#07192b;
+    }
+    .about-highlight span{
+        color:#5f7182;
+        font-size:13px;
+        line-height:1.5;
+    }
+    .about-capabilities{
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+        margin-top:20px;
+    }
+    .about-capabilities span{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 14px;
+        border-radius:999px;
+        background:rgba(8,27,46,.04);
+        border:1px solid rgba(8,27,46,.08);
+        color:#16324a;
+        font-size:13px;
+        font-weight:700;
+    }
+    .about-capabilities span::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:var(--secondary);
+        box-shadow:0 0 0 4px rgba(14,165,164,.12);
+    }
+    .about-modules{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+        margin-top:20px;
+    }
+    .about-module{
+        padding:18px;
+        border-radius:22px;
+        background:linear-gradient(180deg,#f9fbff 0%, #edf4fb 100%);
+        border:1px solid rgba(8,27,46,.08);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .about-module span{
+        display:inline-block;
+        font-size:11px;
+        font-weight:800;
+        letter-spacing:.1em;
+        text-transform:uppercase;
+        color:#ff7a18;
+    }
+    .about-module strong{
+        display:block;
+        margin-top:10px;
+        font:700 20px/1.15 "Space Grotesk","Manrope",sans-serif;
+        color:#081b2e;
+    }
+    .about-module p{
+        margin-top:10px;
+        color:#5c6b7c;
+        font-size:14px;
+    }
+    .about-visual{
+        color:#edf5fd;
+        background:
+            radial-gradient(circle at top right, rgba(255,160,64,.26) 0%, rgba(255,160,64,0) 36%),
+            radial-gradient(circle at bottom left, rgba(14,165,164,.22) 0%, rgba(14,165,164,0) 42%),
+            linear-gradient(160deg,#061526 0%, #0c2440 52%, #08192a 100%);
+        border:1px solid rgba(255,255,255,.08);
+        box-shadow:0 34px 78px rgba(4,17,29,.26);
+    }
+    .about-visual::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 22%);
+        pointer-events:none;
+    }
+    .about-visual > *{position:relative;z-index:1}
+    .about-visual-copy{
+        display:grid;
+        gap:16px;
+        max-width:520px;
+    }
+    .about-visual-copy p{
+        color:rgba(237,245,253,.8);
+        font-size:16px;
+    }
+    .tablet-stage{
+        position:relative;
+        display:grid;
+        place-items:center;
+        margin-top:24px;
+        padding:26px 14px 42px;
+    }
+    .tablet-stage::before{
+        content:"";
+        position:absolute;
+        width:82%;
+        height:62%;
+        border-radius:999px;
+        background:radial-gradient(circle, rgba(255,122,24,.34) 0%, rgba(255,122,24,0) 74%);
+        filter:blur(28px);
+        z-index:0;
+    }
+    .tablet-stage img{
+        position:relative;
+        z-index:1;
+        width:min(100%, 560px);
+        margin:0 auto;
+        transform:perspective(1400px) rotateY(-9deg) rotateX(4deg) rotateZ(-1deg);
+        filter:drop-shadow(0 32px 54px rgba(1,10,23,.44));
+    }
+    .about-floating-tag{
+        position:absolute;
+        z-index:2;
+        max-width:260px;
+        padding:12px 16px;
+        border-radius:18px;
+        background:linear-gradient(180deg, rgba(4,17,29,.92) 0%, rgba(6,22,39,.84) 100%);
+        border:1px solid rgba(255,255,255,.18);
+        box-shadow:0 20px 34px rgba(0,0,0,.28);
+        backdrop-filter:blur(18px);
+        color:#fff;
+        font-size:13px;
+        font-weight:800;
+        line-height:1.5;
+        text-shadow:0 1px 2px rgba(0,0,0,.24);
+    }
+    .about-floating-tag.tag-top{top:0;left:6px}
+    .about-floating-tag.tag-bottom{
+        right:18px;
+        bottom:4px;
+        max-width:300px;
+        background:linear-gradient(180deg, rgba(255,122,24,.96) 0%, rgba(214,92,0,.92) 100%);
+        border-color:rgba(255,255,255,.24);
+    }
+    .about-visual-footer{margin-top:22px}
+    .about-footer-card{
+        display:grid;
+        gap:6px;
+        padding:18px;
+        border-radius:22px;
+        background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.12);
+    }
+    .about-footer-card strong{
+        font:700 18px/1.15 "Space Grotesk","Manrope",sans-serif;
+        color:#fff;
+    }
+    .about-footer-card span{
+        color:rgba(237,245,253,.76);
+        line-height:1.6;
     }
     .problem-card{
         background:linear-gradient(180deg,#fff7f2 0%, #ffffff 100%);
@@ -865,6 +1116,8 @@ $formatLimitValue = static function (?int $value): string {
         .about-grid,
         .contact-grid,
         .footer-grid{grid-template-columns:1fr}
+        .about-highlights,
+        .about-modules{grid-template-columns:repeat(2,minmax(0,1fr))}
         .problems-grid,
         .solutions-grid,
         .feature-grid,
@@ -923,6 +1176,7 @@ $formatLimitValue = static function (?int $value): string {
         .section{padding:72px 0}
         .container{width:min(calc(100% - 22px), var(--max))}
         .site-header{top:10px}
+        .about-panel{padding:24px}
         .content-card,
         .feature-card,
         .problem-card,
@@ -933,6 +1187,8 @@ $formatLimitValue = static function (?int $value): string {
         .metric-card,
         .workflow-item{padding:22px}
         .hero-metrics,
+        .about-highlights,
+        .about-modules,
         .problems-grid,
         .solutions-grid,
         .feature-grid,
@@ -948,6 +1204,16 @@ $formatLimitValue = static function (?int $value): string {
         .hero-copy h1{font-size:30px}
         .hero-copy p{font-size:16px}
         .hero-actions .btn{width:100%}
+        .about-floating-tag{
+            position:static;
+            max-width:none;
+            display:block;
+        }
+        .tablet-stage{
+            gap:14px;
+            padding:12px 0 0;
+        }
+        .tablet-stage img{transform:none}
     }
 </style>
 
@@ -984,7 +1250,7 @@ $formatLimitValue = static function (?int $value): string {
                         <div class="hero-kicker">
                             <span class="eyebrow">Comanda360 com foco em atracao, operacao e recorrencia</span>
                             <h1>Transforme vendas manuais em um fluxo digital que vende, cobra e escala.</h1>
-                            <p>O Comanda360 posiciona sua operacao com mais clareza comercial, entrada de novos clientes, planos ativos prontos para vitrine publica, assinaturas recorrentes e pagamento via PIX ou cartao. Tudo em uma pagina preparada para SEO, indexacao no Google e conversao.</p>
+                            <p>A Comanda360 posiciona sua operacao com mais clareza comercial, entrada de novos clientes, planos ativos prontos para vitrine publica, assinaturas recorrentes e pagamento via PIX ou cartao. Tudo em uma pagina preparada para SEO, indexacao no Google e conversao.</p>
 
                             <div class="hero-actions">
                                 <a class="btn btn-primary" href="#planos">Ver planos ativos</a>
@@ -1012,27 +1278,66 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Sobre</span>
-                    <h2>Uma pagina publica que nao so apresenta o produto, mas organiza a entrada comercial do Comanda360.</h2>
-                    <p>Se a homepage publica nao vende, ela so ocupa espaco. Aqui a proposta foi estruturar uma landing com discurso comercial, foco em publicidade digital e uma narrativa clara para busca organica, campanhas pagas e decisao de compra.</p>
+                    <h2>A Comanda360 foi desenhada para digitalizar atendimento, operacao e receita em um unico fluxo.</h2>
                 </div>
 
                 <div class="about-grid">
-                    <article class="content-card reveal">
-                        <h3>O que a pagina resolve de verdade</h3>
-                        <p>Ela conecta comunicacao, credibilidade e acao. O visitante entende o problema, enxerga a solucao, compara planos ativos e escolhe entre acessar a plataforma ou gerar um contato comercial. Esse encadeamento e mais importante do que qualquer efeito visual isolado.</p>
-                        <p>O ganho pratico esta em reduzir friccao: o marketing nao promete uma coisa e o sistema entrega outra. A vitrine publica ja nasce alinhada ao cadastro de planos, ao ciclo de assinatura e aos meios de pagamento que o produto suporta hoje.</p>
+                    <article class="about-panel about-story reveal">
+                        <div class="about-lead">
+                            <span class="about-kicker">Plataforma operacional Comanda360</span>
+                            <h3>O valor da Comanda360 nao esta em um modulo isolado, mas na integracao entre atendimento, operacao e gestao.</h3>
+                            <p>Na pratica, a plataforma conecta cardapio digital, pedidos por QR Code, comandas, cozinha, caixa, entregas, estoque, usuarios, suporte e assinaturas recorrentes em uma arquitetura multiempresa preparada para uso diario.</p>
+                            <p>Isso reduz o problema mais comum desse mercado: sistemas e processos soltos demais para quem precisa vender rapido, operar com menos erro e manter leitura gerencial confiavel.</p>
+                        </div>
+
+                        <div class="about-highlights">
+                            <?php foreach ($aboutHighlights as $highlight): ?>
+                                <?php if (!is_array($highlight)): continue; endif; ?>
+                                <div class="about-highlight">
+                                    <strong><?= htmlspecialchars((string) ($highlight['value'] ?? '')) ?></strong>
+                                    <span><?= htmlspecialchars((string) ($highlight['label'] ?? '')) ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="about-capabilities">
+                            <?php foreach ($aboutCapabilities as $capability): ?>
+                                <span><?= htmlspecialchars((string) $capability) ?></span>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="about-modules">
+                            <?php foreach ($aboutModules as $module): ?>
+                                <?php if (!is_array($module)): continue; endif; ?>
+                                <article class="about-module">
+                                    <span><?= htmlspecialchars((string) ($module['eyebrow'] ?? '')) ?></span>
+                                    <strong><?= htmlspecialchars((string) ($module['title'] ?? 'Modulo')) ?></strong>
+                                    <p><?= htmlspecialchars((string) ($module['description'] ?? '')) ?></p>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
                     </article>
 
-                    <article class="metric-card reveal">
-                        <h3>Indicadores de posicionamento</h3>
-                        <p>A pagina foi estruturada para deixar explicitos os pilares que mais influenciam conversao e indexacao.</p>
-                        <ul class="feature-card" style="margin-top:16px;padding:0;box-shadow:none;border:0;background:transparent">
-                            <li>Arquitetura semantica com H1, H2, FAQ e blocos textuais ricos em contexto.</li>
-                            <li>CTA de acesso e CTA de contato em pontos diferentes da jornada.</li>
-                            <li>Planos dinamicos baseados no cadastro ativo do Comanda360.</li>
-                            <li>Formulario de lead com captura de origem e parametros UTM.</li>
-                        </ul>
-                    </article>
+                    <aside class="about-panel about-visual reveal">
+                        <div class="about-visual-copy">
+                            <span class="about-kicker is-contrast">Painel em tablet</span>
+                            <h3>Uma interface pensada para uso real em operacao, gestao e acompanhamento institucional.</h3>
+                            <p>A imagem abaixo usa o painel do proprio sistema em formato tablet para mostrar um ponto importante: a Comanda360 nao depende de uma unica tela. Ela foi estruturada para funcionar com clareza em contextos moveis, administrativos e operacionais.</p>
+                        </div>
+
+                        <div class="tablet-stage">
+                            <span class="about-floating-tag tag-top">Dashboard, usuarios, suporte e assinatura no mesmo ecossistema</span>
+                            <img src="<?= htmlspecialchars($aboutPanelImageUrl) ?>" alt="Painel da Comanda360 exibido em um tablet">
+                            <span class="about-floating-tag tag-bottom">Leitura confortavel para salao, caixa e acompanhamento gerencial em rotina de campo</span>
+                        </div>
+
+                        <div class="about-visual-footer">
+                            <div class="about-footer-card">
+                                <strong>Produto com camadas bem separadas</strong>
+                                <span>Cliente final, equipe operacional, administracao do estabelecimento e area global da Comanda360 convivem no mesmo produto sem misturar contexto nem permissao.</span>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
             </div>
         </section>
@@ -1063,7 +1368,7 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="section-head reveal">
                     <span class="eyebrow">Solucoes</span>
                     <h2>O caminho mais consistente nao e improvisar mais, e padronizar melhor.</h2>
-                    <p>A solucao aqui nao foi desenhar uma pagina genrica. Foi alinhar marketing, produto e operacao para que a experiencia publica seja coerente com o que o Comanda360 realmente entrega.</p>
+                    <p>A solucao aqui nao foi desenhar uma pagina genrica. Foi alinhar marketing, produto e operacao para que a experiencia publica seja coerente com o que a Comanda360 realmente entrega.</p>
                 </div>
 
                 <div class="solutions-grid">
@@ -1119,7 +1424,7 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Planos</span>
-                    <h2>Os planos desta pagina seguem o cadastro ativo do Comanda360.</h2>
+                    <h2>Os planos desta pagina seguem o cadastro ativo da Comanda360.</h2>
                 </div>
 
                 <div class="plans-head reveal">
@@ -1158,7 +1463,7 @@ $formatLimitValue = static function (?int $value): string {
                                 </div>
                                 <div class="plan-copy">
                                     <h3><?= htmlspecialchars($planName) ?></h3>
-                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao Comanda360 com cobranca recorrente.') ?></p>
+                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao da Comanda360 com cobranca recorrente.') ?></p>
                                 </div>
 
                                 <div class="plan-price">
@@ -1298,7 +1603,7 @@ $formatLimitValue = static function (?int $value): string {
 
                     <aside class="contact-card is-dark reveal">
                         <h3>O que essa pagina ja sustenta</h3>
-                        <p>Mais do que apresentacao. Ela sustenta descoberta, avaliacao, comparacao e entrada comercial com narrativa coerente para o Comanda360.</p>
+                        <p>Mais do que apresentacao. Ela sustenta descoberta, avaliacao, comparacao e entrada comercial com narrativa coerente para a Comanda360.</p>
 
                         <div class="contact-pillars">
                             <div class="contact-pillar">
