@@ -122,6 +122,14 @@ final class LandingPageService
                     'title' => 'Equipe dependente de memoria',
                     'description' => 'Quando processos vivem em conversas, a escala trava. O negocio fica lento, vulneravel e pouco replicavel.',
                 ],
+                [
+                    'title' => 'Fechamento de mesa com conflito',
+                    'description' => 'Sem controle de comanda, consumo e status de pagamento, o fechamento vira discussao, demora no caixa e risco de cobrar errado ou deixar item para tras.',
+                ],
+                [
+                    'title' => 'Financeiro sem conciliacao real',
+                    'description' => 'Quando recebimentos, comandas e formas de pagamento nao conversam entre si, sobra caixa sem conferencia, falha de registro e pouca clareza sobre o que realmente entrou.',
+                ],
             ],
             'solutions' => [
                 [
