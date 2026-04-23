@@ -1208,6 +1208,17 @@ $formatLimitValue = static function (?int $value): string {
         border:1px solid rgba(8,27,46,.08);
         overflow:hidden;
     }
+    .feature-media-button{
+        position:relative;
+        z-index:1;
+        width:100%;
+        padding:0;
+        border:0;
+        background:transparent;
+        cursor:zoom-in;
+        display:block;
+        text-align:left;
+    }
     .feature-media::after{
         content:"";
         position:absolute;
@@ -1226,6 +1237,100 @@ $formatLimitValue = static function (?int $value): string {
         object-fit:contain;
         object-position:center bottom;
         filter:drop-shadow(0 18px 28px rgba(8,27,46,.16));
+    }
+    .feature-media-hint{
+        position:absolute;
+        top:12px;
+        right:12px;
+        z-index:2;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 10px;
+        border-radius:999px;
+        background:rgba(8,27,46,.74);
+        color:#fff;
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:.02em;
+        pointer-events:none;
+    }
+    .image-zoom-modal{
+        position:fixed;
+        inset:0;
+        z-index:120;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:28px;
+        background:rgba(8,27,46,.76);
+        backdrop-filter:blur(12px);
+    }
+    .image-zoom-modal.is-open{display:flex}
+    .image-zoom-dialog{
+        position:relative;
+        width:min(1100px, 100%);
+        max-height:min(88vh, 980px);
+        display:grid;
+        gap:16px;
+        padding:20px;
+        border-radius:28px;
+        background:linear-gradient(180deg,#fdfefe 0%, #eef4fb 100%);
+        border:1px solid rgba(255,255,255,.42);
+        box-shadow:0 28px 80px rgba(8,27,46,.32);
+    }
+    .image-zoom-head{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:14px;
+        padding-right:54px;
+    }
+    .image-zoom-head strong{
+        display:block;
+        color:#081b2e;
+        font:700 24px/1.08 'Space Grotesk','Manrope',sans-serif;
+    }
+    .image-zoom-head span{
+        display:block;
+        margin-top:6px;
+        color:#5a6f82;
+        font-size:14px;
+        line-height:1.5;
+    }
+    .image-zoom-close{
+        position:absolute;
+        top:16px;
+        right:16px;
+        width:40px;
+        height:40px;
+        border:0;
+        border-radius:999px;
+        background:#081b2e;
+        color:#fff;
+        font-size:22px;
+        line-height:1;
+        cursor:pointer;
+    }
+    .image-zoom-frame{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        min-height:320px;
+        padding:18px;
+        border-radius:24px;
+        background:
+            radial-gradient(circle at top left, rgba(14,165,164,.12) 0%, rgba(14,165,164,0) 38%),
+            linear-gradient(180deg,#f8fbff 0%, #eaf3fb 100%);
+        border:1px solid rgba(8,27,46,.08);
+        overflow:auto;
+    }
+    .image-zoom-frame img{
+        width:100%;
+        max-width:960px;
+        max-height:70vh;
+        object-fit:contain;
+        filter:drop-shadow(0 22px 36px rgba(8,27,46,.18));
     }
 
     .feature-card ul,
@@ -1933,6 +2038,11 @@ $formatLimitValue = static function (?int $value): string {
         .tablet-stage img{transform:none}
         .blog-showcase{padding:24px}
         .blog-published-head{align-items:flex-start}
+        .image-zoom-modal{padding:18px}
+        .image-zoom-dialog{padding:18px;border-radius:24px}
+        .image-zoom-head{padding-right:42px}
+        .image-zoom-head strong{font-size:20px}
+        .image-zoom-frame{padding:14px}
     }
 </style>
 
@@ -2214,7 +2324,10 @@ $formatLimitValue = static function (?int $value): string {
                                 <?php $featureImageUrl = $featureImage !== '' ? public_embedded_image_url($featureImage) : ''; ?>
                                 <?php if ($featureImageUrl !== ''): ?>
                                     <div class="feature-media">
-                                        <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade Comanda360'))) ?>">
+                                        <button class="feature-media-button" type="button" data-image-zoom-trigger data-image-zoom-src="<?= htmlspecialchars($featureImageUrl) ?>" data-image-zoom-alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade Comanda360'))) ?>" data-image-zoom-trigger-title="<?= htmlspecialchars((string) ($group['title'] ?? 'Funcionalidade Comanda360')) ?>">
+                                            <span class="feature-media-hint">Clique para ampliar</span>
+                                            <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade Comanda360'))) ?>" loading="eager" decoding="async">
+                                        </button>
                                     </div>
                                 <?php endif; ?>
 
@@ -2594,6 +2707,21 @@ $formatLimitValue = static function (?int $value): string {
     </footer>
 </div>
 
+<div class="image-zoom-modal" data-image-zoom-modal hidden>
+    <div class="image-zoom-dialog" role="dialog" aria-modal="true" aria-labelledby="image-zoom-title">
+        <button class="image-zoom-close" type="button" aria-label="Fechar imagem ampliada" data-image-zoom-close>&times;</button>
+        <div class="image-zoom-head">
+            <div>
+                <strong id="image-zoom-title" data-image-zoom-modal-title>Visualizacao da funcionalidade</strong>
+                <span>Clique fora da imagem ou pressione Esc para fechar.</span>
+            </div>
+        </div>
+        <div class="image-zoom-frame" data-image-zoom-close>
+            <img src="" alt="" data-image-zoom-image>
+        </div>
+    </div>
+</div>
+
 <script>
 (() => {
     const header = document.querySelector('.site-header');
@@ -2602,6 +2730,10 @@ $formatLimitValue = static function (?int $value): string {
     const revealItems = Array.from(document.querySelectorAll('.reveal'));
     const pricingToggle = document.querySelector('[data-pricing-toggle]');
     const planCards = Array.from(document.querySelectorAll('[data-plan-card]'));
+    const imageZoomModal = document.querySelector('[data-image-zoom-modal]');
+    const imageZoomTitle = document.querySelector('[data-image-zoom-modal-title]');
+    const imageZoomImage = document.querySelector('[data-image-zoom-image]');
+    const imageZoomTriggers = Array.from(document.querySelectorAll('[data-image-zoom-trigger]'));
 
     const syncHeaderState = () => {
         if (!(header instanceof HTMLElement)) {
@@ -2718,6 +2850,68 @@ $formatLimitValue = static function (?int $value): string {
     }
 
     updatePrices('mensal');
+
+    const closeImageZoom = () => {
+        if (!(imageZoomModal instanceof HTMLElement) || !(imageZoomImage instanceof HTMLImageElement)) {
+            return;
+        }
+
+        imageZoomModal.hidden = true;
+        imageZoomModal.classList.remove('is-open');
+        document.body.style.overflow = '';
+    };
+
+    const openImageZoom = (trigger) => {
+        if (
+            !(trigger instanceof HTMLElement) ||
+            !(imageZoomModal instanceof HTMLElement) ||
+            !(imageZoomImage instanceof HTMLImageElement) ||
+            !(imageZoomTitle instanceof HTMLElement)
+        ) {
+            return;
+        }
+
+        const imageSrc = trigger.getAttribute('data-image-zoom-src') || '';
+        const imageAlt = trigger.getAttribute('data-image-zoom-alt') || 'Imagem ampliada da funcionalidade';
+        if (imageSrc === '') {
+            return;
+        }
+
+        imageZoomImage.src = imageSrc;
+        imageZoomImage.alt = imageAlt;
+        imageZoomTitle.textContent = trigger.getAttribute('data-image-zoom-trigger-title') || imageAlt || 'Visualizacao da funcionalidade';
+        imageZoomModal.hidden = false;
+        imageZoomModal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    imageZoomTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => openImageZoom(trigger));
+    });
+
+    if (imageZoomModal instanceof HTMLElement) {
+        imageZoomModal.addEventListener('click', (event) => {
+            if (event.target === imageZoomModal) {
+                closeImageZoom();
+            }
+        });
+
+        imageZoomModal.querySelectorAll('[data-image-zoom-close]').forEach((node) => {
+            node.addEventListener('click', (event) => {
+                if (node instanceof HTMLElement && node.classList.contains('image-zoom-frame') && event.target !== node) {
+                    return;
+                }
+
+                closeImageZoom();
+            });
+        });
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && imageZoomModal instanceof HTMLElement && imageZoomModal.classList.contains('is-open')) {
+            closeImageZoom();
+        }
+    });
 
     const params = new URLSearchParams(window.location.search);
     ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach((key) => {
