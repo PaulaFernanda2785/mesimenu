@@ -105,7 +105,7 @@ final class LandingPageService
                 [
                     'eyebrow' => 'Governanca SaaS',
                     'title' => 'Empresas, planos, assinaturas e suporte',
-                    'description' => 'A Comanda360 tambem opera como produto recorrente, com gestao de empresas assinantes, catalogo publico de planos, cobranca e acompanhamento institucional.',
+                    'description' => 'A Comanda360 tambem opera como produto recorrente, com gestao de empresas assinantes, planos de assinatura, cobranca e acompanhamento institucional.',
                 ],
             ],
             'problem_points' => [
@@ -152,8 +152,8 @@ final class LandingPageService
                 ],
                 [
                     'eyebrow' => 'Crescimento',
-                    'title' => 'Mais forca comercial para atrair e converter clientes',
-                    'description' => 'A pagina publica, os planos e o fluxo de acesso ajudam a apresentar melhor a solucao, fortalecer a proposta de valor e transformar interesse em oportunidade real de venda.',
+                    'title' => 'Mais forca comercial para atrair e converter novas empresas',
+                    'description' => 'A pagina da Comanda360, os planos e o fluxo de contato ajudam a apresentar melhor a solucao, fortalecer a proposta de valor e transformar interesse em oportunidade real de assinatura.',
                 ],
             ],
             'feature_groups' => $this->featureGroups(),
@@ -169,13 +169,13 @@ final class LandingPageService
             'workflow' => [
                 [
                     'step' => '01',
-                    'title' => 'A empresa chega por uma pagina pensada para converter',
-                    'description' => 'A landing apresenta dores reais, proposta de valor, planos ativos e chamadas de acao para transformar visita em interesse comercial.',
+                    'title' => 'A empresa encontra uma pagina pensada para converter interesse em assinatura',
+                    'description' => 'A landing apresenta dores reais, proposta de valor, planos disponiveis e chamadas de acao para transformar visita em contato comercial.',
                 ],
                 [
                     'step' => '02',
-                    'title' => 'O plano certo e escolhido com mais clareza comercial',
-                    'description' => 'O catalogo destaca os planos ativos, recomendados e mais estrategicos para facilitar a decisao e reduzir friccao no momento da adesao.',
+                    'title' => 'O plano certo fica mais claro no momento da decisao',
+                    'description' => 'O catalogo destaca os planos disponiveis, recomendados e mais estrategicos para facilitar a comparacao e reduzir friccao na contratacao.',
                 ],
                 [
                     'step' => '03',
@@ -205,24 +205,7 @@ final class LandingPageService
                     'excerpt' => 'Precificacao nao e tabela isolada. Ela precisa conversar com onboarding, capacidade operacional e percepcao de valor.',
                 ],
             ],
-            'faq' => [
-                [
-                    'question' => 'Os planos exibidos na pagina publica sao automaticos?',
-                    'answer' => 'Sim. A landing publica lista apenas planos ativos cadastrados no painel Comanda360 e aplica os marcadores de destaque e recomendado definidos no catalogo.',
-                ],
-                [
-                    'question' => 'A plataforma trabalha com pagamento via PIX e cartao?',
-                    'answer' => 'Sim. O fluxo comercial e financeiro contempla PIX, cartao e cobranca recorrente conforme o ciclo escolhido.',
-                ],
-                [
-                    'question' => 'Posso vender mensal e anual ao mesmo tempo?',
-                    'answer' => 'Sim. Cada plano pode apresentar precificacao mensal e anual, com comunicacao clara na pagina publica.',
-                ],
-                [
-                    'question' => 'A pagina foi estruturada para SEO?',
-                    'answer' => 'Sim. A pagina entrega hierarquia semantica, conteudo comercial indexavel, FAQ e dados estruturados para apoiar a indexacao.',
-                ],
-            ],
+            'faq' => $this->faqItems(),
         ];
     }
 
@@ -230,30 +213,32 @@ final class LandingPageService
     {
         $canonical = app_url('/');
         $logoUrl = asset_url('/img/logo-comanda360.png');
+        $faq = [];
+        foreach ($this->faqItems() as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
 
-        $faq = [
-            [
+            $question = trim((string) ($item['question'] ?? ''));
+            $answer = trim((string) ($item['answer'] ?? ''));
+            if ($question === '' || $answer === '') {
+                continue;
+            }
+
+            $faq[] = [
                 '@type' => 'Question',
-                'name' => 'Os planos exibidos na pagina publica sao automaticos?',
+                'name' => $question,
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text' => 'A pagina publica lista apenas planos ativos cadastrados no painel Comanda360 e aplica os marcadores de destaque e recomendado definidos no catalogo.',
+                    'text' => $answer,
                 ],
-            ],
-            [
-                '@type' => 'Question',
-                'name' => 'A plataforma trabalha com pagamento via PIX e cartao?',
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text' => 'Sim. O fluxo contempla PIX, cartao e cobranca recorrente com ciclos mensal e anual.',
-                ],
-            ],
-        ];
+            ];
+        }
 
         return [
-            'title' => 'Comanda360 | Plataforma para vendas, operacao e assinaturas com SEO e cobranca recorrente',
-            'description' => 'Comanda360 para digitalizar vendas, comandas, operacao e cobranca recorrente com planos mensais ou anuais, PIX, cartao e pagina publica preparada para SEO.',
-            'keywords' => 'sistema para restaurante, comanda360 para delivery, comanda digital, cobranca recorrente pix, pagina de login seo, software de vendas',
+            'title' => 'Comanda360 | Plataforma para empresas que querem organizar atendimento, pedidos e cobranca',
+            'description' => 'Comanda360 para empresas que querem organizar atendimento, comandas, pagamentos e contratacao recorrente com planos mensais ou anuais.',
+            'keywords' => 'sistema para restaurante, comanda360, comanda digital, qr code para mesas, sistema de pedidos, cobranca recorrente pix',
             'canonical' => $canonical,
             'robots' => 'index,follow,max-image-preview:large',
             'og_image' => $logoUrl,
@@ -299,6 +284,48 @@ final class LandingPageService
             ['href' => '#planos', 'label' => 'Planos'],
             ['href' => '#blog', 'label' => 'Blog'],
             ['href' => '#contato', 'label' => 'Contato'],
+        ];
+    }
+
+    private function faqItems(): array
+    {
+        return [
+            [
+                'question' => 'A Comanda360 atende empresas com mesas, comandas e pedidos no salao?',
+                'answer' => 'Sim. A Comanda360 foi pensada para organizar mesas, comandas, pedidos, atendimento e fechamento em um fluxo mais claro para a empresa assinante.',
+            ],
+            [
+                'question' => 'Depois da contratacao, meus clientes conseguem acessar o cardapio pelo QR Code da mesa?',
+                'answer' => 'Sim. Depois que a empresa entra na plataforma, os clientes do estabelecimento podem acessar o cardapio pelo QR Code e seguir a jornada com mais autonomia.',
+            ],
+            [
+                'question' => 'A Comanda360 ajuda no fechamento da conta e no controle de pagamento da empresa?',
+                'answer' => 'Sim. Consumo, comanda, formas de pagamento e fechamento ficam mais conectados para reduzir erro operacional e dar mais seguranca no caixa da empresa.',
+            ],
+            [
+                'question' => 'A plataforma trabalha com pagamento via PIX e cartao?',
+                'answer' => 'Sim. A plataforma contempla PIX, cartao e cobranca recorrente conforme o ciclo escolhido pela empresa no momento da assinatura.',
+            ],
+            [
+                'question' => 'Posso contratar a Comanda360 no plano mensal ou anual?',
+                'answer' => 'Sim. A Comanda360 pode apresentar contratacao mensal e anual para facilitar a escolha do formato mais adequado para a empresa.',
+            ],
+            [
+                'question' => 'Como eu escolho o plano ideal para a minha empresa?',
+                'answer' => 'A comparacao entre os planos ajuda a entender qual estrutura faz mais sentido para o momento da sua operacao. Se houver duvida, o canal de contato comercial existe justamente para orientar essa decisao.',
+            ],
+            [
+                'question' => 'A Comanda360 serve apenas para operacao ou tambem ajuda a empresa a vender melhor?',
+                'answer' => 'Os dois. A plataforma melhora atendimento, organizacao da operacao, fechamento e a capacidade da empresa de atender melhor e vender com menos erro.',
+            ],
+            [
+                'question' => 'Esta pagina publica e da minha empresa ou da propria Comanda360?',
+                'answer' => 'Esta pagina publica e da propria Comanda360 e foi feita para atrair novas empresas interessadas em contratar a plataforma. Ela nao e uma pagina promocional das empresas assinantes.',
+            ],
+            [
+                'question' => 'Se eu quiser entender melhor o plano ideal, posso falar com o comercial antes de assinar?',
+                'answer' => 'Sim. A secao de contato existe exatamente para isso: abrir uma conversa comercial com mais contexto sobre operacao, momento da empresa e plano de interesse antes da contratacao.',
+            ],
         ];
     }
 

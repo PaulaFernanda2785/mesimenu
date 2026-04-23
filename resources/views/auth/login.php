@@ -155,6 +155,7 @@ $formatLimitValue = static function (?int $value): string {
     #solucoes .section-head h2,
     #blog .section-head h2,
     #contato .section-head h2,
+    #faq .section-head h2,
     #funcionalidades .section-head h2{
         font-size:clamp(24px,3vw,38px);
         line-height:1.08;
@@ -2047,21 +2048,101 @@ $formatLimitValue = static function (?int $value): string {
         text-transform:uppercase;
     }
 
+    .faq-layout{
+        display:grid;
+        grid-template-columns:minmax(300px,.84fr) minmax(0,1.16fr);
+        gap:20px;
+        align-items:start;
+    }
+    .faq-panel{
+        display:grid;
+        gap:18px;
+        position:relative;
+        overflow:hidden;
+        background:linear-gradient(150deg,#081b2e 0%, #163d5b 56%, #1d4ed8 100%);
+        color:#eff7fb;
+    }
+    .faq-panel::before{
+        content:"";
+        position:absolute;
+        top:-56px;
+        right:-34px;
+        width:220px;
+        height:220px;
+        border-radius:999px;
+        background:rgba(255,255,255,.1);
+    }
+    .faq-panel > *{position:relative;z-index:1}
+    .faq-panel-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        width:max-content;
+        padding:8px 14px;
+        border-radius:999px;
+        background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.18);
+        color:#fff;
+        font-size:11px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .faq-panel h3{margin:0;color:#fff}
+    .faq-panel p{margin:0;color:rgba(239,247,251,.78);line-height:1.68}
+    .faq-panel-list{display:grid;gap:12px}
+    .faq-panel-list div{
+        padding:16px 18px;
+        border-radius:18px;
+        border:1px solid rgba(255,255,255,.12);
+        background:rgba(255,255,255,.07);
+    }
+    .faq-panel-list strong{
+        display:block;
+        color:#fff;
+        font:700 18px/1.12 "Space Grotesk","Manrope",sans-serif;
+    }
+    .faq-panel-list span{
+        display:block;
+        margin-top:6px;
+        color:rgba(239,247,251,.76);
+        line-height:1.6;
+    }
+    .faq-list{display:grid;gap:12px}
     details.faq-item{
         padding:20px 22px;
-        border-radius:20px;
-        background:#fff;
+        border-radius:24px;
+        background:rgba(255,255,255,.9);
         border:1px solid rgba(12,34,56,.1);
-        box-shadow:0 14px 28px rgba(8,27,46,.06);
+        box-shadow:0 16px 34px rgba(8,27,46,.07);
+        backdrop-filter:blur(14px);
     }
-    details.faq-item + details.faq-item{margin-top:12px}
     details.faq-item summary{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:14px;
         cursor:pointer;
         list-style:none;
         font:700 18px/1.4 "Space Grotesk","Manrope",sans-serif;
         color:#081b2e;
     }
     details.faq-item summary::-webkit-details-marker{display:none}
+    .faq-toggle{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        flex:0 0 auto;
+        padding:6px 10px;
+        border-radius:999px;
+        background:#eff6ff;
+        border:1px solid rgba(59,130,246,.14);
+        color:#1d4ed8;
+        font-size:10px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
     details.faq-item p{margin:14px 0 0;color:var(--muted);line-height:1.7}
 
     .site-footer{
@@ -2101,6 +2182,7 @@ $formatLimitValue = static function (?int $value): string {
         .problems-layout,
         .solutions-layout,
         .blog-layout,
+        .faq-layout,
         .contact-grid,
         .footer-grid{grid-template-columns:1fr}
         .features-hero{grid-template-columns:1fr}
@@ -2212,6 +2294,7 @@ $formatLimitValue = static function (?int $value): string {
         .blog-published-head{align-items:flex-start}
         .contact-channel-list{grid-template-columns:1fr}
         .contact-form-submit .btn{width:100%}
+        details.faq-item summary{align-items:flex-start}
         .image-zoom-modal{padding:18px}
         .image-zoom-dialog{padding:18px;border-radius:24px}
         .image-zoom-head{padding-right:42px}
@@ -2253,7 +2336,7 @@ $formatLimitValue = static function (?int $value): string {
                         <div class="hero-kicker">
                             <span class="eyebrow">Comanda360 com foco em atracao, operacao e recorrencia</span>
                             <h1>Transforme vendas manuais em um fluxo digital que vende, cobra e escala.</h1>
-                            <p>A Comanda360 posiciona sua operacao com mais clareza comercial, entrada de novos clientes, planos ativos prontos para vitrine publica, assinaturas recorrentes e pagamento via PIX ou cartao. Tudo em uma pagina preparada para SEO, indexacao no Google e conversao.</p>
+                            <p>A Comanda360 ajuda empresas a organizar atendimento, pedidos, comandas, fechamento e cobranca recorrente em uma plataforma feita para contratar, operar e crescer com mais controle.</p>
 
                             <div class="hero-actions">
                                 <a class="btn btn-primary" href="#planos">Ver planos ativos</a>
@@ -2394,14 +2477,14 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="section-head reveal">
                     <span class="eyebrow">Solucoes</span>
                     <h2>Menos erro, mais controle e uma operacao pronta para vender melhor.</h2>
-                    <p>A Comanda360 foi pensada para transformar atendimento, comandas, pagamentos e entrada comercial em um fluxo mais rapido, organizado e lucrativo para a empresa.</p>
+                    <p>A Comanda360 foi pensada para ajudar a empresa a atender melhor, organizar pedidos, fechar com mais seguranca e contratar uma plataforma alinhada ao seu momento operacional.</p>
                 </div>
 
                 <div class="solutions-layout">
                     <aside class="solutions-panel reveal">
                         <span class="solutions-panel-badge">Resposta estrutural</span>
                         <h3>A Comanda360 entra para conectar operacao, pagamento e crescimento.</h3>
-                        <p>A proposta nao e colocar mais uma camada de improviso em cima da rotina da empresa. E transformar atendimento, comandas, caixa e captacao comercial em um fluxo mais previsivel, legivel e escalavel.</p>
+                        <p>A proposta nao e empilhar mais improviso em cima da rotina. E dar para a empresa uma plataforma mais clara para atendimento, comandas, caixa, fechamento e decisao de contratacao.</p>
 
                         <div class="solutions-panel-list">
                             <div>
@@ -2414,7 +2497,7 @@ $formatLimitValue = static function (?int $value): string {
                             </div>
                             <div>
                                 <strong>Venda com mais coerencia</strong>
-                                <span>A pagina publica passa a vender exatamente o que o produto resolve, melhorando a leitura comercial e a entrada de leads.</span>
+                                <span>Esta pagina da Comanda360 passa a comunicar melhor o que a plataforma resolve, atraindo empresas com mais aderencia ao produto.</span>
                             </div>
                         </div>
                     </aside>
@@ -2526,13 +2609,13 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Planos</span>
-                    <h2>Os planos desta pagina seguem o cadastro ativo da Comanda360.</h2>
+                    <h2>Escolha o plano da Comanda360 mais aderente ao momento da sua empresa.</h2>
                 </div>
 
                 <div class="plans-head reveal">
                     <div>
-                        <strong style="display:block;font:700 22px/1.1 'Space Grotesk','Manrope',sans-serif;color:#081b2e">Catalogo comercial ativo</strong>
-                        <span class="pricing-hint"><?= htmlspecialchars((string) ($plansStats['total_active'] ?? 0)) ?> planos ativos, <?= htmlspecialchars((string) ($plansStats['featured'] ?? 0)) ?> destaques e <?= htmlspecialchars((string) ($plansStats['recommended'] ?? 0)) ?> recomendados publicados.</span>
+                        <strong style="display:block;font:700 22px/1.1 'Space Grotesk','Manrope',sans-serif;color:#081b2e">Planos disponiveis para contratacao</strong>
+                        <span class="pricing-hint"><?= htmlspecialchars((string) ($plansStats['total_active'] ?? 0)) ?> planos publicados, <?= htmlspecialchars((string) ($plansStats['featured'] ?? 0)) ?> destaques e <?= htmlspecialchars((string) ($plansStats['recommended'] ?? 0)) ?> recomendados para apoiar a decisao.</span>
                     </div>
                     <div class="pricing-toggle" data-pricing-toggle>
                         <button class="is-active" type="button" data-cycle="mensal">Mensal</button>
@@ -2542,8 +2625,8 @@ $formatLimitValue = static function (?int $value): string {
 
                 <?php if ($plans === []): ?>
                     <article class="content-card reveal">
-                        <h3>Nenhum plano publico disponivel</h3>
-                        <p>O catalogo ainda nao possui planos ativos para exibicao. A proxima acao correta e ativar os planos no painel Comanda360 antes de escalar trafego para esta pagina.</p>
+                        <h3>Nenhum plano disponivel no momento</h3>
+                        <p>Os planos da Comanda360 ainda nao estao disponiveis para exibicao nesta pagina.</p>
                     </article>
                 <?php else: ?>
                     <div class="plans-grid">
@@ -2727,8 +2810,8 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Contato</span>
-                    <h2>Abra uma conversa comercial com a Comanda360 e acelere sua decisao.</h2>
-                    <p>Se a empresa precisa vender melhor, organizar atendimento, comandas e fechamento ou avaliar o plano certo, este e o canal para falar com o comercial da Comanda360.</p>
+                    <h2>Abra uma conversa comercial com a Comanda360 e avance para a contratacao certa.</h2>
+                    <p>Se a empresa quer contratar a Comanda360 para organizar atendimento, pedidos, comandas, pagamentos e fechamento, este e o canal para falar com o comercial.</p>
                 </div>
 
                 <div class="contact-grid">
@@ -2858,21 +2941,49 @@ $formatLimitValue = static function (?int $value): string {
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="faq">
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">FAQ</span>
-                    <h2>Perguntas que reduzem friccao antes do contato comercial.</h2>
-                    <p>FAQ nao e detalhe de rodape. Ele ajuda SEO, elimina duvida repetida e melhora a taxa de clique em trafego qualificado.</p>
+                    <h2>Duvidas que costumam travar a decisao antes do contato comercial.</h2>
+                    <p>Aqui ficam respostas diretas para empresas que estao avaliando a contratacao da Comanda360 e querem entender melhor plano, operacao e aderencia da plataforma.</p>
                 </div>
 
-                <?php foreach ($faqItems as $faq): ?>
-                    <?php if (!is_array($faq)): continue; endif; ?>
-                    <details class="faq-item reveal">
-                        <summary><?= htmlspecialchars((string) ($faq['question'] ?? 'Pergunta')) ?></summary>
-                        <p><?= htmlspecialchars((string) ($faq['answer'] ?? '')) ?></p>
-                    </details>
-                <?php endforeach; ?>
+                <div class="faq-layout">
+                    <article class="content-card faq-panel reveal">
+                        <span class="faq-panel-badge">Leitura comercial rapida</span>
+                        <h3>O FAQ existe para ajudar a empresa a decidir se a Comanda360 faz sentido para a sua operacao.</h3>
+                        <p>Quando a pagina responde as duvidas certas, a conversa comercial avanca com mais criterio e a contratacao fica mais proxima da realidade da empresa.</p>
+
+                        <div class="faq-panel-list">
+                            <div>
+                                <strong>Mais clareza sobre o produto</strong>
+                                <span>A empresa entende com mais rapidez o que a Comanda360 organiza na operacao e onde ela gera valor real.</span>
+                            </div>
+                            <div>
+                                <strong>Menos atrito na avaliacao</strong>
+                                <span>Duvidas sobre QR Code, pagamento, planos e funcionamento da plataforma deixam de travar a leitura comercial da solucao.</span>
+                            </div>
+                            <div>
+                                <strong>Contato mais qualificado</strong>
+                                <span>Quando a duvida basica ja foi respondida, a conversa comercial chega mais perto de plano, proposta e contratacao.</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <div class="faq-list">
+                        <?php foreach ($faqItems as $faq): ?>
+                            <?php if (!is_array($faq)): continue; endif; ?>
+                            <details class="faq-item reveal">
+                                <summary>
+                                    <span><?= htmlspecialchars((string) ($faq['question'] ?? 'Pergunta')) ?></span>
+                                    <span class="faq-toggle">Abrir resposta</span>
+                                </summary>
+                                <p><?= htmlspecialchars((string) ($faq['answer'] ?? '')) ?></p>
+                            </details>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -2886,7 +2997,7 @@ $formatLimitValue = static function (?int $value): string {
                             <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
                         </span>
                     </a>
-                    <p>Landing publica desenhada para atrair novos clientes, sustentar indexacao e transformar visitas em operacoes comerciais rastreaveis.</p>
+                    <p>Landing publica desenhada para atrair novas empresas, sustentar indexacao e transformar visitas em oportunidades de assinatura para a Comanda360.</p>
                 </div>
 
                 <div>
@@ -2920,7 +3031,7 @@ $formatLimitValue = static function (?int $value): string {
 
             <div class="footer-bottom">
                 <span><?= htmlspecialchars((string) ($seo['title'] ?? 'Comanda360')) ?></span>
-                <span>Pagina publica modular para SEO, publicidade digital e captacao de novos clientes.</span>
+                <span>Pagina publica pensada para atrair novas empresas interessadas em contratar a Comanda360.</span>
             </div>
         </div>
     </footer>
