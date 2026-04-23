@@ -31,6 +31,16 @@ if (!function_exists('app_url')) {
     }
 }
 
+if (!function_exists('public_app_url')) {
+    function public_app_url(string $path = ''): string
+    {
+        $app = config('app');
+        $baseUrl = trim((string) ($app['public_base_url'] ?? $app['base_url'] ?? 'http://localhost'));
+
+        return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+    }
+}
+
 if (!function_exists('config')) {
     function config(string $file): array
     {

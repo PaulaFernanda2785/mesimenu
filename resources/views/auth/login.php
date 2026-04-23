@@ -148,7 +148,8 @@ $formatLimitValue = static function (?int $value): string {
         color:#061320;
     }
     .section-head p{margin:0;font-size:18px;line-height:1.65;color:var(--muted)}
-    #sobre .section-head h2{
+    #sobre .section-head h2,
+    #problemas .section-head h2{
         font-size:clamp(24px,3vw,38px);
         line-height:1.08;
     }
@@ -449,7 +450,8 @@ $formatLimitValue = static function (?int $value): string {
         gap:18px;
     }
     .about-grid{grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);align-items:stretch}
-    .problems-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .problems-layout{display:grid;grid-template-columns:minmax(300px,.82fr) minmax(0,1.18fr);gap:20px;align-items:stretch}
+    .problems-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
     .solutions-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .plans-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
@@ -739,8 +741,108 @@ $formatLimitValue = static function (?int $value): string {
         color:rgba(237,245,253,.76);
         line-height:1.6;
     }
+    .problems-panel{
+        position:relative;
+        display:grid;
+        gap:18px;
+        min-height:100%;
+        padding:30px;
+        border-radius:30px;
+        color:#eef7ff;
+        overflow:hidden;
+        background:
+            radial-gradient(circle at top right, rgba(255,160,64,.28) 0%, rgba(255,160,64,0) 34%),
+            radial-gradient(circle at bottom left, rgba(14,165,164,.22) 0%, rgba(14,165,164,0) 38%),
+            linear-gradient(165deg,#08192b 0%, #0b2942 54%, #0f3857 100%);
+        box-shadow:0 36px 70px rgba(4,17,29,.24);
+        border:1px solid rgba(255,255,255,.08);
+    }
+    .problems-panel::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 22%);
+        pointer-events:none;
+    }
+    .problems-panel > *{position:relative;z-index:1}
+    .problem-panel-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        width:max-content;
+        padding:9px 14px;
+        border-radius:999px;
+        background:rgba(255,255,255,.09);
+        border:1px solid rgba(255,255,255,.14);
+        color:#f8fbff;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .problem-panel-badge::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:linear-gradient(135deg,var(--primary),var(--accent));
+        box-shadow:0 0 0 4px rgba(255,122,24,.14);
+    }
+    .problems-panel h3{
+        margin:0;
+        max-width:12ch;
+        font:700 clamp(22px,2.4vw,32px)/1.06 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.05em;
+        color:#fff;
+    }
+    .problems-panel p{
+        margin:0;
+        max-width:48ch;
+        color:rgba(238,247,255,.8);
+        line-height:1.75;
+        font-size:16px;
+    }
+    .problems-panel-list{
+        display:grid;
+        gap:12px;
+        margin-top:4px;
+    }
+    .problems-panel-list div{
+        padding:16px 18px;
+        border-radius:22px;
+        background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.12);
+        backdrop-filter:blur(14px);
+    }
+    .problems-panel-list strong{
+        display:block;
+        font:700 18px/1.15 "Space Grotesk","Manrope",sans-serif;
+        color:#fff;
+    }
+    .problems-panel-list span{
+        display:block;
+        margin-top:8px;
+        color:rgba(238,247,255,.78);
+        line-height:1.65;
+        font-size:14px;
+    }
     .problem-card{
+        position:relative;
+        overflow:hidden;
+        min-height:220px;
+        padding-top:28px;
         background:linear-gradient(180deg,#fff7f2 0%, #ffffff 100%);
+        border-color:rgba(255,122,24,.16);
+        box-shadow:0 24px 52px rgba(8,27,46,.1);
+    }
+    .problem-card::before{
+        content:"";
+        position:absolute;
+        inset:0 auto auto 0;
+        width:100%;
+        height:4px;
+        background:linear-gradient(90deg,var(--primary) 0%, #ffb366 52%, rgba(255,179,102,0) 100%);
     }
     .problem-card .problem-index,
     .workflow-item .workflow-step{
@@ -753,6 +855,16 @@ $formatLimitValue = static function (?int $value): string {
         background:#081b2e;
         color:#fff;
         font-weight:800;
+    }
+    .problem-card h3{
+        margin-top:18px;
+        max-width:15ch;
+        font-size:22px;
+    }
+    .problem-card p{
+        margin-top:14px;
+        font-size:15px;
+        line-height:1.7;
     }
     .solution-card{
         background:linear-gradient(180deg,#eefbf9 0%, #ffffff 100%);
@@ -1114,6 +1226,7 @@ $formatLimitValue = static function (?int $value): string {
     @media (max-width:1120px){
         .hero-grid,
         .about-grid,
+        .problems-layout,
         .contact-grid,
         .footer-grid{grid-template-columns:1fr}
         .about-highlights,
@@ -1177,6 +1290,7 @@ $formatLimitValue = static function (?int $value): string {
         .container{width:min(calc(100% - 22px), var(--max))}
         .site-header{top:10px}
         .about-panel{padding:24px}
+        .problems-panel{padding:24px}
         .content-card,
         .feature-card,
         .problem-card,
@@ -1350,15 +1464,38 @@ $formatLimitValue = static function (?int $value): string {
                     <p>O custo nao aparece so no caixa. Ele aparece em pedido errado, atraso, falta de visibilidade, cobranca desorganizada e marketing que atrai curiosos em vez de compradores.</p>
                 </div>
 
-                <div class="problems-grid">
-                    <?php foreach ($problemPoints as $index => $problem): ?>
-                        <?php if (!is_array($problem)): continue; endif; ?>
-                        <article class="problem-card reveal">
-                            <span class="problem-index"><?= htmlspecialchars(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)) ?></span>
-                            <h3 style="margin-top:18px"><?= htmlspecialchars((string) ($problem['title'] ?? 'Problema')) ?></h3>
-                            <p><?= htmlspecialchars((string) ($problem['description'] ?? '')) ?></p>
-                        </article>
-                    <?php endforeach; ?>
+                <div class="problems-layout">
+                    <aside class="problems-panel reveal">
+                        <span class="problem-panel-badge">Leitura executiva</span>
+                        <h3>O prejuizo comeca muito antes do fechamento do caixa.</h3>
+                        <p>Quando a operacao depende de memoria, improviso e comunicacao manual, o negocio perde velocidade, margem e previsibilidade ao mesmo tempo. O problema nao fica em um setor so.</p>
+
+                        <div class="problems-panel-list">
+                            <div>
+                                <strong>Operacao fragil</strong>
+                                <span>Pedido errado, atraso no atendimento e retrabalho viram rotina quando o fluxo nao esta organizado em um sistema.</span>
+                            </div>
+                            <div>
+                                <strong>Financeiro reativo</strong>
+                                <span>Cobranca sem processo e sem leitura clara de receita gera atraso, mistura caixa com operacao e reduz previsibilidade.</span>
+                            </div>
+                            <div>
+                                <strong>Crescimento sem consistencia</strong>
+                                <span>Marketing sozinho nao sustenta resultado quando a pagina publica nao converte e a equipe nao consegue absorver a demanda.</span>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="problems-grid">
+                        <?php foreach ($problemPoints as $index => $problem): ?>
+                            <?php if (!is_array($problem)): continue; endif; ?>
+                            <article class="problem-card reveal">
+                                <span class="problem-index"><?= htmlspecialchars(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)) ?></span>
+                                <h3><?= htmlspecialchars((string) ($problem['title'] ?? 'Problema')) ?></h3>
+                                <p><?= htmlspecialchars((string) ($problem['description'] ?? '')) ?></p>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </section>

@@ -6,6 +6,7 @@ return [
     'env' => getenv('APP_ENV') ?: 'local',
     'debug' => filter_var(getenv('APP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOLEAN),
     'base_url' => getenv('APP_URL') ?: 'http://localhost',
+    'public_base_url' => getenv('APP_PUBLIC_URL') ?: (getenv('APP_URL') ?: 'http://localhost'),
     'timezone' => getenv('APP_TIMEZONE') ?: 'America/Belem',
     'session_name' => getenv('SESSION_NAME') ?: 'comanda360_session',
     'session_secure' => filter_var(getenv('SESSION_SECURE') ?: '', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
