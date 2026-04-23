@@ -15,7 +15,8 @@ final class LandingPageService
         private readonly PlanRepository $plans = new PlanRepository(),
         private readonly CompanyRepository $companies = new CompanyRepository(),
         private readonly SubscriptionRepository $subscriptions = new SubscriptionRepository(),
-        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService()
+        private readonly PlanFeatureCatalogService $featureCatalog = new PlanFeatureCatalogService(),
+        private readonly \App\Repositories\PublicInteractionRepository $publicInteractions = new \App\Repositories\PublicInteractionRepository()
     ) {}
 
     public function build(): array
@@ -24,10 +25,12 @@ final class LandingPageService
             $companySummary = $this->companies->summary();
             $subscriptionSummary = $this->subscriptions->summary();
             $plans = $this->normalizePlans($this->plans->listActiveForPublicCatalog());
+            $publishedInteractions = $this->publicInteractions->listPublished(6);
         } catch (Throwable) {
             $companySummary = [];
             $subscriptionSummary = [];
             $plans = [];
+            $publishedInteractions = [];
         }
         $featuredPlans = array_values(array_filter(
             $plans,
@@ -154,6 +157,7 @@ final class LandingPageService
                 ],
             ],
             'feature_groups' => $this->featureGroups(),
+            'public_interactions' => $publishedInteractions,
             'plans' => $plans,
             'featured_plans' => $featuredPlans,
             'recommended_plans' => $recommendedPlans,

@@ -7,10 +7,11 @@ $rawNavItems = is_array($navItems ?? null)
     ? $navItems
     : [
         ['href' => '/saas/dashboard', 'label' => 'Dashboard', 'description' => 'Indicadores da plataforma'],
+        ['href' => '/saas/public-interactions', 'label' => 'Interações', 'description' => 'Moderação da página pública'],
         ['href' => '/saas/companies', 'label' => 'Empresas', 'description' => 'Clientes da plataforma'],
-        ['href' => '/saas/plans', 'label' => 'Planos', 'description' => 'Catalogo comercial'],
+        ['href' => '/saas/plans', 'label' => 'Planos', 'description' => 'Catálogo comercial'],
         ['href' => '/saas/subscriptions', 'label' => 'Assinaturas', 'description' => 'Ciclo de contratos'],
-        ['href' => '/saas/subscription-payments', 'label' => 'Cobrancas', 'description' => 'Recebimentos SaaS'],
+        ['href' => '/saas/subscription-payments', 'label' => 'Cobranças', 'description' => 'Recebimentos SaaS'],
         ['href' => '/account/password', 'label' => 'Alterar senha', 'description' => 'Conta e segurança'],
     ];
 

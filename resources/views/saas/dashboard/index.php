@@ -300,6 +300,11 @@ $managementSummaryItems = [
 
 $hubLinks = [
     [
+        'title' => 'Interacoes',
+        'copy' => 'Moderacao de feedbacks, sugestoes e publicacoes da pagina publica.',
+        'href' => base_url('/saas/public-interactions'),
+    ],
+    [
         'title' => 'Empresas',
         'copy' => 'Cadastro, status operacional, plano e ciclo de vida da carteira.',
         'href' => base_url('/saas/companies'),

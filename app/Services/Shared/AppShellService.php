@@ -27,7 +27,7 @@ final class AppShellService
             'main_card_color' => '#0f172a',
             'logo_path' => '',
             'banner_path' => '',
-            'footer_text' => 'Comanda360 - Sistema de gestão de atendimento e vendas.',
+            'footer_text' => 'Comanda360 - Sistema de gestÃ£o de atendimento e vendas.',
         ];
 
         if (!is_array($user)) {
@@ -192,7 +192,7 @@ final class AppShellService
             [
                 'href' => '/admin/dashboard',
                 'label' => 'Dashboard',
-                'description' => 'Visão geral da operação',
+                'description' => 'VisÃ£o geral da operaÃ§Ã£o',
                 'permission' => 'dashboard.view',
                 'roles' => ['admin_establishment', 'manager'],
                 'match' => ['/admin/dashboard', '/admin/dashboard/report'],
@@ -200,13 +200,13 @@ final class AppShellService
             [
                 'href' => '/admin/products',
                 'label' => 'Produtos',
-                'description' => 'Cardápio e categorias',
+                'description' => 'CardÃ¡pio e categorias',
                 'permission' => 'products.view',
             ],
             [
                 'href' => '/admin/tables',
                 'label' => 'Mesas',
-                'description' => 'Gestão de salão',
+                'description' => 'GestÃ£o de salÃ£o',
                 'permission' => 'tables.view',
             ],
             [
@@ -224,7 +224,7 @@ final class AppShellService
             [
                 'href' => '/admin/kitchen',
                 'label' => 'Cozinha',
-                'description' => 'Produção e impressão',
+                'description' => 'ProduÃ§Ã£o e impressÃ£o',
                 'permission' => 'orders.view',
             ],
             [
@@ -249,7 +249,7 @@ final class AppShellService
             [
                 'href' => '/admin/payments',
                 'label' => 'Pagamentos',
-                'description' => 'Cobranças e recebimentos',
+                'description' => 'CobranÃ§as e recebimentos',
                 'permission' => 'payments.view',
             ],
             [
@@ -276,9 +276,16 @@ final class AppShellService
                 'permission' => 'dashboard.view',
             ],
             [
+                'href' => '/saas/public-interactions',
+                'label' => 'Interações',
+                'description' => 'Moderação da página pública',
+                'permission' => 'support.view',
+                'match' => ['/saas/public-interactions'],
+            ],
+            [
                 'href' => '/saas/support',
                 'label' => 'Chamados',
-                'description' => 'Atendimento tecnico SaaS',
+                'description' => 'Atendimento técnico SaaS',
                 'permission' => 'support.view',
             ],
             [
@@ -290,7 +297,7 @@ final class AppShellService
             [
                 'href' => '/saas/plans',
                 'label' => 'Planos',
-                'description' => 'Catalogo comercial',
+                'description' => 'Catálogo comercial',
                 'permission' => 'plans.view',
             ],
             [
@@ -301,7 +308,7 @@ final class AppShellService
             ],
             [
                 'href' => '/saas/subscription-payments',
-                'label' => 'Cobrancas',
+                'label' => 'Cobranças',
                 'description' => 'Recebimentos SaaS',
                 'permission' => 'subscriptions.view',
             ],
@@ -313,3 +320,4 @@ final class AppShellService
         ];
     }
 }
+

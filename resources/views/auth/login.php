@@ -14,7 +14,7 @@ $featuredPlans = is_array($landingPage['featured_plans'] ?? null) ? $landingPage
 $recommendedPlans = is_array($landingPage['recommended_plans'] ?? null) ? $landingPage['recommended_plans'] : [];
 $plansStats = is_array($landingPage['plans_stats'] ?? null) ? $landingPage['plans_stats'] : [];
 $workflow = is_array($landingPage['workflow'] ?? null) ? $landingPage['workflow'] : [];
-$blogArticles = is_array($landingPage['blog_articles'] ?? null) ? $landingPage['blog_articles'] : [];
+$publicInteractions = is_array($landingPage['public_interactions'] ?? null) ? $landingPage['public_interactions'] : [];
 $faqItems = is_array($landingPage['faq'] ?? null) ? $landingPage['faq'] : [];
 
 $logoUrl = public_logo_url();
@@ -152,6 +152,7 @@ $formatLimitValue = static function (?int $value): string {
     #sobre .section-head h2,
     #problemas .section-head h2,
     #solucoes .section-head h2,
+    #blog .section-head h2,
     #funcionalidades .section-head h2{
         font-size:clamp(24px,3vw,38px);
         line-height:1.08;
@@ -446,7 +447,7 @@ $formatLimitValue = static function (?int $value): string {
     .problems-grid,
     .solutions-grid,
     .plans-grid,
-    .blog-grid,
+    .blog-published-grid,
     .contact-grid,
     .footer-grid{
         display:grid;
@@ -459,7 +460,8 @@ $formatLimitValue = static function (?int $value): string {
     .solutions-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
     .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .plans-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
-    .blog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .blog-layout{display:grid;grid-template-columns:minmax(300px,.84fr) minmax(0,1.16fr);gap:20px;align-items:stretch}
+    .blog-published-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
     .contact-grid{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr)}
     .footer-grid{grid-template-columns:minmax(0,1.1fr) repeat(3,minmax(0,.5fr))}
 
@@ -501,6 +503,30 @@ $formatLimitValue = static function (?int $value): string {
         margin:12px 0 0;
         color:var(--muted);
         line-height:1.72;
+    }
+    .flash-stack{
+        display:grid;
+        gap:10px;
+        margin-bottom:22px;
+    }
+    .flash{
+        padding:14px 16px;
+        border-radius:18px;
+        border:1px solid transparent;
+        font-weight:700;
+        line-height:1.5;
+        box-shadow:0 14px 30px rgba(8,27,46,.08);
+        backdrop-filter:blur(12px);
+    }
+    .flash.success{
+        background:rgba(236,253,243,.94);
+        border-color:#b7ebcf;
+        color:#157f5b;
+    }
+    .flash.error{
+        background:rgba(255,241,240,.96);
+        border-color:#f7c5c0;
+        color:#b42318;
     }
     .about-panel{
         position:relative;
@@ -888,7 +914,6 @@ $formatLimitValue = static function (?int $value): string {
         background:linear-gradient(90deg,var(--secondary) 0%, #6fe4cf 54%, rgba(111,228,207,0) 100%);
     }
     .solution-eyebrow,
-    .blog-category,
     .plan-badge,
     .feature-chip{
         display:inline-flex;
@@ -998,7 +1023,6 @@ $formatLimitValue = static function (?int $value): string {
         line-height:1.65;
         font-size:14px;
     }
-    .blog-category{background:#edf2ff;color:#21358a}
     .feature-chip{background:#eef4fb;color:#19344f}
     .plan-badge{background:#fff4d4;color:#8b5c00;white-space:nowrap}
     .features-showcase{
@@ -1478,6 +1502,238 @@ $formatLimitValue = static function (?int $value): string {
         margin-top:2px;
     }
 
+    .blog-showcase{
+        position:relative;
+        display:grid;
+        gap:18px;
+        min-height:100%;
+        padding:30px;
+        border-radius:30px;
+        color:#eef7ff;
+        overflow:hidden;
+        background:
+            radial-gradient(circle at top right, rgba(255,160,64,.26) 0%, rgba(255,160,64,0) 34%),
+            radial-gradient(circle at bottom left, rgba(14,165,164,.22) 0%, rgba(14,165,164,0) 38%),
+            linear-gradient(165deg,#08192b 0%, #0b2942 54%, #0f3857 100%);
+        box-shadow:0 36px 70px rgba(4,17,29,.24);
+        border:1px solid rgba(255,255,255,.08);
+    }
+    .blog-showcase::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 22%);
+        pointer-events:none;
+    }
+    .blog-showcase > *{position:relative;z-index:1}
+    .blog-showcase-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        width:max-content;
+        padding:9px 14px;
+        border-radius:999px;
+        background:rgba(255,255,255,.09);
+        border:1px solid rgba(255,255,255,.14);
+        color:#f8fbff;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .blog-showcase-badge::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:linear-gradient(135deg,var(--primary),var(--accent));
+        box-shadow:0 0 0 4px rgba(255,122,24,.14);
+    }
+    .blog-showcase h3{
+        margin:0;
+        max-width:13ch;
+        font:700 clamp(20px,2.1vw,28px)/1.08 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.05em;
+        color:#fff;
+    }
+    .blog-showcase p{
+        margin:0;
+        color:rgba(239,247,251,.8);
+        line-height:1.75;
+    }
+    .blog-showcase-points{
+        display:grid;
+        gap:12px;
+    }
+    .blog-showcase-point{
+        padding:18px;
+        border-radius:20px;
+        background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.12);
+    }
+    .blog-showcase-point strong{
+        display:block;
+        color:#fff;
+        font:700 18px/1.18 "Space Grotesk","Manrope",sans-serif;
+    }
+    .blog-showcase-point span{
+        display:block;
+        margin-top:8px;
+        color:rgba(239,247,251,.74);
+        line-height:1.6;
+    }
+    .blog-form-card{
+        display:grid;
+        gap:18px;
+    }
+    .blog-form-head{
+        display:flex;
+        justify-content:space-between;
+        gap:14px;
+        align-items:flex-start;
+        flex-wrap:wrap;
+    }
+    .blog-form-head h3{margin:0}
+    .blog-form-head p{margin:10px 0 0}
+    .blog-form-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 14px;
+        border-radius:999px;
+        background:#eef6ff;
+        border:1px solid rgba(8,27,46,.08);
+        color:#123551;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+        white-space:nowrap;
+    }
+    .blog-form-badge::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:var(--secondary);
+        box-shadow:0 0 0 4px rgba(14,165,164,.12);
+    }
+    .blog-form-note{
+        padding:16px 18px;
+        border-radius:18px;
+        background:#f8fbff;
+        border:1px solid rgba(8,27,46,.08);
+        color:#516374;
+        line-height:1.65;
+    }
+    .blog-published-head{
+        display:flex;
+        justify-content:space-between;
+        gap:14px;
+        align-items:flex-end;
+        flex-wrap:wrap;
+        margin-top:26px;
+        margin-bottom:18px;
+    }
+    .blog-published-head h3{
+        margin:0;
+        font:700 clamp(22px,2.3vw,30px)/1.08 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.04em;
+        color:#081b2e;
+    }
+    .blog-published-head p{
+        margin:8px 0 0;
+        color:#5d6f80;
+        line-height:1.65;
+        max-width:720px;
+    }
+    .blog-published-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 14px;
+        border-radius:999px;
+        background:#fff;
+        border:1px solid rgba(8,27,46,.08);
+        color:#0b3d5f;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+        box-shadow:0 12px 24px rgba(8,27,46,.06);
+    }
+    .blog-published-badge::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:var(--primary);
+        box-shadow:0 0 0 4px rgba(255,122,24,.12);
+    }
+    .blog-card{
+        display:grid;
+        gap:16px;
+    }
+    .blog-card blockquote{
+        margin:0;
+        color:#304456;
+        line-height:1.75;
+        font-size:15px;
+    }
+    .blog-card blockquote::before{
+        content:"“";
+        display:block;
+        margin-bottom:8px;
+        font:700 42px/1 "Space Grotesk","Manrope",sans-serif;
+        color:#ff7a18;
+    }
+    .blog-card-meta{
+        display:grid;
+        gap:8px;
+    }
+    .blog-card-meta strong{
+        font:700 18px/1.15 "Space Grotesk","Manrope",sans-serif;
+        color:#081b2e;
+    }
+    .blog-card-meta span{
+        color:#607283;
+        font-size:13px;
+        line-height:1.55;
+    }
+    .blog-card-status{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        width:max-content;
+        padding:8px 12px;
+        border-radius:999px;
+        background:#eff6ff;
+        border:1px solid rgba(59,130,246,.14);
+        color:#1d4ed8;
+        font-size:11px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .blog-card-status::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:#1d4ed8;
+        box-shadow:0 0 0 4px rgba(29,78,216,.12);
+    }
+    .blog-empty{
+        padding:22px 24px;
+        border-radius:24px;
+        background:rgba(255,255,255,.88);
+        border:1px dashed rgba(12,34,56,.18);
+        color:#5b6d7e;
+        line-height:1.7;
+        box-shadow:var(--shadow);
+    }
+
     .blog-card a,
     .contact-card a,
     .footer-list a{
@@ -1567,6 +1823,7 @@ $formatLimitValue = static function (?int $value): string {
         .about-grid,
         .problems-layout,
         .solutions-layout,
+        .blog-layout,
         .contact-grid,
         .footer-grid{grid-template-columns:1fr}
         .features-hero{grid-template-columns:1fr}
@@ -1576,7 +1833,7 @@ $formatLimitValue = static function (?int $value): string {
         .solutions-grid,
         .feature-grid,
         .plans-grid,
-        .blog-grid,
+        .blog-published-grid,
         .workflow{grid-template-columns:repeat(2,minmax(0,1fr))}
         .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
@@ -1652,7 +1909,7 @@ $formatLimitValue = static function (?int $value): string {
         .solutions-grid,
         .feature-grid,
         .plans-grid,
-        .blog-grid,
+        .blog-published-grid,
         .workflow,
         .form-grid,
         .plan-meta,
@@ -1674,6 +1931,8 @@ $formatLimitValue = static function (?int $value): string {
             padding:12px 0 0;
         }
         .tablet-stage img{transform:none}
+        .blog-showcase{padding:24px}
+        .blog-published-head{align-items:flex-start}
     }
 </style>
 
@@ -2071,22 +2330,109 @@ $formatLimitValue = static function (?int $value): string {
         <section class="section" id="blog">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Blog</span>
-                    <h2>Conteudo para ampliar autoridade, indexacao e argumentos de venda.</h2>
-                    <p>O blog entra como ativo de topo e meio de funil. Mesmo antes de um modulo editorial completo, a landing ja pode sinalizar pauta, posicionamento e temas com forte busca comercial.</p>
+                    <span class="eyebrow">Feedback</span>
+                    <h2>Feedback e sugestoes para mostrar o valor da Comanda360 com mais clareza.</h2>
+                    <p>Use este espaco para contar sua percepcao sobre o sistema, sugerir melhorias e acompanhar feedbacks que ajudam a reforcar a confianca na Comanda360.</p>
                 </div>
 
-                <div class="blog-grid">
-                    <?php foreach ($blogArticles as $article): ?>
-                        <?php if (!is_array($article)): continue; endif; ?>
-                        <article class="blog-card reveal">
-                            <span class="blog-category"><?= htmlspecialchars((string) ($article['category'] ?? 'Conteudo')) ?></span>
-                            <h3 style="margin-top:18px"><?= htmlspecialchars((string) ($article['title'] ?? 'Artigo')) ?></h3>
-                            <p><?= htmlspecialchars((string) ($article['excerpt'] ?? '')) ?></p>
-                            <p style="margin-top:16px"><a href="#contato">Quero receber essa pauta no comercial</a></p>
-                        </article>
-                    <?php endforeach; ?>
+                <?php if (!empty($flashSuccess) || !empty($flashError)): ?>
+                    <div class="flash-stack reveal is-visible">
+                        <?php if (!empty($flashSuccess)): ?>
+                            <div class="flash success"><?= htmlspecialchars((string) $flashSuccess) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($flashError)): ?>
+                            <div class="flash error"><?= htmlspecialchars((string) $flashError) ?></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="blog-layout">
+                    <aside class="blog-showcase reveal">
+                        <span class="blog-showcase-badge">Feedback da Comanda360</span>
+                        <h3>Um espaco para ouvir o mercado e reforcar a confianca no sistema.</h3>
+                        <p>Quando a pagina mostra percepcoes reais de quem conhece a Comanda360, ela ganha mais proximidade, mais credibilidade e mais forca para sustentar a decisao de compra.</p>
+
+                        <div class="blog-showcase-points">
+                            <div class="blog-showcase-point">
+                                <strong>Mais proximidade com quem visita a pagina</strong>
+                                <span>O feedback abre um canal direto para entender duvidas, percepcoes e oportunidades de melhoria sobre a Comanda360.</span>
+                            </div>
+                            <div class="blog-showcase-point">
+                                <strong>Mais clareza sobre o que o produto entrega</strong>
+                                <span>Sugestoes e comentarios ajudam a destacar pontos que geram valor real para quem esta avaliando o sistema.</span>
+                            </div>
+                            <div class="blog-showcase-point">
+                                <strong>Mais confianca para vender melhor</strong>
+                                <span>Feedbacks em destaque funcionam como sinal de interesse, relevancia e proximidade com o mercado.</span>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <article class="contact-card blog-form-card reveal">
+                        <div class="blog-form-head">
+                            <div>
+                                <h3>Enviar feedback para a equipe Comanda360</h3>
+                                <p>Compartilhe sua opiniao sobre o sistema, envie uma sugestao ou registre sua percepcao sobre a Comanda360.</p>
+                            </div>
+                            <span class="blog-form-badge">Campos obrigatorios</span>
+                        </div>
+
+                        <div class="blog-form-note">
+                            Seu feedback ajuda a Comanda360 a evoluir a experiencia, comunicar melhor o produto e ficar mais alinhada ao que o mercado espera.
+                        </div>
+
+                        <form method="POST" action="<?= htmlspecialchars(base_url('/blog/interactions')) ?>">
+                            <?= form_security_fields('marketing.public_interactions.store') ?>
+                            <input type="hidden" name="source_url" value="<?= htmlspecialchars($currentUrl) ?>" data-source-url>
+
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="interaction_name">Nome</label>
+                                    <input id="interaction_name" name="name" type="text" required placeholder="Seu nome">
+                                </div>
+                                <div class="field">
+                                    <label for="interaction_email">E-mail</label>
+                                    <input id="interaction_email" name="email" type="email" required placeholder="voce@empresa.com.br">
+                                </div>
+                                <div class="field full">
+                                    <label for="interaction_message">Mensagem</label>
+                                    <textarea id="interaction_message" name="message" required placeholder="Escreva seu feedback, sua sugestao ou sua percepcao sobre a Comanda360."></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" type="submit" style="margin-top:18px">Enviar feedback</button>
+                        </form>
+                    </article>
                 </div>
+
+                <div class="blog-published-head reveal">
+                    <span class="blog-published-badge"><?= htmlspecialchars((string) count($publicInteractions)) ?> feedbacks em destaque</span>
+                </div>
+
+                <?php if ($publicInteractions === []): ?>
+                    <div class="blog-empty reveal">
+                        Os primeiros feedbacks em destaque vao aparecer aqui conforme a Comanda360 ampliar essa vitrine de percepcoes e sugestoes do mercado.
+                    </div>
+                <?php else: ?>
+                    <div class="blog-published-grid">
+                        <?php foreach ($publicInteractions as $interaction): ?>
+                            <?php if (!is_array($interaction)): continue; endif; ?>
+                            <?php
+                            $publishedAt = trim((string) ($interaction['published_at'] ?? ''));
+                            $createdAt = trim((string) ($interaction['created_at'] ?? ''));
+                            $displayDate = $publishedAt !== '' ? $publishedAt : $createdAt;
+                            ?>
+                            <article class="blog-card reveal">
+                                <span class="blog-card-status">Feedback</span>
+                                <blockquote><?= htmlspecialchars((string) ($interaction['message'] ?? '')) ?></blockquote>
+                                <div class="blog-card-meta">
+                                    <strong><?= htmlspecialchars((string) ($interaction['visitor_name'] ?? 'Visitante')) ?></strong>
+                                    <span>Percepcao registrada em <?= htmlspecialchars($displayDate !== '' ? date('d/m/Y', strtotime($displayDate)) : '-') ?></span>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
