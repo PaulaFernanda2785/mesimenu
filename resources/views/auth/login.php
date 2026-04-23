@@ -149,7 +149,8 @@ $formatLimitValue = static function (?int $value): string {
     }
     .section-head p{margin:0;font-size:18px;line-height:1.65;color:var(--muted)}
     #sobre .section-head h2,
-    #problemas .section-head h2{
+    #problemas .section-head h2,
+    #solucoes .section-head h2{
         font-size:clamp(24px,3vw,38px);
         line-height:1.08;
     }
@@ -452,7 +453,8 @@ $formatLimitValue = static function (?int $value): string {
     .about-grid{grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);align-items:stretch}
     .problems-layout{display:grid;grid-template-columns:minmax(300px,.82fr) minmax(0,1.18fr);gap:20px;align-items:stretch}
     .problems-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
-    .solutions-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .solutions-layout{display:grid;grid-template-columns:minmax(300px,.84fr) minmax(0,1.16fr);gap:20px;align-items:stretch}
+    .solutions-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
     .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .plans-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
     .blog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -867,7 +869,21 @@ $formatLimitValue = static function (?int $value): string {
         line-height:1.7;
     }
     .solution-card{
+        position:relative;
+        overflow:hidden;
+        min-height:220px;
+        padding-top:28px;
         background:linear-gradient(180deg,#eefbf9 0%, #ffffff 100%);
+        border-color:rgba(14,165,164,.16);
+        box-shadow:0 24px 52px rgba(8,27,46,.09);
+    }
+    .solution-card::before{
+        content:"";
+        position:absolute;
+        inset:0 auto auto 0;
+        width:100%;
+        height:4px;
+        background:linear-gradient(90deg,var(--secondary) 0%, #6fe4cf 54%, rgba(111,228,207,0) 100%);
     }
     .solution-eyebrow,
     .blog-category,
@@ -884,6 +900,102 @@ $formatLimitValue = static function (?int $value): string {
         text-transform:uppercase;
     }
     .solution-eyebrow{background:#dff8f5;color:#0a5c67}
+    .solution-card h3{
+        margin-top:18px;
+        max-width:16ch;
+        font-size:22px;
+    }
+    .solution-card p{
+        margin-top:14px;
+        font-size:15px;
+        line-height:1.7;
+    }
+    .solutions-panel{
+        position:relative;
+        display:grid;
+        gap:18px;
+        min-height:100%;
+        padding:30px;
+        border-radius:30px;
+        overflow:hidden;
+        color:#f7fcfb;
+        background:
+            radial-gradient(circle at top left, rgba(111,228,207,.22) 0%, rgba(111,228,207,0) 34%),
+            radial-gradient(circle at bottom right, rgba(255,160,64,.18) 0%, rgba(255,160,64,0) 38%),
+            linear-gradient(165deg,#05232b 0%, #0b4b53 54%, #0f6a66 100%);
+        box-shadow:0 36px 70px rgba(4,17,29,.22);
+        border:1px solid rgba(255,255,255,.08);
+    }
+    .solutions-panel::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 22%);
+        pointer-events:none;
+    }
+    .solutions-panel > *{position:relative;z-index:1}
+    .solutions-panel-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        width:max-content;
+        padding:9px 14px;
+        border-radius:999px;
+        background:rgba(255,255,255,.1);
+        border:1px solid rgba(255,255,255,.14);
+        color:#f8fbff;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+    .solutions-panel-badge::before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:999px;
+        background:linear-gradient(135deg,var(--secondary),#6fe4cf);
+        box-shadow:0 0 0 4px rgba(111,228,207,.12);
+    }
+    .solutions-panel h3{
+        margin:0;
+        max-width:12ch;
+        font:700 clamp(22px,2.5vw,34px)/1.05 "Space Grotesk","Manrope",sans-serif;
+        letter-spacing:-.05em;
+        color:#fff;
+    }
+    .solutions-panel p{
+        margin:0;
+        max-width:48ch;
+        color:rgba(247,252,251,.82);
+        line-height:1.75;
+        font-size:16px;
+    }
+    .solutions-panel-list{
+        display:grid;
+        gap:12px;
+        margin-top:4px;
+    }
+    .solutions-panel-list div{
+        padding:16px 18px;
+        border-radius:22px;
+        background:rgba(255,255,255,.09);
+        border:1px solid rgba(255,255,255,.12);
+        backdrop-filter:blur(14px);
+    }
+    .solutions-panel-list strong{
+        display:block;
+        font:700 18px/1.15 "Space Grotesk","Manrope",sans-serif;
+        color:#fff;
+    }
+    .solutions-panel-list span{
+        display:block;
+        margin-top:8px;
+        color:rgba(247,252,251,.78);
+        line-height:1.65;
+        font-size:14px;
+    }
     .blog-category{background:#edf2ff;color:#21358a}
     .feature-chip{background:#eef4fb;color:#19344f}
     .plan-badge{background:#fff4d4;color:#8b5c00;white-space:nowrap}
@@ -1227,6 +1339,7 @@ $formatLimitValue = static function (?int $value): string {
         .hero-grid,
         .about-grid,
         .problems-layout,
+        .solutions-layout,
         .contact-grid,
         .footer-grid{grid-template-columns:1fr}
         .about-highlights,
@@ -1291,6 +1404,7 @@ $formatLimitValue = static function (?int $value): string {
         .site-header{top:10px}
         .about-panel{padding:24px}
         .problems-panel{padding:24px}
+        .solutions-panel{padding:24px}
         .content-card,
         .feature-card,
         .problem-card,
@@ -1504,19 +1618,42 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Solucoes</span>
-                    <h2>O caminho mais consistente nao e improvisar mais, e padronizar melhor.</h2>
-                    <p>A solucao aqui nao foi desenhar uma pagina genrica. Foi alinhar marketing, produto e operacao para que a experiencia publica seja coerente com o que a Comanda360 realmente entrega.</p>
+                    <h2>Menos erro, mais controle e uma operacao pronta para vender melhor.</h2>
+                    <p>A Comanda360 foi pensada para transformar atendimento, comandas, pagamentos e entrada comercial em um fluxo mais rapido, organizado e lucrativo para a empresa.</p>
                 </div>
 
-                <div class="solutions-grid">
-                    <?php foreach ($solutions as $solution): ?>
-                        <?php if (!is_array($solution)): continue; endif; ?>
-                        <article class="solution-card reveal">
-                            <span class="solution-eyebrow"><?= htmlspecialchars((string) ($solution['eyebrow'] ?? '')) ?></span>
-                            <h3 style="margin-top:18px"><?= htmlspecialchars((string) ($solution['title'] ?? 'Solucao')) ?></h3>
-                            <p><?= htmlspecialchars((string) ($solution['description'] ?? '')) ?></p>
-                        </article>
-                    <?php endforeach; ?>
+                <div class="solutions-layout">
+                    <aside class="solutions-panel reveal">
+                        <span class="solutions-panel-badge">Resposta estrutural</span>
+                        <h3>A Comanda360 entra para conectar operacao, pagamento e crescimento.</h3>
+                        <p>A proposta nao e colocar mais uma camada de improviso em cima da rotina da empresa. E transformar atendimento, comandas, caixa e captacao comercial em um fluxo mais previsivel, legivel e escalavel.</p>
+
+                        <div class="solutions-panel-list">
+                            <div>
+                                <strong>Menos ruído operacional</strong>
+                                <span>Pedidos, comandas e mesas deixam de depender de anotacao dispersa e passam a seguir um processo mais claro para equipe e cliente.</span>
+                            </div>
+                            <div>
+                                <strong>Mais controle no fechamento</strong>
+                                <span>Consumo, pagamento e caixa ficam melhor conectados, reduzindo erro de conferencia, atraso no fechamento e divergencia financeira.</span>
+                            </div>
+                            <div>
+                                <strong>Venda com mais coerencia</strong>
+                                <span>A pagina publica passa a vender exatamente o que o produto resolve, melhorando a leitura comercial e a entrada de leads.</span>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="solutions-grid">
+                        <?php foreach ($solutions as $solution): ?>
+                            <?php if (!is_array($solution)): continue; endif; ?>
+                            <article class="solution-card reveal">
+                                <span class="solution-eyebrow"><?= htmlspecialchars((string) ($solution['eyebrow'] ?? '')) ?></span>
+                                <h3><?= htmlspecialchars((string) ($solution['title'] ?? 'Solucao')) ?></h3>
+                                <p><?= htmlspecialchars((string) ($solution['description'] ?? '')) ?></p>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
                 <div class="workflow">

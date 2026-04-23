@@ -134,18 +134,23 @@ final class LandingPageService
             'solutions' => [
                 [
                     'eyebrow' => 'Operacao',
-                    'title' => 'Fluxo comercial e operacional no Comanda360',
-                    'description' => 'Da captura de interesse ate o uso diario da plataforma, o Comanda360 conecta login, plano, assinatura, cobranca e operacao sem quebrar a jornada.',
+                    'title' => 'Atendimento mais rapido e operacao mais organizada',
+                    'description' => 'A Comanda360 conecta mesas, comandas, pedidos e cozinha em um fluxo mais claro para reduzir falhas, acelerar o atendimento e melhorar a experiencia do cliente.',
                 ],
                 [
-                    'eyebrow' => 'Receita recorrente',
-                    'title' => 'Assinaturas com pagamento mensal ou anual',
-                    'description' => 'A plataforma suporta contratos recorrentes, PIX, cartao e leitura do status da cobranca para proteger receita e reduzir inadimplencia.',
+                    'eyebrow' => 'Pagamento',
+                    'title' => 'Fechamento de conta com mais controle e menos atrito',
+                    'description' => 'Pagamentos, consumo e status da comanda ficam integrados para diminuir erro de cobranca, reduzir divergencias no caixa e dar mais seguranca no fechamento.',
+                ],
+                [
+                    'eyebrow' => 'Gestao',
+                    'title' => 'Mais padrao para a equipe e mais controle para a gestao',
+                    'description' => 'Com processos registrados no sistema, a empresa deixa de depender de memoria e improviso, ganha visibilidade da operacao e cria base para crescer com mais consistencia.',
                 ],
                 [
                     'eyebrow' => 'Crescimento',
-                    'title' => 'Pagina publica pensada para SEO e conversao',
-                    'description' => 'Estrutura semantica, conteudo comercial, FAQ, blocos de prova e CTA forte para melhorar indexacao e transformar visitas em contato qualificado.',
+                    'title' => 'Mais forca comercial para atrair e converter clientes',
+                    'description' => 'A pagina publica, os planos e o fluxo de acesso ajudam a apresentar melhor a solucao, fortalecer a proposta de valor e transformar interesse em oportunidade real de venda.',
                 ],
             ],
             'feature_groups' => $this->featureGroups(),
@@ -160,23 +165,23 @@ final class LandingPageService
             'workflow' => [
                 [
                     'step' => '01',
-                    'title' => 'Empresa entra pelo canal publico',
-                    'description' => 'A landing apresenta problema, proposta de valor, planos ativos e CTA de contato ou acesso.',
+                    'title' => 'A empresa chega por uma pagina pensada para converter',
+                    'description' => 'A landing apresenta dores reais, proposta de valor, planos ativos e chamadas de acao para transformar visita em interesse comercial.',
                 ],
                 [
                     'step' => '02',
-                    'title' => 'Plano escolhido e assinatura registrada',
-                    'description' => 'O catalogo comercial respeita os planos ativos, os destaques e os recomendados definidos no cadastro interno.',
+                    'title' => 'O plano certo e escolhido com mais clareza comercial',
+                    'description' => 'O catalogo destaca os planos ativos, recomendados e mais estrategicos para facilitar a decisao e reduzir friccao no momento da adesao.',
                 ],
                 [
                     'step' => '03',
-                    'title' => 'Pagamento recorrente sem friccao',
-                    'description' => 'PIX para rapidez operacional e cartao para continuidade de cobranca, com ciclos mensal e anual.',
+                    'title' => 'A assinatura avanca com pagamento simples e recorrente',
+                    'description' => 'PIX e cartao entram como caminhos diretos para acelerar a contratacao, sustentar a recorrencia e dar mais previsibilidade de receita.',
                 ],
                 [
                     'step' => '04',
-                    'title' => 'Operacao acompanhada com visibilidade',
-                    'description' => 'Dashboard, suporte, controle de acesso e modulos do produto ficam alinhados ao plano contratado.',
+                    'title' => 'A operacao ganha visibilidade, controle e continuidade',
+                    'description' => 'Depois da entrada, a empresa acompanha a operacao com mais leitura gerencial, acesso organizado, suporte e modulos alinhados ao plano contratado.',
                 ],
             ],
             'blog_articles' => [
