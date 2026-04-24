@@ -18,10 +18,10 @@ Renomear o sistema de Comanda360 para MesiMenu sem quebrar o que ja funciona. A 
 ## Estado atual encontrado
 
 - Stack: PHP puro com arquitetura MVC, MySQL, Apache/WAMP, Node apenas para geracao de QR Code.
-- Repositorio local: `d:/wamp64/www/comanda360`.
+- Repositorio local original: `d:/wamp64/www/comanda360`.
 - Branch: `main`, acompanhando `origin/main`.
 - Git esta limpo, exceto o novo arquivo `public/img/logo-mesimenu.png`.
-- Remote atual: `https://github.com/PaulaFernanda2785/comanda360.git`.
+- Remote original: `https://github.com/PaulaFernanda2785/comanda360.git`.
 - Nao existe `composer.json` nem `composer.lock`, mas o workflow `.github/workflows/php.yml` tenta rodar Composer. Isso ja e um risco independente do rebranding.
 - Logo nova disponivel: `public/img/logo-mesimenu.png`.
 

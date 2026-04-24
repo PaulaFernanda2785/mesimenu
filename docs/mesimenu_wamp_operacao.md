@@ -4,11 +4,11 @@
 
 - Host local novo: `http://mesimenu.local`.
 - Alias local: `http://www.mesimenu.local`.
-- DocumentRoot temporario: `D:/wamp64/www/comanda360/public`.
+- DocumentRoot: `D:/wamp64/www/mesimenu/public`.
 - Banco alvo preparado: `mesimenu`.
 - Banco antigo preservado para rollback: `comanda360`.
 
-O DocumentRoot ainda aponta para `comanda360/public` de proposito. O renome fisico da pasta para `D:/wamp64/www/mesimenu` fica para a fase final, depois de validar host, banco e aplicacao.
+O DocumentRoot deve apontar para a pasta final `D:/wamp64/www/mesimenu/public`.
 
 ## Scripts criados
 
@@ -32,7 +32,7 @@ O script:
 - valida Apache com `httpd.exe -t`;
 - reinicia o servico `wampapache64`.
 
-Enquanto a pasta fisica ainda for `D:/wamp64/www/comanda360`, o caminho padrao do script esta correto. Depois do renome final da pasta, execute o `.ps1` diretamente com:
+Depois do renome final da pasta, execute o script normalmente. Se precisar informar o caminho manualmente:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\fix_wamp_hosts_mesimenu.ps1 -ProjectPublicPath "D:/wamp64/www/mesimenu/public"
@@ -90,8 +90,8 @@ Mantenha o banco `comanda360` ate validar login, dashboards, cardapio digital, p
 
 ## Pendencias para fase final
 
-- Renomear a pasta local para `D:/wamp64/www/mesimenu`.
-- Atualizar o DocumentRoot do vhost para `D:/wamp64/www/mesimenu/public`.
+- Validar que a pasta local esta em `D:/wamp64/www/mesimenu`.
+- Validar que o DocumentRoot do vhost esta em `D:/wamp64/www/mesimenu/public`.
 - Renomear o repositorio GitHub.
 - Atualizar `origin` para `https://github.com/PaulaFernanda2785/mesimenu.git`.
 - Regenerar pacote de deploy.

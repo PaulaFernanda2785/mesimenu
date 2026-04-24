@@ -1,5 +1,5 @@
 param(
-    [string] $ProjectPublicPath = 'D:/wamp64/www/comanda360/public'
+    [string] $ProjectPublicPath = 'D:/wamp64/www/mesimenu/public'
 )
 
 $ErrorActionPreference = 'Stop'
