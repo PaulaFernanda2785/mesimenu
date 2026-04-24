@@ -141,7 +141,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         text-transform:uppercase;
     }
     h1,h2,h3{margin:0;font-family:"Space Grotesk","Manrope",sans-serif}
-    .hero-copy h1{margin-top:18px;font-size:clamp(34px,4.2vw,56px);line-height:1.04;color:#081b2e}
+    .hero-copy h1{margin-top:18px;font-size:clamp(24px,2.7vw,36px);line-height:1.12;color:#081b2e}
     .hero-copy p{margin:16px 0 0;color:#4f6175;font-size:17px;line-height:1.7}
     .hero-points{display:grid;gap:12px;margin-top:24px}
     .hero-points div{
@@ -426,18 +426,18 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
                 <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
             </a>
-            <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Ja sou cliente</a>
+            <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Entrar na conta</a>
         </div>
 
         <section class="hero">
             <article class="card hero-copy">
                 <span class="eyebrow">Etapa financeira</span>
-                <h1>Pagamento da assinatura para liberar o primeiro acesso da empresa.</h1>
-                <p>O cadastro ja foi salvo. Agora o ponto critico e confirmar o recebimento no gateway. Somente depois disso o usuario administrador inicial sera ativado para entrar na plataforma.</p>
+                <h1>Conclua o pagamento e ative a MesiMenu para sua empresa.</h1>
+                <p>Seu cadastro foi recebido. Agora escolha a melhor forma de pagamento para liberar o acesso e comecar a configurar cardapio digital, pedidos e gestao em uma unica plataforma.</p>
                 <div class="hero-points">
                     <div>Cadastro salvo para <strong><?= htmlspecialchars((string) ($company['name'] ?? 'Empresa')) ?></strong>.</div>
-                    <div>Plano e ciclo seguem exatamente o que foi selecionado na pagina publica.</div>
-                    <div>Assim que o banco confirmar o pagamento, o sistema libera o login automaticamente.</div>
+                    <div>Plano e ciclo ja estao vinculados a sua contratacao.</div>
+                    <div>Pagamento confirmado, acesso liberado para iniciar a operacao.</div>
                 </div>
 
                 <?php if (!empty($flashSuccess)): ?>
@@ -450,7 +450,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
 
             <aside class="card summary-card">
                 <h2><?= htmlspecialchars((string) ($planSummary['name'] ?? 'Plano')) ?></h2>
-                <p><?= htmlspecialchars((string) (($planSummary['description'] ?? '') !== '' ? $planSummary['description'] : 'Plano ativo vinculado ao onboarding publico.')) ?></p>
+                <p><?= htmlspecialchars((string) (($planSummary['description'] ?? '') !== '' ? $planSummary['description'] : 'Plano escolhido para sua empresa com recursos para vender melhor, organizar pedidos e simplificar a rotina.')) ?></p>
                 <div class="summary-price">
                     <strong><?= htmlspecialchars($formatMoney(isset($planSummary['amount']) ? (float) $planSummary['amount'] : null)) ?></strong>
                     <span>/ <?= htmlspecialchars((string) ($planSummary['billing_cycle'] ?? 'mensal')) ?></span>
@@ -481,8 +481,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
 
         <section class="content-grid">
             <article class="card section-card">
-                <h2>Escolha a forma de pagamento</h2>
-                <p>O fluxo abaixo evita friccao operacional: a empresa paga, o gateway confirma, o acesso e liberado e o primeiro login passa a funcionar com o e-mail principal cadastrado.</p>
+                <h2>Escolha como deseja pagar</h2>
+                <p>Finalize a assinatura por PIX ou cartao. Depois da confirmacao, o acesso da empresa e liberado para iniciar a configuracao da MesiMenu.</p>
 
                 <div class="status-strip">
                     <div>
@@ -490,12 +490,12 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <strong><?= htmlspecialchars((string) ($company['name'] ?? '-')) ?></strong>
                     </div>
                     <div>
-                        <span>Status da assinatura</span>
+                        <span>Status</span>
                         <strong><?= htmlspecialchars(status_label('subscription_status', (string) ($subscription['status'] ?? 'trial'))) ?></strong>
                     </div>
                     <div>
-                        <span>Cobranca atual</span>
-                        <strong><?= htmlspecialchars($currentPaymentId > 0 ? $formatMoney((float) ($currentPayment['amount'] ?? 0)) : 'Aguardando geracao') ?></strong>
+                        <span>Valor atual</span>
+                        <strong><?= htmlspecialchars($currentPaymentId > 0 ? $formatMoney((float) ($currentPayment['amount'] ?? 0)) : 'Aguardando escolha') ?></strong>
                     </div>
                 </div>
 
@@ -517,8 +517,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                 <?php if ($stateTone === 'processing'): ?>
                     <div class="processing-banner" data-processing-banner>
                         <div>
-                            <strong>Pagamento em verificacao continua</strong>
-                            <span>Esta pagina consulta o gateway automaticamente para evitar que a empresa fique sem resposta depois de pagar.</span>
+                            <strong>Estamos acompanhando seu pagamento</strong>
+                            <span>A pagina atualiza o status automaticamente e libera o acesso assim que a confirmacao chegar.</span>
                         </div>
                         <button class="btn btn-secondary" type="button" data-refresh-payment>Atualizar agora</button>
                     </div>
@@ -527,7 +527,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                 <div class="payment-methods">
                     <section class="payment-box">
                         <h3>PIX</h3>
-                        <p>Indicado quando a empresa quer pagar agora e liberar o acesso assim que o banco devolver a confirmacao.</p>
+                        <p>Escolha PIX para pagar agora e acelerar a liberacao da sua conta assim que a confirmacao for recebida.</p>
                         <div class="payment-actions">
                             <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/pix')) ?>">
                                 <?= form_security_fields('marketing.public.payment.pix') ?>
@@ -536,7 +536,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                             <?php if (trim((string) ($currentPayment['pix_ticket_url'] ?? '')) !== ''): ?>
                                 <a class="btn btn-secondary" href="<?= htmlspecialchars((string) $currentPayment['pix_ticket_url']) ?>" target="_blank" rel="noopener">Abrir tela do PIX</a>
                             <?php endif; ?>
-                            <button class="btn btn-secondary" type="button" data-refresh-payment>Atualizar confirmacao</button>
+                            <button class="btn btn-secondary" type="button" data-refresh-payment>Verificar pagamento</button>
                         </div>
 
                         <?php if ($hasPixPayload): ?>
@@ -556,22 +556,22 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <?php endif; ?>
 
                         <div class="note" data-payment-feedback>
-                            Depois do pagamento, esta pagina pode consultar o gateway novamente e liberar o acesso automaticamente.
+                            Depois de pagar, clique em verificar pagamento ou aguarde a atualizacao automatica da pagina.
                         </div>
                     </section>
 
                     <section class="payment-box">
                         <h3>Cartao</h3>
-                        <p>Ideal quando a contratacao ja precisa nascer com checkout recorrente para o ciclo mensal ou anual selecionado.</p>
+                        <p>Use cartao para concluir a assinatura com recorrencia no ciclo mensal ou anual escolhido.</p>
                         <div class="payment-actions">
                             <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/cartao')) ?>">
                                 <?= form_security_fields('marketing.public.payment.card') ?>
                                 <button class="btn btn-dark" type="submit">Pagar com cartao</button>
                             </form>
-                            <button class="btn btn-secondary" type="button" data-refresh-payment>Atualizar confirmacao</button>
+                            <button class="btn btn-secondary" type="button" data-refresh-payment>Verificar pagamento</button>
                         </div>
                         <div class="note">
-                            Ao concluir a autorizacao no checkout do gateway, volte para esta pagina. Se a confirmacao ja tiver chegado, o sistema redireciona para o login com o acesso liberado.
+                            Ao concluir o checkout, volte para esta pagina. Se o pagamento ja estiver confirmado, voce sera direcionado para acessar a conta.
                         </div>
                     </section>
                 </div>
@@ -581,8 +581,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <div class="history-item">
                             <div class="history-head">
                                 <div>
-                                    <h3>Historico da assinatura</h3>
-                                    <p>Nenhuma cobranca adicional foi registrada ainda. O onboarding esta concentrado na primeira contratacao.</p>
+                                    <h3>Historico de pagamento</h3>
+                                    <p>Assim que houver uma cobranca registrada, ela aparecera aqui para acompanhamento da assinatura.</p>
                                 </div>
                             </div>
                         </div>
@@ -625,12 +625,12 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             </article>
 
             <aside class="card aside-card">
-                <h3>Regra operacional do onboarding</h3>
-                <p>O fluxo publico nao deve criar empresa com acesso antecipado. Primeiro a empresa entra, escolhe plano, fecha cadastro e paga. So depois o login e liberado.</p>
+                <h3>Depois do pagamento</h3>
+                <p>Apos a confirmacao, sua empresa recebe acesso ao painel para configurar cardapio, produtos, mesas, pedidos e rotina de atendimento.</p>
                 <ul class="aside-list">
-                    <li>1. O usuario inicial fica inativo ate o pagamento ser reconhecido.</li>
-                    <li>2. PIX e cartao usam o mesmo plano e o mesmo ciclo definidos na etapa comercial.</li>
-                    <li>3. Quando o banco confirmar, a empresa pode entrar em <strong><?= htmlspecialchars((string) ($company['email'] ?? '-')) ?></strong>.</li>
+                    <li>1. A assinatura e ativada no plano e ciclo escolhidos.</li>
+                    <li>2. O administrador principal passa a acessar o painel da empresa.</li>
+                    <li>3. O login sera feito com o e-mail <strong><?= htmlspecialchars((string) ($company['email'] ?? '-')) ?></strong>.</li>
                 </ul>
             </aside>
         </section>
@@ -679,7 +679,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         }
 
         statusTitle.textContent = payload.state_title || 'Pagamento pendente';
-        statusMessage.textContent = payload.state_message || 'Aguardando a confirmacao do pagamento.';
+        statusMessage.textContent = payload.state_message || 'Aguardando a confirmacao para liberar seu acesso.';
 
         if (statusHint instanceof HTMLElement) {
             const hint = payload.state_hint || '';
@@ -694,7 +694,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         }
 
         isRefreshing = true;
-        setFeedback('Consultando o gateway para verificar a confirmacao do pagamento...');
+        setFeedback('Verificando se o pagamento ja foi confirmado...');
 
         try {
             const response = await fetch(pollEndpoint, {
@@ -704,7 +704,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             const payload = await response.json();
 
             if (!response.ok || payload.ok === false) {
-                setFeedback(payload.message || 'Nao foi possivel atualizar o status do pagamento agora.');
+                setFeedback(payload.message || 'Nao foi possivel verificar o pagamento agora.');
                 return;
             }
 
@@ -714,9 +714,9 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             }
 
             applyState(payload);
-            setFeedback(payload.state_message || 'Pagamento ainda aguardando confirmacao. Se voce acabou de pagar, aguarde alguns instantes e atualize novamente.');
+            setFeedback(payload.state_message || 'Pagamento ainda em confirmacao. Se voce acabou de pagar, aguarde alguns instantes e verifique novamente.');
         } catch (error) {
-            setFeedback('Falha ao consultar o gateway neste momento. Tente novamente em alguns segundos.');
+            setFeedback('Nao foi possivel verificar o pagamento neste momento. Tente novamente em alguns segundos.');
         } finally {
             isRefreshing = false;
         }

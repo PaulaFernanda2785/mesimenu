@@ -41,8 +41,8 @@ final class PublicOnboardingService
         return [
             'title' => 'Cadastro da empresa',
             'seo' => $this->buildSeo(
-                'Cadastro da empresa | MesiMenu',
-                'Conclua o cadastro da empresa com o plano selecionado e avance para o pagamento da assinatura.'
+                'Finalize sua contratacao | MesiMenu',
+                'Cadastre sua empresa, confirme o plano escolhido e avance para o pagamento para ativar a MesiMenu.'
             ),
             'selectedPlan' => $selection,
             'formData' => $this->normalizeFormData($formData),
@@ -106,10 +106,10 @@ final class PublicOnboardingService
             : [];
 
         return [
-            'title' => 'Pagamento da assinatura',
+            'title' => 'Ative sua assinatura',
             'seo' => $this->buildSeo(
-                'Pagamento da assinatura | MesiMenu',
-                'Escolha PIX ou cartao, acompanhe a confirmacao do pagamento e libere o acesso da empresa ao sistema.'
+                'Ative sua assinatura | MesiMenu',
+                'Escolha PIX ou cartao, conclua o pagamento e libere o acesso da sua empresa a MesiMenu.'
             ),
             'completed' => false,
             'company' => $company,
@@ -128,7 +128,7 @@ final class PublicOnboardingService
     public function generatePixCharge(): void
     {
         if (!$this->gatewayService->isConfigured()) {
-            throw new ValidationException('O gateway de pagamento ainda nao esta configurado para gerar o PIX.');
+            throw new ValidationException('O servico de pagamento ainda nao esta pronto para gerar o PIX.');
         }
 
         $companyId = $this->requireRememberedCompanyId();
@@ -140,7 +140,7 @@ final class PublicOnboardingService
     public function startCardCheckout(): string
     {
         if (!$this->gatewayService->isConfigured()) {
-            throw new ValidationException('O gateway de pagamento ainda nao esta configurado para checkout com cartao.');
+            throw new ValidationException('O servico de pagamento ainda nao esta pronto para checkout com cartao.');
         }
 
         $companyId = $this->requireRememberedCompanyId();
@@ -429,8 +429,8 @@ final class PublicOnboardingService
                 'key' => 'approved',
                 'tone' => 'approved',
                 'title' => 'Pagamento aprovado',
-                'message' => 'O recebimento foi confirmado. O sistema esta liberando o acesso inicial da empresa.',
-                'hint' => 'Se esta tela nao redirecionar sozinha em alguns segundos, atualize o status manualmente.',
+                'message' => 'Tudo certo. Sua assinatura foi confirmada e o acesso da empresa esta sendo liberado.',
+                'hint' => 'Se a pagina nao avancar sozinha em alguns segundos, clique para verificar o pagamento novamente.',
             ];
         }
 
@@ -442,9 +442,9 @@ final class PublicOnboardingService
             return [
                 'key' => 'rejected',
                 'tone' => 'rejected',
-                'title' => 'Pagamento recusado ou nao concluido',
-                'message' => 'A autorizacao nao foi confirmada. Revise a forma de pagamento ou tente novamente com outro meio.',
-                'hint' => 'No cartao, isso normalmente indica recusa, abandono do checkout ou cancelamento da autorizacao.',
+                'title' => 'Pagamento nao concluido',
+                'message' => 'Nao conseguimos confirmar essa tentativa. Voce pode tentar novamente por PIX ou cartao.',
+                'hint' => 'Se usou cartao, confira os dados ou escolha outro meio de pagamento para finalizar a assinatura.',
             ];
         }
 
@@ -455,9 +455,9 @@ final class PublicOnboardingService
             return [
                 'key' => 'processing',
                 'tone' => 'processing',
-                'title' => 'Pagamento em processamento',
-                'message' => 'O gateway recebeu a operacao e ainda esta concluindo a confirmacao com o banco.',
-                'hint' => 'Essa etapa pode levar alguns instantes. A pagina acompanha o retorno automaticamente.',
+                'title' => 'Pagamento em confirmacao',
+                'message' => 'Recebemos a tentativa de pagamento e estamos aguardando a confirmacao para liberar o acesso.',
+                'hint' => 'Essa etapa pode levar alguns instantes. A pagina atualiza o status automaticamente.',
             ];
         }
 
@@ -465,8 +465,8 @@ final class PublicOnboardingService
             'key' => 'pending',
             'tone' => 'pending',
             'title' => 'Pagamento pendente',
-            'message' => 'A assinatura ainda nao foi confirmada. Gere o PIX ou conclua o checkout do cartao para seguir.',
-            'hint' => 'Enquanto o pagamento nao for reconhecido, o primeiro acesso permanece bloqueado.',
+            'message' => 'Escolha PIX ou cartao para finalizar a assinatura e ativar sua empresa.',
+            'hint' => 'O acesso ao painel sera liberado assim que o pagamento for confirmado.',
         ];
     }
 
@@ -579,7 +579,7 @@ final class PublicOnboardingService
         return [
             'title' => $title,
             'description' => $description,
-            'keywords' => 'cadastro empresa mesimenu, pagamento pix cartao, onboarding assinatura mesimenu',
+            'keywords' => 'cadastro empresa mesimenu, pagamento pix cartao, assinatura mesimenu',
             'canonical' => app_url((string) ($_SERVER['REQUEST_URI'] ?? '/')),
             'robots' => 'noindex,nofollow',
             'og_image' => asset_url('/img/logo-mesimenu.png'),

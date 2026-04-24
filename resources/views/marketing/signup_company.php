@@ -113,7 +113,7 @@ $formatLimit = static function (?int $value, string $label): string {
         text-transform:uppercase;
     }
     h1,h2,h3{margin:0;font-family:"Space Grotesk","Manrope",sans-serif}
-    .hero-copy h1{margin-top:18px;font-size:clamp(34px,4.2vw,56px);line-height:1.04;color:#081b2e}
+    .hero-copy h1{margin-top:18px;font-size:clamp(24px,2.7vw,36px);line-height:1.12;color:#081b2e}
     .hero-copy p{margin:16px 0 0;color:#4f6175;font-size:17px;line-height:1.7}
     .hero-points{display:grid;gap:12px;margin-top:24px}
     .hero-points div{
@@ -259,27 +259,27 @@ $formatLimit = static function (?int $value, string $label): string {
                 <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
             </a>
             <div class="topbar-links">
-                <a href="<?= htmlspecialchars(base_url('/#planos')) ?>">Voltar aos planos</a>
-                <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Ja sou cliente</a>
+                <a href="<?= htmlspecialchars(base_url('/#planos')) ?>">Ver planos</a>
+                <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Entrar na conta</a>
             </div>
         </div>
 
         <section class="hero">
             <article class="card hero-copy">
-                <span class="eyebrow">Onboarding comercial</span>
-                <h1>Cadastro da empresa com o plano ja definido, sem desalinhar marketing, contrato e faturamento.</h1>
-                <p>O ponto critico aqui nao e apenas cadastrar dados. E garantir que plano, ciclo e valor entrem corretos desde a origem para o pagamento acontecer sem retrabalho comercial depois.</p>
+                <span class="eyebrow">Comece agora</span>
+                <h1>Finalize sua contratacao e ative a MesiMenu para sua empresa.</h1>
+                <p>Informe os dados principais, confirme o plano escolhido e avance para o pagamento. Em poucos passos sua empresa fica pronta para usar cardapio digital, pedidos e gestao em uma unica plataforma.</p>
                 <div class="hero-points">
-                    <div>Plano selecionado automaticamente conforme o card da pagina publica.</div>
-                    <div>Ciclo mensal ou anual travado na escolha comercial feita pelo visitante.</div>
-                    <div>Depois do cadastro, a empresa segue direto para a etapa de pagamento.</div>
+                    <div>Plano e ciclo ja carregados a partir da sua escolha na pagina publica.</div>
+                    <div>Cadastro direto para iniciar a ativacao da empresa sem conversa demorada.</div>
+                    <div>Proxima etapa com pagamento por PIX ou cartao para liberar o acesso.</div>
                 </div>
             </article>
 
             <aside class="card plan-card">
-                <span class="plan-badge">Plano escolhido</span>
+                <span class="plan-badge">Sua escolha</span>
                 <h2><?= htmlspecialchars((string) ($selectedPlan['name'] ?? 'Plano')) ?></h2>
-                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ativo publicado para contratacao no ambiente MesiMenu.')) ?></p>
+                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ideal para comecar a vender com cardapio digital, pedidos organizados e gestao mais simples no dia a dia.')) ?></p>
                 <div class="plan-price">
                     <strong><?= htmlspecialchars($formatMoney(isset($selectedPlan['amount']) ? (float) $selectedPlan['amount'] : null)) ?></strong>
                     <span>/ <?= htmlspecialchars((string) ($selectedPlan['billing_cycle'] ?? 'mensal')) ?></span>
@@ -310,8 +310,8 @@ $formatLimit = static function (?int $value, string $label): string {
 
         <section class="content-grid">
             <article class="card form-card">
-                <h2>Dados da empresa</h2>
-                <p>Preencha o cadastro principal. O sistema vai criar a empresa, associar o plano escolhido e preparar o acesso inicial do administrador assim que o pagamento for confirmado.</p>
+                <h2>Dados para ativacao</h2>
+                <p>Preencha as informacoes da empresa e crie o acesso do administrador. Depois do pagamento confirmado, a conta fica pronta para iniciar a configuracao da operacao.</p>
 
                 <?php if (!empty($flashSuccess)): ?>
                     <div class="flash success"><?= htmlspecialchars((string) $flashSuccess) ?></div>
@@ -334,8 +334,8 @@ $formatLimit = static function (?int $value, string $label): string {
                             <input id="signup_company_name" name="name" type="text" value="<?= htmlspecialchars((string) ($formData['name'] ?? '')) ?>" required>
                         </div>
                         <div class="field">
-                            <label for="signup_company_slug">Slug publico</label>
-                            <input id="signup_company_slug" name="slug" type="text" value="<?= htmlspecialchars((string) ($formData['slug'] ?? '')) ?>" placeholder="Opcional">
+                            <label for="signup_company_slug">Endereco publico</label>
+                            <input id="signup_company_slug" name="slug" type="text" value="<?= htmlspecialchars((string) ($formData['slug'] ?? '')) ?>" placeholder="Opcional, ex: minha-empresa">
                         </div>
                         <div class="field">
                             <label for="signup_company_legal_name">Razao social</label>
@@ -358,7 +358,7 @@ $formatLimit = static function (?int $value, string $label): string {
                             <input id="signup_company_whatsapp" name="whatsapp" type="text" value="<?= htmlspecialchars((string) ($formData['whatsapp'] ?? '')) ?>">
                         </div>
                         <div class="field">
-                            <label for="signup_company_cycle">Ciclo contratado</label>
+                            <label for="signup_company_cycle">Ciclo escolhido</label>
                             <input id="signup_company_cycle" type="text" value="<?= htmlspecialchars((string) ucfirst((string) ($selectedPlan['billing_cycle'] ?? 'mensal'))) ?>" readonly>
                         </div>
                         <div class="field">
@@ -373,20 +373,20 @@ $formatLimit = static function (?int $value, string $label): string {
 
                     <div class="form-actions">
                         <div class="form-note">
-                            O acesso nao e liberado no cadastro. Primeiro a empresa conclui o pagamento da assinatura. Depois da confirmacao do banco, o login inicial fica disponivel com o e-mail principal e a senha definida acima.
+                            A conta sera liberada apos a confirmacao do pagamento. Use o e-mail principal e a senha criada aqui para acessar o painel assim que a assinatura estiver ativa.
                         </div>
-                        <button class="btn btn-primary" type="submit">Salvar cadastro e seguir para pagamento</button>
+                        <button class="btn btn-primary" type="submit">Continuar para pagamento</button>
                     </div>
                 </form>
             </article>
 
             <aside class="card aside-card">
-                <h3>O que acontece depois</h3>
-                <p>O fluxo nao deve deixar lacuna operacional entre comercial e financeiro. Por isso o cadastro ja nasce vinculado ao plano escolhido.</p>
+                <h3>Proximos passos</h3>
+                <p>A MesiMenu conduz sua empresa do cadastro ao pagamento com uma jornada simples, para voce comecar a configurar a operacao rapidamente.</p>
                 <ul class="aside-list">
-                    <li>1. O cadastro cria a empresa, vincula o plano e prepara a assinatura no ciclo selecionado.</li>
-                    <li>2. O usuario administrador principal e criado, mas fica inativo ate a confirmacao do pagamento.</li>
-                    <li>3. A proxima tela concentra PIX ou cartao para fechar a contratacao sem depender de ajuste manual interno.</li>
+                    <li>1. Sua empresa e cadastrada com o plano e o ciclo escolhidos.</li>
+                    <li>2. O administrador principal fica preparado para acessar o painel apos a confirmacao.</li>
+                    <li>3. Na proxima tela, escolha PIX ou cartao e conclua a contratacao.</li>
                 </ul>
             </aside>
         </section>
