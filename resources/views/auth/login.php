@@ -1201,15 +1201,42 @@ $formatLimitValue = static function (?int $value): string {
     }
     .feature-media{
         position:relative;
+        display:grid;
+        place-items:center;
         margin:0;
-        padding:20px 20px 16px;
-        min-height:240px;
+        padding:36px 20px 24px;
+        min-height:318px;
         border-radius:24px;
         background:
-            radial-gradient(circle at top left, rgba(14,165,164,.12) 0%, rgba(14,165,164,0) 38%),
-            linear-gradient(180deg,#f8fbff 0%, #eaf3fb 100%);
+            linear-gradient(145deg, rgba(255,255,255,.94) 0%, rgba(245,250,255,.88) 45%, rgba(231,240,249,.96) 100%);
         border:1px solid rgba(8,27,46,.08);
         overflow:hidden;
+    }
+    .feature-media::before{
+        content:"";
+        position:absolute;
+        inset:22px 28px 30px;
+        border-radius:30px;
+        background:
+            linear-gradient(160deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.36) 46%, rgba(14,165,164,.08) 100%);
+        border:1px solid rgba(255,255,255,.72);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 18px 34px rgba(8,27,46,.08);
+        transform:skewY(-2deg);
+        pointer-events:none;
+    }
+    .feature-media::after{
+        content:"";
+        position:absolute;
+        left:24%;
+        right:24%;
+        bottom:18px;
+        height:18px;
+        border-radius:999px;
+        background:rgba(8,27,46,.18);
+        filter:blur(14px);
+        pointer-events:none;
     }
     .feature-media-button{
         position:relative;
@@ -1222,24 +1249,40 @@ $formatLimitValue = static function (?int $value): string {
         display:block;
         text-align:left;
     }
-    .feature-media::after{
-        content:"";
-        position:absolute;
-        inset:auto -28px -38px auto;
-        width:140px;
-        height:140px;
-        border-radius:999px;
-        background:radial-gradient(circle, rgba(255,122,24,.18) 0%, rgba(255,122,24,0) 72%);
-        pointer-events:none;
+    .feature-media-button:focus-visible{
+        outline:3px solid rgba(255,122,24,.45);
+        outline-offset:6px;
+        border-radius:44px;
     }
-    .feature-media img{
+    .feature-device-stage{
         position:relative;
         z-index:1;
+        display:grid;
+        place-items:center;
+        width:min(72%, 226px);
+        max-width:100%;
+        margin:0 auto;
+        transform:translateY(0);
+        transition:transform .22s ease, filter .22s ease;
+    }
+    .feature-device-stage img{
+        display:block;
         width:100%;
-        height:260px;
+        height:auto;
         object-fit:contain;
-        object-position:center bottom;
-        filter:drop-shadow(0 18px 28px rgba(8,27,46,.16));
+        object-position:center;
+        filter:
+            drop-shadow(0 22px 28px rgba(8,27,46,.18))
+            drop-shadow(0 6px 10px rgba(8,27,46,.12));
+        transition:filter .22s ease;
+    }
+    .feature-media-button:hover .feature-device-stage{
+        transform:translateY(-5px) scale(1.015);
+    }
+    .feature-media-button:hover .feature-device-stage img{
+        filter:
+            drop-shadow(0 28px 34px rgba(8,27,46,.2))
+            drop-shadow(0 8px 12px rgba(8,27,46,.14));
     }
     .feature-media-hint{
         position:absolute;
@@ -1326,14 +1369,23 @@ $formatLimitValue = static function (?int $value): string {
             radial-gradient(circle at top left, rgba(14,165,164,.12) 0%, rgba(14,165,164,0) 38%),
             linear-gradient(180deg,#f8fbff 0%, #eaf3fb 100%);
         border:1px solid rgba(8,27,46,.08);
-        overflow:auto;
+        overflow:hidden;
     }
-    .image-zoom-frame img{
-        width:100%;
-        max-width:960px;
+    .feature-device-stage--zoom{
+        width:auto;
+        max-width:min(480px, calc(100vw - 96px));
         max-height:70vh;
-        object-fit:contain;
-        filter:drop-shadow(0 22px 36px rgba(8,27,46,.18));
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+    .feature-device-stage--zoom img{
+        width:auto;
+        max-width:100%;
+        max-height:70vh;
+        filter:
+            drop-shadow(0 28px 38px rgba(8,27,46,.22))
+            drop-shadow(0 8px 14px rgba(8,27,46,.14));
     }
 
     .feature-card ul,
@@ -2250,7 +2302,9 @@ $formatLimitValue = static function (?int $value): string {
         .problems-panel{padding:24px}
         .solutions-panel{padding:24px}
         .features-hero{padding:24px}
-        .feature-media{padding:18px 18px 14px}
+        .feature-media{min-height:286px;padding:32px 18px 20px}
+        .feature-media::before{inset:20px 20px 24px;border-radius:26px}
+        .feature-device-stage{width:min(78%, 230px)}
         .content-card,
         .feature-card,
         .problem-card,
@@ -2300,6 +2354,8 @@ $formatLimitValue = static function (?int $value): string {
         .image-zoom-head{padding-right:42px}
         .image-zoom-head strong{font-size:20px}
         .image-zoom-frame{padding:14px}
+        .feature-device-stage--zoom{max-width:calc(100vw - 68px);max-height:66vh}
+        .feature-device-stage--zoom img{max-height:66vh}
     }
 </style>
 
@@ -2583,7 +2639,9 @@ $formatLimitValue = static function (?int $value): string {
                                     <div class="feature-media">
                                         <button class="feature-media-button" type="button" data-image-zoom-trigger data-image-zoom-src="<?= htmlspecialchars($featureImageUrl) ?>" data-image-zoom-alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade MesiMenu'))) ?>" data-image-zoom-trigger-title="<?= htmlspecialchars((string) ($group['title'] ?? 'Funcionalidade MesiMenu')) ?>">
                                             <span class="feature-media-hint">Clique para ampliar</span>
-                                            <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade MesiMenu'))) ?>" loading="eager" decoding="async">
+                                            <span class="feature-device-stage">
+                                                <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade MesiMenu'))) ?>" loading="eager" decoding="async">
+                                            </span>
                                         </button>
                                     </div>
                                 <?php endif; ?>
@@ -3047,7 +3105,9 @@ $formatLimitValue = static function (?int $value): string {
             </div>
         </div>
         <div class="image-zoom-frame" data-image-zoom-close>
-            <img src="" alt="" data-image-zoom-image>
+            <div class="feature-device-stage feature-device-stage--zoom">
+                <img src="" alt="" data-image-zoom-image>
+            </div>
         </div>
     </div>
 </div>
