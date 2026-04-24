@@ -31,24 +31,24 @@ final class PublicInteractionService
             throw new ValidationException('Informe seu nome para registrar a mensagem.');
         }
         if (strlen($name) > self::MAX_NAME_LENGTH) {
-            throw new ValidationException('O nome deve ter no maximo 120 caracteres.');
+            throw new ValidationException('O nome deve ter no máximo 120 caracteres.');
         }
 
         if ($email === '') {
-            throw new ValidationException('Informe um e-mail valido para contato.');
+            throw new ValidationException('Informe um e-mail válido para contato.');
         }
         if (strlen($email) > self::MAX_EMAIL_LENGTH) {
-            throw new ValidationException('O e-mail deve ter no maximo 160 caracteres.');
+            throw new ValidationException('O e-mail deve ter no máximo 160 caracteres.');
         }
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new ValidationException('Informe um e-mail valido para contato.');
+            throw new ValidationException('Informe um e-mail válido para contato.');
         }
 
         if ($message === '') {
             throw new ValidationException('Escreva sua mensagem antes de enviar.');
         }
         if (strlen($message) > self::MAX_MESSAGE_LENGTH) {
-            throw new ValidationException('A mensagem deve ter no maximo 2000 caracteres.');
+            throw new ValidationException('A mensagem deve ter no máximo 2000 caracteres.');
         }
 
         if ($sourceUrl !== '' && strlen($sourceUrl) > self::MAX_SOURCE_URL_LENGTH) {

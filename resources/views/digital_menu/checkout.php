@@ -74,7 +74,7 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
         <div class="dm-hero-grid">
             <div class="dm-hero-copy">
                 <span class="dm-eyebrow">Carrinho da mesa</span>
-                <h1>Fluxo indisponivel</h1>
+                <h1>Fluxo indisponível</h1>
                 <p><?= htmlspecialchars($fatalError) ?></p>
             </div>
             <div class="dm-action-bar" style="justify-content:flex-start">
@@ -87,9 +87,9 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
         <section class="dm-card dm-hero">
             <div class="dm-hero-grid">
                 <div class="dm-hero-copy">
-                    <span class="dm-eyebrow">Confirmacao do pedido</span>
+                    <span class="dm-eyebrow">Confirmação do pedido</span>
                     <h1>Carrinho da mesa</h1>
-                    <p>Revise os itens do seu pedido, ajuste o carrinho se necessario e envie somente para a sua comanda atual.</p>
+                    <p>Revise os itens do seu pedido, ajuste o carrinho se necessário e envie somente para a sua comanda atual.</p>
                     <div class="dm-chip-row">
                         <span class="dm-pill">Mesa <?= $tableNumber ?></span>
                         <?php if ($currentCommand !== null): ?>
@@ -108,11 +108,11 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
             <main class="dm-review-card">
                 <div class="dm-section-head">
                     <div>
-                        <h2>Revisao do pedido</h2>
-                        <p>Esta etapa centraliza o envio do pedido. Os itens do carrinho continuam vinculados somente a sua comanda nesta mesa.</p>
+                        <h2>Revisão do pedido</h2>
+                        <p>Esta etapa centraliza o envio do pedido. Os itens do carrinho continuam vinculados somente à sua comanda nesta mesa.</p>
                     </div>
                     <div class="dm-chip-row">
-                        <span class="dm-chip">Atualizacao do menu a cada <?= htmlspecialchars((string) ($refreshIntervalSeconds / 60)) ?> min</span>
+                        <span class="dm-chip">Atualização do menu a cada <?= htmlspecialchars((string) ($refreshIntervalSeconds / 60)) ?> min</span>
                     </div>
                 </div>
 
@@ -126,7 +126,7 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
                         </div>
 
                         <div class="field">
-                            <label for="digital_order_notes">Observacoes gerais do pedido</label>
+                            <label for="digital_order_notes">Observações gerais do pedido</label>
                             <textarea id="digital_order_notes" name="notes" placeholder="Opcional"></textarea>
                         </div>
 
@@ -143,8 +143,8 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
             <aside class="dm-summary-card">
                 <div class="dm-section-head">
                     <div>
-                        <h2>Resumo rapido</h2>
-                        <p>Conferencia final antes do envio para a operacao.</p>
+                        <h2>Resumo rápido</h2>
+                        <p>Conferência final antes do envio para a operação.</p>
                     </div>
                 </div>
 
@@ -266,7 +266,7 @@ $formatMoney = static fn (float $value): string => 'R$ ' . number_format($value,
                             </div>
                             <span>${money(item.lineTotal)}</span>
                         </div>
-                        ${item.notes ? `<div class="dm-review-note">Observacao: ${escapeHtml(item.notes)}</div>` : ''}
+                        ${item.notes ? `<div class="dm-review-note">Observação: ${escapeHtml(item.notes)}</div>` : ''}
                         <div class="dm-review-actions">
                             <button class="btn-secondary" type="button" data-cart-remove="${index}">Remover item</button>
                         </div>

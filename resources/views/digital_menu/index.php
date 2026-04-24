@@ -39,7 +39,7 @@ $formatDate = static function (?string $value): string {
     return $timestamp !== false ? date('d/m/Y H:i', $timestamp) : $raw;
 };
 $statusLabels = [
-    'pending' => 'Aguardando producao',
+    'pending' => 'Aguardando produção',
     'received' => 'Recebido na cozinha',
     'preparing' => 'Em preparo',
     'ready' => 'Pronto para entrega',
@@ -221,7 +221,7 @@ if (!is_string($productsJson)) {
         <div class="dm-hero-grid">
             <div class="dm-hero-copy">
                 <span class="dm-eyebrow">Acesso da mesa</span>
-                <h1>Menu digital indisponivel</h1>
+                <h1>Menu digital indisponível</h1>
                 <p><?= htmlspecialchars($fatalError) ?></p>
             </div>
             <div class="dm-empty" style="color:#fff;border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08)">
@@ -236,7 +236,7 @@ if (!is_string($productsJson)) {
                 <div class="dm-hero-copy">
                     <span class="dm-eyebrow">Mesa vinculada ao QR Code</span>
                     <h1><?= htmlspecialchars(trim((string) ($table['name'] ?? 'Mesa ' . $tableNumber))) ?></h1>
-                    <p><?= htmlspecialchars(trim((string) ($menuTheme['description'] ?? '')) !== '' ? (string) $menuTheme['description'] : 'Abra sua comanda, acompanhe os pedidos da mesa e faca seus pedidos com rapidez direto do celular.') ?></p>
+                    <p><?= htmlspecialchars(trim((string) ($menuTheme['description'] ?? '')) !== '' ? (string) $menuTheme['description'] : 'Abra sua comanda, acompanhe os pedidos da mesa e faça seus pedidos com rapidez direto do celular.') ?></p>
                     <div class="dm-chip-row">
                         <span class="dm-pill">Mesa <?= $tableNumber ?></span>
                         <span class="dm-pill"><?= htmlspecialchars((string) ($company['name'] ?? 'Estabelecimento')) ?></span>
@@ -250,7 +250,7 @@ if (!is_string($productsJson)) {
                     </div>
                     <div class="dm-signal">
                         <strong><?= (int) ($tableSummary['orders_count'] ?? 0) ?></strong>
-                        <span>Pedidos lancados na mesa</span>
+                        <span>Pedidos lançados na mesa</span>
                     </div>
                     <div class="dm-signal">
                         <strong><?= $formatMoney((float) ($tableSummary['total_amount'] ?? 0)) ?></strong>
@@ -271,7 +271,7 @@ if (!is_string($productsJson)) {
                         <div class="dm-section-head">
                             <div>
                                 <h2>Sua comanda ativa</h2>
-                                <p>Voce enxerga todas as comandas abertas desta mesa, mas so consegue lancar pedidos na sua propria comanda neste aparelho.</p>
+                                <p>Você enxerga todas as comandas abertas desta mesa, mas só consegue lançar pedidos na sua própria comanda neste aparelho.</p>
                             </div>
                             <div class="dm-chip-row">
                                 <span class="dm-chip is-current">Comanda #<?= $currentCommandId ?></span>
@@ -281,7 +281,7 @@ if (!is_string($productsJson)) {
 
                         <div class="dm-quick-grid">
                             <div class="dm-quick-card"><strong><?= (int) ($currentSummary['total_orders'] ?? 0) ?></strong><span>Pedidos da sua comanda</span></div>
-                            <div class="dm-quick-card"><strong><?= (int) ($currentSummary['preparing'] ?? 0) + (int) ($currentSummary['received'] ?? 0) ?></strong><span>Em producao</span></div>
+                            <div class="dm-quick-card"><strong><?= (int) ($currentSummary['preparing'] ?? 0) + (int) ($currentSummary['received'] ?? 0) ?></strong><span>Em produção</span></div>
                             <div class="dm-quick-card"><strong><?= (int) ($currentSummary['ready'] ?? 0) ?></strong><span>Prontos</span></div>
                             <div class="dm-quick-card"><strong><?= $formatMoney((float) ($currentSummary['total_amount'] ?? 0)) ?></strong><span>Total da sua comanda</span></div>
                         </div>
@@ -291,7 +291,7 @@ if (!is_string($productsJson)) {
                         <div class="dm-section-head">
                             <div>
                                 <h2>Abrir sua comanda</h2>
-                                <p>Cada pessoa da mesa pode abrir uma comanda propria pelo mesmo QR Code. Depois disso, os pedidos ficam vinculados somente a sua comanda neste dispositivo.</p>
+                                <p>Cada pessoa da mesa pode abrir uma comanda própria pelo mesmo QR Code. Depois disso, os pedidos ficam vinculados somente à sua comanda neste dispositivo.</p>
                             </div>
                         </div>
                         <form class="dm-open-form" method="POST" action="<?= htmlspecialchars($openCommandAction) ?>">
@@ -299,14 +299,14 @@ if (!is_string($productsJson)) {
                             <div class="dm-grid-two">
                                 <div class="field">
                                     <label for="customer_name">Nome na comanda</label>
-                                    <input id="customer_name" name="customer_name" type="text" maxlength="120" placeholder="Ex.: Ana, Joao, Mesa da empresa">
+                                    <input id="customer_name" name="customer_name" type="text" maxlength="120" placeholder="Ex.: Ana, João, Mesa da empresa">
                                 </div>
                                 <div class="field">
-                                    <label for="command_notes">Observacao da comanda</label>
+                                    <label for="command_notes">Observação da comanda</label>
                                     <input id="command_notes" name="notes" type="text" maxlength="255" placeholder="Opcional">
                                 </div>
                             </div>
-                            <div class="dm-note">A mesa pode ter varias comandas abertas ao mesmo tempo, mas este aparelho ficara vinculado somente a comanda que voce abrir aqui.</div>
+                            <div class="dm-note">A mesa pode ter várias comandas abertas ao mesmo tempo, mas este aparelho ficará vinculado somente à comanda que você abrir aqui.</div>
                             <div class="dm-action-bar">
                                 <button class="btn" type="submit">Abrir minha comanda</button>
                             </div>
@@ -317,16 +317,16 @@ if (!is_string($productsJson)) {
                 <section class="dm-glass-card">
                         <div class="dm-section-head">
                             <div>
-                                <h2>Cardapio por categoria</h2>
+                                <h2>Cardápio por categoria</h2>
                             </div>
                         </div>
 
                     <?php if ($categories === []): ?>
-                        <div class="dm-empty">Nenhum produto ativo foi encontrado no cardapio desta empresa.</div>
+                        <div class="dm-empty">Nenhum produto ativo foi encontrado no cardápio desta empresa.</div>
                     <?php else: ?>
                         <div class="dm-menu-shell" id="digitalMenuShell">
                             <div class="dm-category-nav-anchor" id="digitalCategoryNavAnchor" aria-hidden="true"></div>
-                            <nav class="dm-category-nav" id="categoryTabs" aria-label="Categorias do cardapio">
+                            <nav class="dm-category-nav" id="categoryTabs" aria-label="Categorias do cardápio">
                                 <?php foreach ($categories as $index => $category): ?>
                                     <?php $categoryKey = (string) ($category['key'] ?? 'category-' . $index); ?>
                                     <button
@@ -350,7 +350,7 @@ if (!is_string($productsJson)) {
                                         <div class="dm-category-head">
                                             <div class="dm-category-copy">
                                                 <h3><?= htmlspecialchars((string) ($category['name'] ?? 'Categoria')) ?></h3>
-                                                <p><?= count($categoryProducts) ?> produto(s) disponivel(is) nesta categoria.</p>
+                                                <p><?= count($categoryProducts) ?> produto(s) disponível(is) nesta categoria.</p>
                                             </div>
                                             <span class="dm-refresh-status"><?= count($categoryProducts) ?> produto(s)</span>
                                         </div>
@@ -374,13 +374,13 @@ if (!is_string($productsJson)) {
                                                     </div>
                                                     <div class="dm-product-body">
                                                         <strong><?= htmlspecialchars((string) ($product['name'] ?? 'Produto')) ?></strong>
-                                                        <p><?= htmlspecialchars((string) ($product['description'] ?? 'Sem descricao informada.')) ?></p>
+                                                        <p><?= htmlspecialchars((string) ($product['description'] ?? 'Sem descrição informada.')) ?></p>
                                                         <div class="dm-tag-row">
                                                             <?php if ($additionals !== []): ?>
                                                                 <span class="dm-tag"><?= count($additionals) ?> adicional(is)</span>
                                                             <?php endif; ?>
                                                             <?php if ((int) ($product['allows_notes'] ?? 0) === 1): ?>
-                                                                <span class="dm-tag">Aceita observacao</span>
+                                                                <span class="dm-tag">Aceita observação</span>
                                                             <?php endif; ?>
                                                         </div>
                                                         <div class="dm-product-meta">
@@ -412,13 +412,13 @@ if (!is_string($productsJson)) {
                     <div class="dm-section-head">
                         <div>
                             <h2>Comandas abertas da mesa</h2>
-                            <p>Visao compartilhada da mesa: comandas abertas, pedidos, totais e tickets. Nenhuma comanda consegue ver pedidos de outras mesas.</p>
+                            <p>Visão compartilhada da mesa: comandas abertas, pedidos, totais e tickets. Nenhuma comanda consegue ver pedidos de outras mesas.</p>
                         </div>
                         <div class="dm-action-bar" style="margin-top:0">
                             <?php if ((int) ($tableSummary['orders_count'] ?? 0) > 0): ?>
                                 <a class="btn-soft" href="<?= htmlspecialchars($tableTicketUrl) ?>">Ticket geral da mesa</a>
                             <?php endif; ?>
-                            <span class="dm-refresh-status">Atualizacao automatica a cada <?= htmlspecialchars($refreshIntervalLabel) ?></span>
+                            <span class="dm-refresh-status">Atualização automática a cada <?= htmlspecialchars($refreshIntervalLabel) ?></span>
                         </div>
                     </div>
 
@@ -457,12 +457,12 @@ if (!is_string($productsJson)) {
                                     <div class="dm-command-metrics">
                                         <div class="dm-command-metric"><strong><?= (int) ($summary['active_orders'] ?? 0) ?></strong><span>Pedidos ativos</span></div>
                                         <div class="dm-command-metric"><strong><?= (int) ($summary['ready'] ?? 0) ?></strong><span>Prontos</span></div>
-                                        <div class="dm-command-metric"><strong><?= (int) ($summary['preparing'] ?? 0) + (int) ($summary['received'] ?? 0) ?></strong><span>Em producao</span></div>
+                                        <div class="dm-command-metric"><strong><?= (int) ($summary['preparing'] ?? 0) + (int) ($summary['received'] ?? 0) ?></strong><span>Em produção</span></div>
                                         <div class="dm-command-metric"><strong><?= $formatMoney((float) ($summary['total_amount'] ?? 0)) ?></strong><span>Total da comanda</span></div>
                                     </div>
 
                                     <?php if ($orders === []): ?>
-                                        <div class="dm-empty" style="margin-top:12px">Esta comanda ainda nao possui pedidos.</div>
+                                        <div class="dm-empty" style="margin-top:12px">Esta comanda ainda não possui pedidos.</div>
                                     <?php else: ?>
                                         <div class="dm-order-list">
                                             <?php foreach ($orders as $order): ?>
@@ -500,7 +500,7 @@ if (!is_string($productsJson)) {
                                                                     </small>
                                                                 <?php endif; ?>
                                                                 <?php if (!empty($item['notes'])): ?>
-                                                                    <small>Observacao: <?= htmlspecialchars((string) $item['notes']) ?></small>
+                                                                    <small>Observação: <?= htmlspecialchars((string) $item['notes']) ?></small>
                                                                 <?php endif; ?>
                                                             </div>
                                                         <?php endforeach; ?>
@@ -530,11 +530,11 @@ if (!is_string($productsJson)) {
                     <div class="dm-section-head">
                         <div>
                             <h2>Leitura operacional</h2>
-                            <p>Resumo rapido da mesa para consulta do cliente.</p>
+                            <p>Resumo rápido da mesa para consulta do cliente.</p>
                         </div>
                     </div>
                     <div class="dm-quick-grid">
-                        <div class="dm-quick-card"><strong><?= (int) ($tableSummary['pending'] ?? 0) ?></strong><span>Aguardando producao</span></div>
+                        <div class="dm-quick-card"><strong><?= (int) ($tableSummary['pending'] ?? 0) ?></strong><span>Aguardando produção</span></div>
                         <div class="dm-quick-card"><strong><?= (int) ($tableSummary['preparing'] ?? 0) + (int) ($tableSummary['received'] ?? 0) ?></strong><span>Em preparo</span></div>
                         <div class="dm-quick-card"><strong><?= (int) ($tableSummary['ready'] ?? 0) ?></strong><span>Prontos</span></div>
                         <div class="dm-quick-card"><strong><?= (int) ($tableSummary['delivered'] ?? 0) ?></strong><span>Entregues</span></div>
@@ -545,14 +545,14 @@ if (!is_string($productsJson)) {
                     <div class="dm-section-head">
                         <div>
                             <h2>Tickets e consulta</h2>
-                            <p>Acompanhe os pedidos da mesa e consulte os tickets ja emitidos.</p>
+                            <p>Acompanhe os pedidos da mesa e consulte os tickets já emitidos.</p>
                         </div>
                     </div>
                     <div class="dm-action-bar" style="margin-top:0">
                         <?php if ((int) ($tableSummary['orders_count'] ?? 0) > 0): ?>
                             <a class="btn-secondary" href="<?= htmlspecialchars($tableTicketUrl) ?>">Imprimir ticket geral da mesa</a>
                         <?php endif; ?>
-                        <a class="btn-soft" href="#categoryTabs">Ir para o cardapio</a>
+                        <a class="btn-soft" href="#categoryTabs">Ir para o cardápio</a>
                     </div>
                 </section>
             </aside>
@@ -579,7 +579,7 @@ if (!is_string($productsJson)) {
             <div class="dm-modal-head">
                 <div>
                     <h3 id="productModalTitle">Produto</h3>
-                    <p id="productModalDescription">Configure quantidade, adicionais e observacoes.</p>
+                    <p id="productModalDescription">Configure quantidade, adicionais e observações.</p>
                 </div>
                 <button class="btn-secondary" type="button" id="closeProductModal">Fechar</button>
             </div>
@@ -594,14 +594,14 @@ if (!is_string($productsJson)) {
                     </div>
                 </div>
                 <div class="field">
-                    <label for="productItemNotes">Observacao do item</label>
+                    <label for="productItemNotes">Observação do item</label>
                     <textarea id="productItemNotes" rows="4" placeholder="Ex.: sem cebola, ponto da carne, enviar junto."></textarea>
                 </div>
             </div>
 
             <div class="field">
                 <label>Adicionais</label>
-                <div id="productAdditionalsMeta" class="dm-note">Este item nao possui adicionais ativos.</div>
+                <div id="productAdditionalsMeta" class="dm-note">Este item não possui adicionais ativos.</div>
                 <div class="dm-additionals-grid" id="productAdditionalsGrid"></div>
             </div>
 
@@ -914,7 +914,7 @@ if (!is_string($productsJson)) {
             qtyValue.textContent = '1';
             itemNotes.value = '';
             additionalsGrid.innerHTML = '';
-            additionalsMeta.textContent = 'Este item nao possui adicionais ativos.';
+            additionalsMeta.textContent = 'Este item não possui adicionais ativos.';
             modal.hidden = true;
             document.body.style.overflow = '';
         };
@@ -961,7 +961,7 @@ if (!is_string($productsJson)) {
                 }
             });
 
-            if (!String(baseText).includes('Este item nao possui adicionais ativos.')) {
+            if (!String(baseText).includes('Este item não possui adicionais ativos.')) {
                 const suffix = selectedCount > 0 ? ` · ${selectedCount} adicional(is) · ${totalUnits} unidade(s)` : '';
                 additionalsMeta.textContent = `${baseText}${suffix}`;
             }
@@ -982,7 +982,7 @@ if (!is_string($productsJson)) {
             const nextTotal = currentTotal - Number(currentSelection.quantity || 0) + nextQuantity;
 
             if (maxSelection !== null && nextTotal > maxSelection) {
-                alert(`Este item aceita no maximo ${maxSelection} unidade(s) de adicionais por produto.`);
+                alert(`Este item aceita no máximo ${maxSelection} unidade(s) de adicionais por produto.`);
                 return false;
             }
 
@@ -1000,20 +1000,20 @@ if (!is_string($productsJson)) {
 
             if (additionals.length === 0) {
                 additionalsGrid.innerHTML = '';
-                additionalsMeta.textContent = 'Este item nao possui adicionais ativos.';
+                additionalsMeta.textContent = 'Este item não possui adicionais ativos.';
                 return;
             }
 
             const rules = [];
             if (required || minSelection > 0) {
-                rules.push(`minimo ${Math.max(required ? 1 : 0, minSelection)}`);
+                rules.push(`mínimo ${Math.max(required ? 1 : 0, minSelection)}`);
             }
             if (maxSelection !== null) {
-                rules.push(`maximo ${maxSelection}`);
+                rules.push(`máximo ${maxSelection}`);
             }
             const baseMetaText = rules.length > 0
-                ? `Selecao de adicionais: ${rules.join(' - ')}`
-                : 'Selecao opcional de adicionais.';
+                ? `Seleção de adicionais: ${rules.join(' - ')}`
+                : 'Seleção opcional de adicionais.';
             additionalsMeta.setAttribute('data-base-text', baseMetaText);
             additionalsMeta.textContent = baseMetaText;
 
@@ -1087,7 +1087,7 @@ if (!is_string($productsJson)) {
             qtyValue.textContent = '1';
             itemNotes.value = '';
             modalTitle.textContent = product.name || 'Produto';
-            modalDescription.textContent = product.description || 'Configure quantidade, adicionais e observacoes.';
+            modalDescription.textContent = product.description || 'Configure quantidade, adicionais e observações.';
             renderAdditionals(product);
             modal.hidden = false;
             document.body.style.overflow = 'hidden';
@@ -1143,7 +1143,7 @@ if (!is_string($productsJson)) {
             const totalAdditionalUnits = additionals.reduce((sum, additional) => sum + Number(additional.quantity || 0), 0);
 
             if (maxSelection !== null && totalAdditionalUnits > maxSelection) {
-                alert(`Este item aceita no maximo ${maxSelection} unidade(s) de adicionais.`);
+                alert(`Este item aceita no máximo ${maxSelection} unidade(s) de adicionais.`);
                 return;
             }
 

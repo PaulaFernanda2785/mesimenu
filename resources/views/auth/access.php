@@ -695,7 +695,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                 <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
             </a>
             <div class="topbar-actions">
-                <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/')) ?>">Voltar para a pagina publica</a>
+                <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/')) ?>">Voltar para a página pública</a>
             </div>
         </div>
 
@@ -704,50 +704,50 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                 <div class="context-copy">
                     <span class="eyebrow">Acesso interno da MesiMenu</span>
                     <h1>Entrar no ambiente certo, com o perfil certo e sem misturar contextos de uso.</h1>
-                    <p>O login interno da MesiMenu separa operacao do estabelecimento, gestao da empresa assinante e ambiente institucional da plataforma. O cliente final do QR Code continua no fluxo publico do cardapio e do pedido.</p>
+                    <p>O login interno da MesiMenu separa operação do estabelecimento, gestão da empresa assinante e ambiente institucional da plataforma. O cliente final do QR Code continua no fluxo público do cardápio e do pedido.</p>
                 </div>
 
                 <div class="context-grid">
                     <article class="context-card">
-                        <span>Operacao do estabelecimento</span>
+                        <span>Operação do estabelecimento</span>
                         <strong>Mesas, comandas e pedidos</strong>
-                        <p>Garcom, cozinha, caixa e entrega acessam aqui os modulos de atendimento, producao, recebimento e acompanhamento operacional.</p>
+                        <p>Garçom, cozinha, caixa e entrega acessam aqui os módulos de atendimento, produção, recebimento e acompanhamento operacional.</p>
                     </article>
 
                     <article class="context-card">
-                        <span>Gestao da empresa</span>
-                        <strong>Catalogo, estoque e relatorios</strong>
-                        <p>Administrador e gestor entram para manter produtos, adicionais, taxas, usuarios e acompanhamento gerencial da unidade.</p>
+                        <span>Gestão da empresa</span>
+                        <strong>Catálogo, estoque e relatórios</strong>
+                        <p>Administrador e gestor entram para manter produtos, adicionais, taxas, usuários e acompanhamento gerencial da unidade.</p>
                     </article>
 
                     <article class="context-card">
                         <span>Ambiente institucional</span>
-                        <strong>Empresas, planos e cobrancas</strong>
-                        <p>Usuarios da MesiMenu acessam governanca da plataforma, assinaturas, cobrancas, suporte e operacao global da MesiMenu.</p>
+                        <strong>Empresas, planos e cobranças</strong>
+                        <p>Usuários da MesiMenu acessam governança da plataforma, assinaturas, cobranças, suporte e operação global da MesiMenu.</p>
                     </article>
 
                     <article class="context-card">
                         <span>Fronteira de acesso</span>
                         <strong>Cliente final fica fora daqui</strong>
-                        <p>O consumo publico permanece no cardapio digital por QR Code ou link direto do estabelecimento, sem passar por este login.</p>
+                        <p>O consumo público permanece no cardápio digital por QR Code ou link direto do estabelecimento, sem passar por este login.</p>
                     </article>
                 </div>
 
                 <div class="context-note">
-                    Esta tela existe para refletir a arquitetura real do sistema: area publica do cliente, area operacional do estabelecimento, area administrativa da empresa e ambiente institucional separados por permissao e contexto.
+                    Esta tela existe para refletir a arquitetura real do sistema: área pública do cliente, área operacional do estabelecimento, área administrativa da empresa e ambiente institucional separados por permissão e contexto.
                 </div>
             </article>
 
             <article class="login-panel">
                 <div class="login-hero">
                     <span class="eyebrow">Acesso dedicado</span>
-                    <h2>Entre com seu usuario interno e siga para o modulo que pertence ao seu perfil.</h2>
-                    <p>O destino do acesso respeita o contexto permitido para o usuario: operacao, administracao da empresa ou ambiente institucional da MesiMenu.</p>
+                    <h2>Entre com seu usuário interno e siga para o módulo que pertence ao seu perfil.</h2>
+                    <p>O destino do acesso respeita o contexto permitido para o usuário: operação, administração da empresa ou ambiente institucional da MesiMenu.</p>
 
                     <div class="login-pills">
                         <span>Pedidos e cozinha</span>
-                        <span>Catalogo e estoque</span>
-                        <span>Empresas e cobrancas</span>
+                        <span>Catálogo e estoque</span>
+                        <span>Empresas e cobranças</span>
                     </div>
 
                     <div class="device-frame">
@@ -758,7 +758,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                 <div class="login-body">
                     <div class="login-head">
                         <h3>Acessar agora</h3>
-                        <p>Informe o e-mail e a senha do usuario cadastrado na MesiMenu. O redirecionamento e definido automaticamente pelo perfil, empresa vinculada e escopo autorizado.</p>
+                        <p>Informe o e-mail e a senha do usuário cadastrado na MesiMenu. O redirecionamento é definido automaticamente pelo perfil, empresa vinculada e escopo autorizado.</p>
                     </div>
 
                     <div class="flash-stack">
@@ -794,7 +794,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
 
                 <div class="login-footer">
                     <div class="login-footer-card">
-                        O cliente final nao utiliza esta tela. O fluxo publico continua no cardapio digital do estabelecimento, com acesso por QR Code ou link direto.
+                        O cliente final não utiliza esta tela. O fluxo público continua no cardápio digital do estabelecimento, com acesso por QR Code ou link direto.
                     </div>
                 </div>
             </article>
@@ -802,7 +802,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
 
         <footer class="page-footer">
             <div class="page-footer-topline">
-                <div class="page-footer-kicker">Autenticacao interna com contexto controlado</div>
+                <div class="page-footer-kicker">Autenticação interna com contexto controlado</div>
                 <span>Entrada central para equipes operacionais, gestores da empresa e escopo institucional da MesiMenu.</span>
             </div>
 
@@ -813,17 +813,17 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                     </div>
                     <div class="page-footer-title">MesiMenu</div>
                     <div class="page-footer-subtitle">
-                        Ambiente de autenticacao para operacao do estabelecimento, gestao da empresa assinante e area institucional da plataforma, respeitando perfil, permissao e contexto de uso.
+                        Ambiente de autenticação para operação do estabelecimento, gestão da empresa assinante e área institucional da plataforma, respeitando perfil, permissão e contexto de uso.
                     </div>
                     <div class="page-footer-pills">
-                        <span>Operacao interna</span>
-                        <span>Gestao da empresa</span>
+                        <span>Operação interna</span>
+                        <span>Gestão da empresa</span>
                         <span>Ambiente institucional</span>
                     </div>
                     <div class="page-footer-highlight">
                         <div class="page-footer-stat">
                             <strong>3</strong>
-                            <span>camadas de acesso organizadas sem misturar cliente publico e usuario interno.</span>
+                            <span>camadas de acesso organizadas sem misturar cliente público e usuário interno.</span>
                         </div>
                         <div class="page-footer-stat">
                             <strong>1</strong>
@@ -831,7 +831,7 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                         </div>
                         <div class="page-footer-stat">
                             <strong>100%</strong>
-                            <span>do fluxo pensado para respeitar perfil, permissao e empresa vinculada.</span>
+                            <span>do fluxo pensado para respeitar perfil, permissão e empresa vinculada.</span>
                         </div>
                     </div>
                 </div>
@@ -840,24 +840,24 @@ $mobilePreviewUrl = public_embedded_image_url('img/menu-celular.png');
                     <strong>Escopos Cobertos</strong>
                     <ul class="page-footer-list">
                         <li>Mesas, comandas, pedidos, cozinha, caixa e entregas da empresa.</li>
-                        <li>Catalogo, adicionais, estoque, usuarios e acompanhamento gerencial da unidade.</li>
-                        <li>Empresas, planos, assinaturas, cobrancas e suporte da MesiMenu.</li>
+                        <li>Catálogo, adicionais, estoque, usuários e acompanhamento gerencial da unidade.</li>
+                        <li>Empresas, planos, assinaturas, cobranças e suporte da MesiMenu.</li>
                     </ul>
                 </div>
 
                 <div class="page-footer-column">
-                    <strong>Regra De Acesso</strong>
+                    <strong>Regra de acesso</strong>
                     <ul class="page-footer-list">
-                        <li>Cliente final permanece no fluxo publico do cardapio digital.</li>
-                        <li>Usuarios internos entram conforme o perfil e a empresa vinculada.</li>
-                        <li>Permissoes e rotas seguem o escopo operacional, administrativo ou institucional.</li>
+                        <li>Cliente final permanece no fluxo público do cardápio digital.</li>
+                        <li>Usuários internos entram conforme o perfil e a empresa vinculada.</li>
+                        <li>Permissões e rotas seguem o escopo operacional, administrativo ou institucional.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="page-footer-bottom">
-                <span>Login interno da MesiMenu desenhado para separar atendimento ao cliente, operacao do estabelecimento e governanca da plataforma.</span>
-                <span>Interface de acesso alinhada a contexto, permissao e responsabilidade operacional.</span>
+                <span>Login interno da MesiMenu desenhado para separar atendimento ao cliente, operação do estabelecimento e governança da plataforma.</span>
+                <span>Interface de acesso alinhada a contexto, permissão e responsabilidade operacional.</span>
             </div>
         </footer>
     </div>

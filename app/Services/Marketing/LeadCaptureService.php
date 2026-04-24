@@ -73,11 +73,11 @@ final class LeadCaptureService
     {
         $email = strtolower(trim((string) ($value ?? '')));
         if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new ValidationException('Informe um e-mail valido.');
+            throw new ValidationException('Informe um e-mail válido.');
         }
 
         if (strlen($email) > self::MAX_EMAIL_LENGTH) {
-            throw new ValidationException('Informe um e-mail valido.');
+            throw new ValidationException('Informe um e-mail válido.');
         }
 
         return $email;
@@ -91,7 +91,7 @@ final class LeadCaptureService
         }
 
         if (!in_array($normalized, ['mensal', 'anual'], true)) {
-            throw new ValidationException('Ciclo de cobranca invalido.');
+            throw new ValidationException('Ciclo de cobrança inválido.');
         }
 
         return $normalized;

@@ -104,7 +104,7 @@ final class DigitalMenuService
                 $input['notes'] ?? null,
                 self::MAX_PUBLIC_COMMAND_NOTES_LENGTH,
                 false,
-                'Observacao da comanda invalida.'
+                'Observação da comanda inválida.'
             ),
         ]);
 

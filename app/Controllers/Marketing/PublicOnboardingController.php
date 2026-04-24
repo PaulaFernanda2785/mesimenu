@@ -31,7 +31,7 @@ final class PublicOnboardingController extends Controller
         if (($guard['ok'] ?? false) !== true) {
             try {
                 $payload = $this->service->signupPage($request->all(), $request->all());
-                $payload['error'] = (string) ($guard['message'] ?? 'Nao foi possivel validar o envio do cadastro.');
+                $payload['error'] = (string) ($guard['message'] ?? 'Não foi possível validar o envio do cadastro.');
                 return $this->view('marketing/signup_company', $payload, 'layouts/public');
             } catch (ValidationException $e) {
                 return $this->backWithError($e->getMessage(), '/#planos');

@@ -39,7 +39,7 @@ final class LoginController extends Controller
         $timedOut = Auth::consumeTimedOut();
 
         return $this->renderLoginPage(
-            $timedOut ? 'Sessao encerrada com seguranca apos 30 minutos de inatividade. Entre novamente.' : null
+            $timedOut ? 'Sessão encerrada com segurança após 30 minutos de inatividade. Entre novamente.' : null
         );
     }
 
@@ -47,7 +47,7 @@ final class LoginController extends Controller
     {
         $guard = validate_form_submission($request->all(), 'auth.login', 2);
         if (($guard['ok'] ?? false) !== true) {
-            return $this->renderLoginPage((string) ($guard['message'] ?? 'Nao foi possivel validar o envio do login.'));
+            return $this->renderLoginPage((string) ($guard['message'] ?? 'Não foi possível validar o envio do login.'));
         }
 
         $email = trim((string) $request->input('email', ''));
@@ -80,7 +80,7 @@ final class LoginController extends Controller
         if (($guard['ok'] ?? false) !== true) {
             Auth::logout();
             Session::start();
-            Session::flash('error', 'Sessao encerrada por seguranca. Entre novamente.');
+            Session::flash('error', 'Sessão encerrada por segurança. Entre novamente.');
             return $this->redirect('/login');
         }
 
@@ -88,7 +88,7 @@ final class LoginController extends Controller
         Session::start();
         $logoutReason = strtolower(trim((string) $request->input('logout_reason', '')));
         $message = $logoutReason === 'idle_timeout'
-            ? 'Sessao encerrada com seguranca apos 30 minutos de inatividade.'
+            ? 'Sessão encerrada com segurança após 30 minutos de inatividade.'
             : 'Logout realizado com sucesso.';
         Session::flash('success', $message);
 

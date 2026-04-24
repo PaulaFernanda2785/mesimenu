@@ -41,7 +41,7 @@ final class PublicOnboardingService
         return [
             'title' => 'Cadastro da empresa',
             'seo' => $this->buildSeo(
-                'Finalize sua contratacao | MesiMenu',
+                'Finalize sua contratação | MesiMenu',
                 'Cadastre sua empresa, confirme o plano escolhido e avance para o pagamento para ativar a MesiMenu.'
             ),
             'selectedPlan' => $selection,
@@ -93,7 +93,7 @@ final class PublicOnboardingService
         $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
         if ($company === null || $subscription === null) {
             $this->forgetRememberedCompany();
-            throw new ValidationException('Nao foi possivel retomar o cadastro da empresa. Recomece a selecao do plano.');
+            throw new ValidationException('Não foi possível retomar o cadastro da empresa. Recomece a seleção do plano.');
         }
 
         $subscriptionId = (int) ($subscription['id'] ?? 0);
@@ -109,7 +109,7 @@ final class PublicOnboardingService
             'title' => 'Ative sua assinatura',
             'seo' => $this->buildSeo(
                 'Ative sua assinatura | MesiMenu',
-                'Escolha PIX ou cartao, conclua o pagamento e libere o acesso da sua empresa a MesiMenu.'
+                'Escolha PIX ou cartão, conclua o pagamento e libere o acesso da sua empresa à MesiMenu.'
             ),
             'completed' => false,
             'company' => $company,
@@ -128,7 +128,7 @@ final class PublicOnboardingService
     public function generatePixCharge(): void
     {
         if (!$this->gatewayService->isConfigured()) {
-            throw new ValidationException('O servico de pagamento ainda nao esta pronto para gerar o PIX.');
+            throw new ValidationException('O serviço de pagamento ainda não está pronto para gerar o PIX.');
         }
 
         $companyId = $this->requireRememberedCompanyId();
@@ -140,7 +140,7 @@ final class PublicOnboardingService
     public function startCardCheckout(): string
     {
         if (!$this->gatewayService->isConfigured()) {
-            throw new ValidationException('O servico de pagamento ainda nao esta pronto para checkout com cartao.');
+            throw new ValidationException('O serviço de pagamento ainda não está pronto para checkout com cartão.');
         }
 
         $companyId = $this->requireRememberedCompanyId();
@@ -152,7 +152,7 @@ final class PublicOnboardingService
         $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
         $fallbackUrl = trim((string) ($subscription['gateway_checkout_url'] ?? ''));
         if ($fallbackUrl === '') {
-            throw new ValidationException('Nao foi possivel gerar o checkout do cartao neste momento.');
+            throw new ValidationException('Não foi possível gerar o checkout do cartão neste momento.');
         }
 
         return $fallbackUrl;
@@ -164,7 +164,7 @@ final class PublicOnboardingService
         $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
         if ($subscription === null) {
             $this->forgetRememberedCompany();
-            throw new ValidationException('Assinatura nao encontrada para acompanhar o pagamento.');
+            throw new ValidationException('Assinatura não encontrada para acompanhar o pagamento.');
         }
 
         if ($this->gatewayService->isConfigured()) {
@@ -229,17 +229,17 @@ final class PublicOnboardingService
     {
         $slug = strtolower(trim((string) ($input['plano'] ?? ($input['plan'] ?? ''))));
         if ($slug === '') {
-            throw new ValidationException('Selecione um plano valido antes de seguir para o cadastro.');
+            throw new ValidationException('Selecione um plano válido antes de seguir para o cadastro.');
         }
 
         $billingCycle = strtolower(trim((string) ($input['ciclo'] ?? ($input['cycle'] ?? 'mensal'))));
         if (!in_array($billingCycle, self::ALLOWED_BILLING_CYCLES, true)) {
-            throw new ValidationException('Selecione um ciclo de cobranca valido para o plano.');
+            throw new ValidationException('Selecione um ciclo de cobrança válido para o plano.');
         }
 
         $plan = $this->plans->findActivePublicBySlug($slug);
         if ($plan === null) {
-            throw new ValidationException('O plano selecionado nao esta disponivel para contratacao publica.');
+            throw new ValidationException('O plano selecionado não está disponível para contratação pública.');
         }
 
         $pricing = $this->featureCatalog->pricingConfigFromJson($plan['features_json'] ?? null);
@@ -254,8 +254,8 @@ final class PublicOnboardingService
         if ($selectedAmount === null || $selectedAmount <= 0) {
             throw new ValidationException(
                 $billingCycle === 'anual'
-                    ? 'Este plano nao possui precificacao anual publicada para contratacao.'
-                    : 'Este plano nao possui precificacao mensal valida para contratacao.'
+                    ? 'Este plano não possui precificação anual publicada para contratação.'
+                    : 'Este plano não possui precificação mensal válida para contratação.'
             );
         }
 
@@ -287,21 +287,21 @@ final class PublicOnboardingService
         $documentNumber = $this->nullableTrim($input['document_number'] ?? null);
         $email = strtolower(trim((string) ($input['email'] ?? '')));
         if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new ValidationException('Informe um e-mail valido para o acesso inicial da empresa.');
+            throw new ValidationException('Informe um e-mail válido para o acesso inicial da empresa.');
         }
 
         $existingByEmail = $this->dashboard->findUserByEmail($email);
         if ($existingByEmail !== null && trim((string) ($existingByEmail['deleted_at'] ?? '')) === '') {
-            throw new ValidationException('Ja existe usuario ativo cadastrado com esse e-mail.');
+            throw new ValidationException('Já existe usuário ativo cadastrado com esse e-mail.');
         }
 
         $password = (string) ($input['initial_admin_password'] ?? '');
         $passwordConfirmation = (string) ($input['initial_admin_password_confirmation'] ?? '');
         if (strlen($password) < 6) {
-            throw new ValidationException('A senha inicial precisa ter no minimo 6 caracteres.');
+            throw new ValidationException('A senha inicial precisa ter no mínimo 6 caracteres.');
         }
         if ($password !== $passwordConfirmation) {
-            throw new ValidationException('A confirmacao da senha inicial nao confere.');
+            throw new ValidationException('A confirmação da senha inicial não confere.');
         }
 
         $phone = $this->nullableTrim($input['phone'] ?? null);
@@ -340,12 +340,12 @@ final class PublicOnboardingService
     private function createInitialAdminUser(int $companyId, array $data): void
     {
         if ($companyId <= 0) {
-            throw new ValidationException('Empresa invalida para criar o usuario inicial.');
+            throw new ValidationException('Empresa inválida para criar o usuário inicial.');
         }
 
         $role = $this->dashboard->findCompanyRoleBySlug($companyId, self::INITIAL_ADMIN_ROLE_SLUG);
         if ($role === null) {
-            throw new ValidationException('Perfil administrativo padrao nao foi encontrado para a empresa.');
+            throw new ValidationException('Perfil administrativo padrão não foi encontrado para a empresa.');
         }
 
         $this->dashboard->createCompanyUser([
@@ -373,7 +373,7 @@ final class PublicOnboardingService
     {
         $subscription = $this->subscriptions->findCurrentByCompanyId($companyId);
         if ($subscription === null) {
-            throw new ValidationException('Assinatura nao encontrada para gerar a cobranca.');
+            throw new ValidationException('Assinatura não encontrada para gerar a cobrança.');
         }
 
         $payment = $this->firstOpenPayment((int) ($subscription['id'] ?? 0));
@@ -384,7 +384,7 @@ final class PublicOnboardingService
         }
 
         if ($payment === null) {
-            throw new ValidationException('Nao foi possivel preparar uma cobranca em aberto para este cadastro.');
+            throw new ValidationException('Não foi possível preparar uma cobrança em aberto para este cadastro.');
         }
 
         return $payment;
@@ -429,8 +429,8 @@ final class PublicOnboardingService
                 'key' => 'approved',
                 'tone' => 'approved',
                 'title' => 'Pagamento aprovado',
-                'message' => 'Tudo certo. Sua assinatura foi confirmada e o acesso da empresa esta sendo liberado.',
-                'hint' => 'Se a pagina nao avancar sozinha em alguns segundos, clique para verificar o pagamento novamente.',
+                'message' => 'Tudo certo. Sua assinatura foi confirmada e o acesso da empresa está sendo liberado.',
+                'hint' => 'Se a página não avançar sozinha em alguns segundos, clique para verificar o pagamento novamente.',
             ];
         }
 
@@ -442,9 +442,9 @@ final class PublicOnboardingService
             return [
                 'key' => 'rejected',
                 'tone' => 'rejected',
-                'title' => 'Pagamento nao concluido',
-                'message' => 'Nao conseguimos confirmar essa tentativa. Voce pode tentar novamente por PIX ou cartao.',
-                'hint' => 'Se usou cartao, confira os dados ou escolha outro meio de pagamento para finalizar a assinatura.',
+                'title' => 'Pagamento não concluído',
+                'message' => 'Não conseguimos confirmar essa tentativa. Você pode tentar novamente por PIX ou cartão.',
+                'hint' => 'Se usou cartão, confira os dados ou escolha outro meio de pagamento para finalizar a assinatura.',
             ];
         }
 
@@ -455,9 +455,9 @@ final class PublicOnboardingService
             return [
                 'key' => 'processing',
                 'tone' => 'processing',
-                'title' => 'Pagamento em confirmacao',
-                'message' => 'Recebemos a tentativa de pagamento e estamos aguardando a confirmacao para liberar o acesso.',
-                'hint' => 'Essa etapa pode levar alguns instantes. A pagina atualiza o status automaticamente.',
+                'title' => 'Pagamento em confirmação',
+                'message' => 'Recebemos a tentativa de pagamento e estamos aguardando a confirmação para liberar o acesso.',
+                'hint' => 'Essa etapa pode levar alguns instantes. A página atualiza o status automaticamente.',
             ];
         }
 
@@ -465,8 +465,8 @@ final class PublicOnboardingService
             'key' => 'pending',
             'tone' => 'pending',
             'title' => 'Pagamento pendente',
-            'message' => 'Escolha PIX ou cartao para finalizar a assinatura e ativar sua empresa.',
-            'hint' => 'O acesso ao painel sera liberado assim que o pagamento for confirmado.',
+            'message' => 'Escolha PIX ou cartão para finalizar a assinatura e ativar sua empresa.',
+            'hint' => 'O acesso ao painel será liberado assim que o pagamento for confirmado.',
         ];
     }
 
@@ -547,7 +547,7 @@ final class PublicOnboardingService
         Session::start();
         $companyId = (int) Session::get(self::SESSION_KEY, 0);
         if ($companyId <= 0) {
-            throw new ValidationException('A jornada de contratacao nao possui contexto ativo. Escolha o plano novamente.');
+            throw new ValidationException('A jornada de contratação não possui contexto ativo. Escolha o plano novamente.');
         }
 
         return $companyId;
@@ -579,7 +579,7 @@ final class PublicOnboardingService
         return [
             'title' => $title,
             'description' => $description,
-            'keywords' => 'cadastro empresa mesimenu, pagamento pix cartao, assinatura mesimenu',
+            'keywords' => 'cadastro empresa mesimenu, pagamento pix cartão, assinatura mesimenu',
             'canonical' => app_url((string) ($_SERVER['REQUEST_URI'] ?? '/')),
             'robots' => 'noindex,nofollow',
             'og_image' => asset_url('/img/logo-mesimenu.png'),

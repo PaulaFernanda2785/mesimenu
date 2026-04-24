@@ -39,13 +39,13 @@ $hasPixPayload = trim((string) ($currentPayment['pix_qr_payload'] ?? '')) !== ''
 $hasGatewayTracking = trim((string) ($currentPayment['gateway_payment_id'] ?? '')) !== '' || trim((string) ($subscription['gateway_subscription_id'] ?? '')) !== '';
 $paymentMethodLabels = [
     'pix' => 'PIX',
-    'credito' => 'Cartao de credito',
-    'debito' => 'Cartao de debito',
+    'credito' => 'Cartão de crédito',
+    'debito' => 'Cartão de débito',
 ];
 $stateKey = trim((string) ($paymentState['key'] ?? 'pending'));
 $stateTone = trim((string) ($paymentState['tone'] ?? 'pending'));
 $stateTitle = trim((string) ($paymentState['title'] ?? 'Pagamento pendente'));
-$stateMessage = trim((string) ($paymentState['message'] ?? 'Aguardando a confirmacao do pagamento.'));
+$stateMessage = trim((string) ($paymentState['message'] ?? 'Aguardando a confirmação do pagamento.'));
 $stateHint = trim((string) ($paymentState['hint'] ?? ''));
 ?>
 
@@ -433,11 +433,11 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             <article class="card hero-copy">
                 <span class="eyebrow">Etapa financeira</span>
                 <h1>Conclua o pagamento e ative a MesiMenu para sua empresa.</h1>
-                <p>Seu cadastro foi recebido. Agora escolha a melhor forma de pagamento para liberar o acesso e comecar a configurar cardapio digital, pedidos e gestao em uma unica plataforma.</p>
+                <p>Seu cadastro foi recebido. Agora escolha a melhor forma de pagamento para liberar o acesso e começar a configurar cardápio digital, pedidos e gestão em uma única plataforma.</p>
                 <div class="hero-points">
                     <div>Cadastro salvo para <strong><?= htmlspecialchars((string) ($company['name'] ?? 'Empresa')) ?></strong>.</div>
-                    <div>Plano e ciclo ja estao vinculados a sua contratacao.</div>
-                    <div>Pagamento confirmado, acesso liberado para iniciar a operacao.</div>
+                    <div>Plano e ciclo já estão vinculados à sua contratação.</div>
+                    <div>Pagamento confirmado, acesso liberado para iniciar a operação.</div>
                 </div>
 
                 <?php if (!empty($flashSuccess)): ?>
@@ -457,8 +457,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                 </div>
                 <div class="summary-grid">
                     <div>
-                        <span>Usuarios</span>
-                        <strong><?= htmlspecialchars($formatLimit($planSummary['max_users'] ?? null, 'usuarios')) ?></strong>
+                        <span>Usuários</span>
+                        <strong><?= htmlspecialchars($formatLimit($planSummary['max_users'] ?? null, 'usuários')) ?></strong>
                     </div>
                     <div>
                         <span>Produtos</span>
@@ -482,7 +482,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         <section class="content-grid">
             <article class="card section-card">
                 <h2>Escolha como deseja pagar</h2>
-                <p>Finalize a assinatura por PIX ou cartao. Depois da confirmacao, o acesso da empresa e liberado para iniciar a configuracao da MesiMenu.</p>
+                <p>Finalize a assinatura por PIX ou cartão. Depois da confirmação, o acesso da empresa é liberado para iniciar a configuração da MesiMenu.</p>
 
                 <div class="status-strip">
                     <div>
@@ -518,7 +518,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                     <div class="processing-banner" data-processing-banner>
                         <div>
                             <strong>Estamos acompanhando seu pagamento</strong>
-                            <span>A pagina atualiza o status automaticamente e libera o acesso assim que a confirmacao chegar.</span>
+                            <span>A página atualiza o status automaticamente e libera o acesso assim que a confirmação chegar.</span>
                         </div>
                         <button class="btn btn-secondary" type="button" data-refresh-payment>Atualizar agora</button>
                     </div>
@@ -527,7 +527,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                 <div class="payment-methods">
                     <section class="payment-box">
                         <h3>PIX</h3>
-                        <p>Escolha PIX para pagar agora e acelerar a liberacao da sua conta assim que a confirmacao for recebida.</p>
+                        <p>Escolha PIX para pagar agora e acelerar a liberação da sua conta assim que a confirmação for recebida.</p>
                         <div class="payment-actions">
                             <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/pix')) ?>">
                                 <?= form_security_fields('marketing.public.payment.pix') ?>
@@ -545,7 +545,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                                     <?php if (trim((string) ($currentPayment['pix_qr_image_base64'] ?? '')) !== ''): ?>
                                         <img src="data:image/png;base64,<?= htmlspecialchars((string) $currentPayment['pix_qr_image_base64']) ?>" alt="QR Code PIX">
                                     <?php else: ?>
-                                        <span>QR disponivel pelo codigo copia e cola.</span>
+                                        <span>QR disponível pelo código copia e cola.</span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="field">
@@ -556,22 +556,22 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <?php endif; ?>
 
                         <div class="note" data-payment-feedback>
-                            Depois de pagar, clique em verificar pagamento ou aguarde a atualizacao automatica da pagina.
+                            Depois de pagar, clique em verificar pagamento ou aguarde a atualização automática da página.
                         </div>
                     </section>
 
                     <section class="payment-box">
-                        <h3>Cartao</h3>
-                        <p>Use cartao para concluir a assinatura com recorrencia no ciclo mensal ou anual escolhido.</p>
+                        <h3>Cartão</h3>
+                        <p>Use cartão para concluir a assinatura com recorrência no ciclo mensal ou anual escolhido.</p>
                         <div class="payment-actions">
                             <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/cartao')) ?>">
                                 <?= form_security_fields('marketing.public.payment.card') ?>
-                                <button class="btn btn-dark" type="submit">Pagar com cartao</button>
+                                <button class="btn btn-dark" type="submit">Pagar com cartão</button>
                             </form>
                             <button class="btn btn-secondary" type="button" data-refresh-payment>Verificar pagamento</button>
                         </div>
                         <div class="note">
-                            Ao concluir o checkout, volte para esta pagina. Se o pagamento ja estiver confirmado, voce sera direcionado para acessar a conta.
+                            Ao concluir o checkout, volte para esta página. Se o pagamento já estiver confirmado, você será direcionado para acessar a conta.
                         </div>
                     </section>
                 </div>
@@ -581,8 +581,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <div class="history-item">
                             <div class="history-head">
                                 <div>
-                                    <h3>Historico de pagamento</h3>
-                                    <p>Assim que houver uma cobranca registrada, ela aparecera aqui para acompanhamento da assinatura.</p>
+                                    <h3>Histórico de pagamento</h3>
+                                    <p>Assim que houver uma cobrança registrada, ela aparecerá aqui para acompanhamento da assinatura.</p>
                                 </div>
                             </div>
                         </div>
@@ -597,8 +597,8 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                             <div class="history-item">
                                 <div class="history-head">
                                     <div>
-                                        <h3>Referencia <?= htmlspecialchars(sprintf('%02d/%04d', (int) ($payment['reference_month'] ?? 0), (int) ($payment['reference_year'] ?? 0))) ?></h3>
-                                        <p>Metodo: <?= htmlspecialchars($paymentMethodLabels[(string) ($payment['payment_method'] ?? 'pix')] ?? ucfirst((string) ($payment['payment_method'] ?? 'pix'))) ?></p>
+                                        <h3>Referência <?= htmlspecialchars(sprintf('%02d/%04d', (int) ($payment['reference_month'] ?? 0), (int) ($payment['reference_year'] ?? 0))) ?></h3>
+                                        <p>Método: <?= htmlspecialchars($paymentMethodLabels[(string) ($payment['payment_method'] ?? 'pix')] ?? ucfirst((string) ($payment['payment_method'] ?? 'pix'))) ?></p>
                                     </div>
                                     <span class="badge <?= htmlspecialchars($badgeClass) ?>">
                                         <?= htmlspecialchars(status_label('subscription_payment_status', (string) ($payment['status'] ?? ''))) ?>
@@ -626,11 +626,11 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
 
             <aside class="card aside-card">
                 <h3>Depois do pagamento</h3>
-                <p>Apos a confirmacao, sua empresa recebe acesso ao painel para configurar cardapio, produtos, mesas, pedidos e rotina de atendimento.</p>
+                <p>Após a confirmação, sua empresa recebe acesso ao painel para configurar cardápio, produtos, mesas, pedidos e rotina de atendimento.</p>
                 <ul class="aside-list">
-                    <li>1. A assinatura e ativada no plano e ciclo escolhidos.</li>
+                    <li>1. A assinatura é ativada no plano e ciclo escolhidos.</li>
                     <li>2. O administrador principal passa a acessar o painel da empresa.</li>
-                    <li>3. O login sera feito com o e-mail <strong><?= htmlspecialchars((string) ($company['email'] ?? '-')) ?></strong>.</li>
+                    <li>3. O login será feito com o e-mail <strong><?= htmlspecialchars((string) ($company['email'] ?? '-')) ?></strong>.</li>
                 </ul>
             </aside>
         </section>
@@ -679,7 +679,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         }
 
         statusTitle.textContent = payload.state_title || 'Pagamento pendente';
-        statusMessage.textContent = payload.state_message || 'Aguardando a confirmacao para liberar seu acesso.';
+        statusMessage.textContent = payload.state_message || 'Aguardando a confirmação para liberar seu acesso.';
 
         if (statusHint instanceof HTMLElement) {
             const hint = payload.state_hint || '';
@@ -694,7 +694,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
         }
 
         isRefreshing = true;
-        setFeedback('Verificando se o pagamento ja foi confirmado...');
+        setFeedback('Verificando se o pagamento já foi confirmado...');
 
         try {
             const response = await fetch(pollEndpoint, {
@@ -704,7 +704,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             const payload = await response.json();
 
             if (!response.ok || payload.ok === false) {
-                setFeedback(payload.message || 'Nao foi possivel verificar o pagamento agora.');
+                setFeedback(payload.message || 'Não foi possível verificar o pagamento agora.');
                 return;
             }
 
@@ -714,9 +714,9 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
             }
 
             applyState(payload);
-            setFeedback(payload.state_message || 'Pagamento ainda em confirmacao. Se voce acabou de pagar, aguarde alguns instantes e verifique novamente.');
+            setFeedback(payload.state_message || 'Pagamento ainda em confirmação. Se você acabou de pagar, aguarde alguns instantes e verifique novamente.');
         } catch (error) {
-            setFeedback('Nao foi possivel verificar o pagamento neste momento. Tente novamente em alguns segundos.');
+            setFeedback('Não foi possível verificar o pagamento neste momento. Tente novamente em alguns segundos.');
         } finally {
             isRefreshing = false;
         }
