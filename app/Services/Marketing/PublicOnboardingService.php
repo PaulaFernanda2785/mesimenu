@@ -212,14 +212,14 @@ final class PublicOnboardingService
         Session::start();
         $payload = Session::get(self::CONFIRMATION_SESSION_KEY);
         if (!is_array($payload) || $payload === []) {
-            throw new ValidationException('Nao existe confirmacao recente de assinatura para exibir.');
+            throw new ValidationException('Não existe confirmação recente de assinatura para exibir.');
         }
 
         return [
-            'title' => 'Assinatura confirmada',
+            'title' => 'Pagamento confirmado',
             'seo' => $this->buildSeo(
-                'Assinatura confirmada | MesiMenu',
-                'Assinatura confirmada e acesso liberado para o primeiro login da empresa.'
+                'Pagamento confirmado | MesiMenu',
+                'Pagamento confirmado e acesso liberado para a empresa começar a usar a MesiMenu.'
             ),
             'confirmation' => $payload,
         ];

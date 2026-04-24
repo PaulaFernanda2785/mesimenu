@@ -267,27 +267,27 @@ $formatLimit = static function (?int $value, string $label): string {
         <section class="hero">
             <article class="card hero-copy">
                 <span class="eyebrow">Comece agora</span>
-                <h1>Finalize sua contratacao e ative a MesiMenu para sua empresa.</h1>
-                <p>Informe os dados principais, confirme o plano escolhido e avance para o pagamento. Em poucos passos sua empresa fica pronta para usar cardapio digital, pedidos e gestao em uma unica plataforma.</p>
+                <h1>Finalize sua contratação e ative a MesiMenu para sua empresa.</h1>
+                <p>Informe os dados principais, confirme o plano escolhido e avance para o pagamento. Em poucos passos, sua empresa fica pronta para usar cardápio digital, pedidos e gestão em uma única plataforma.</p>
                 <div class="hero-points">
-                    <div>Plano e ciclo ja carregados a partir da sua escolha na pagina publica.</div>
-                    <div>Cadastro direto para iniciar a ativacao da empresa sem conversa demorada.</div>
-                    <div>Proxima etapa com pagamento por PIX ou cartao para liberar o acesso.</div>
+                    <div>Plano e ciclo já carregados a partir da sua escolha na página pública.</div>
+                    <div>Cadastro direto para iniciar a ativação da empresa sem conversa demorada.</div>
+                    <div>Próxima etapa com pagamento por PIX ou cartão para liberar o acesso.</div>
                 </div>
             </article>
 
             <aside class="card plan-card">
                 <span class="plan-badge">Sua escolha</span>
                 <h2><?= htmlspecialchars((string) ($selectedPlan['name'] ?? 'Plano')) ?></h2>
-                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ideal para comecar a vender com cardapio digital, pedidos organizados e gestao mais simples no dia a dia.')) ?></p>
+                <p><?= htmlspecialchars((string) (($selectedPlan['description'] ?? '') !== '' ? $selectedPlan['description'] : 'Plano ideal para começar a vender com cardápio digital, pedidos organizados e gestão mais simples no dia a dia.')) ?></p>
                 <div class="plan-price">
                     <strong><?= htmlspecialchars($formatMoney(isset($selectedPlan['amount']) ? (float) $selectedPlan['amount'] : null)) ?></strong>
                     <span>/ <?= htmlspecialchars((string) ($selectedPlan['billing_cycle'] ?? 'mensal')) ?></span>
                 </div>
                 <div class="plan-meta">
                     <div>
-                        <span>Usuarios</span>
-                        <strong><?= htmlspecialchars($formatLimit($selectedPlan['max_users'] ?? null, 'usuarios')) ?></strong>
+                        <span>Usuários</span>
+                        <strong><?= htmlspecialchars($formatLimit($selectedPlan['max_users'] ?? null, 'usuários')) ?></strong>
                     </div>
                     <div>
                         <span>Produtos</span>
@@ -310,8 +310,8 @@ $formatLimit = static function (?int $value, string $label): string {
 
         <section class="content-grid">
             <article class="card form-card">
-                <h2>Dados para ativacao</h2>
-                <p>Preencha as informacoes da empresa e crie o acesso do administrador. Depois do pagamento confirmado, a conta fica pronta para iniciar a configuracao da operacao.</p>
+                <h2>Dados para ativação</h2>
+                <p>Preencha as informações da empresa e crie o acesso do administrador. Depois do pagamento confirmado, a conta fica pronta para iniciar a configuração da operação.</p>
 
                 <?php if (!empty($flashSuccess)): ?>
                     <div class="flash success"><?= htmlspecialchars((string) $flashSuccess) ?></div>
@@ -334,11 +334,11 @@ $formatLimit = static function (?int $value, string $label): string {
                             <input id="signup_company_name" name="name" type="text" value="<?= htmlspecialchars((string) ($formData['name'] ?? '')) ?>" required>
                         </div>
                         <div class="field">
-                            <label for="signup_company_slug">Endereco publico</label>
+                            <label for="signup_company_slug">Endereço público</label>
                             <input id="signup_company_slug" name="slug" type="text" value="<?= htmlspecialchars((string) ($formData['slug'] ?? '')) ?>" placeholder="Opcional, ex: minha-empresa">
                         </div>
                         <div class="field">
-                            <label for="signup_company_legal_name">Razao social</label>
+                            <label for="signup_company_legal_name">Razão social</label>
                             <input id="signup_company_legal_name" name="legal_name" type="text" value="<?= htmlspecialchars((string) ($formData['legal_name'] ?? '')) ?>">
                         </div>
                         <div class="field">
@@ -373,7 +373,7 @@ $formatLimit = static function (?int $value, string $label): string {
 
                     <div class="form-actions">
                         <div class="form-note">
-                            A conta sera liberada apos a confirmacao do pagamento. Use o e-mail principal e a senha criada aqui para acessar o painel assim que a assinatura estiver ativa.
+                            A conta será liberada após a confirmação do pagamento. Use o e-mail principal e a senha criada aqui para acessar o painel assim que a assinatura estiver ativa.
                         </div>
                         <button class="btn btn-primary" type="submit">Continuar para pagamento</button>
                     </div>
@@ -381,12 +381,12 @@ $formatLimit = static function (?int $value, string $label): string {
             </article>
 
             <aside class="card aside-card">
-                <h3>Proximos passos</h3>
-                <p>A MesiMenu conduz sua empresa do cadastro ao pagamento com uma jornada simples, para voce comecar a configurar a operacao rapidamente.</p>
+                <h3>Próximos passos</h3>
+                <p>A MesiMenu conduz sua empresa do cadastro ao pagamento com uma jornada simples, para você começar a configurar a operação rapidamente.</p>
                 <ul class="aside-list">
-                    <li>1. Sua empresa e cadastrada com o plano e o ciclo escolhidos.</li>
-                    <li>2. O administrador principal fica preparado para acessar o painel apos a confirmacao.</li>
-                    <li>3. Na proxima tela, escolha PIX ou cartao e conclua a contratacao.</li>
+                    <li>1. Sua empresa é cadastrada com o plano e o ciclo escolhidos.</li>
+                    <li>2. O administrador principal fica preparado para acessar o painel após a confirmação.</li>
+                    <li>3. Na próxima tela, escolha PIX ou cartão e conclua a contratação.</li>
                 </ul>
             </aside>
         </section>

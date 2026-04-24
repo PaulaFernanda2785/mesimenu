@@ -191,19 +191,19 @@ $formatDate = static function (?string $value): string {
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
                 <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
             </a>
-            <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Ir para o login</a>
+            <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Acessar minha conta</a>
         </div>
         <section class="panel">
             <div class="hero">
-                <span class="eyebrow">Assinatura confirmada</span>
-                <h1>Agora faça seu primeiro login.</h1>
-                <p>O pagamento foi reconhecido e o acesso inicial da empresa ja esta liberado. O proximo passo correto e entrar na plataforma com o e-mail principal cadastrado e a senha definida no onboarding.</p>
+                <span class="eyebrow">Pagamento confirmado</span>
+                <h1>Pagamento confirmado. Sua conta já está liberada.</h1>
+                <p>Sua assinatura foi aprovada e a MesiMenu já está pronta para uso. Acesse com o e-mail principal cadastrado e a senha definida no cadastro para começar a configurar sua operação.</p>
             </div>
 
             <div class="content">
                 <article class="card">
                     <h2>Primeiro acesso liberado</h2>
-                    <p>A contratacao foi concluida sem depender de ajuste manual interno. Isso fecha a jornada comercial com previsibilidade melhor para o cliente e para o financeiro.</p>
+                    <p>Sua assinatura está ativa. A partir de agora, você pode entrar no painel da MesiMenu para configurar cardápio, produtos, mesas, pedidos e a rotina de atendimento da sua empresa.</p>
 
                     <ul class="checklist">
                         <li>Empresa ativada: <strong><?= htmlspecialchars((string) ($confirmation['company_name'] ?? 'Empresa')) ?></strong></li>
@@ -212,24 +212,24 @@ $formatDate = static function (?string $value): string {
                     </ul>
 
                     <div class="actions">
-                        <a class="btn btn-primary" href="<?= htmlspecialchars(base_url('/login')) ?>">Ir para o login</a>
-                        <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/')) ?>">Voltar para a pagina inicial</a>
+                        <a class="btn btn-primary" href="<?= htmlspecialchars(base_url('/login')) ?>">Acessar minha conta</a>
+                        <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/')) ?>">Voltar para a página inicial</a>
                     </div>
                 </article>
 
                 <aside class="card">
-                    <h2>Resumo da confirmacao</h2>
+                    <h2>Resumo da confirmação</h2>
                     <div class="summary">
                         <div class="summary-item">
-                            <span>Valor confirmado</span>
+                            <span>Valor pago</span>
                             <strong><?= htmlspecialchars($formatMoney(isset($confirmation['amount']) ? (float) $confirmation['amount'] : null)) ?></strong>
                         </div>
                         <div class="summary-item">
-                            <span>Ciclo contratado</span>
+                            <span>Ciclo de cobrança</span>
                             <strong><?= htmlspecialchars(status_label('billing_cycle', (string) ($confirmation['billing_cycle'] ?? 'mensal'))) ?></strong>
                         </div>
                         <div class="summary-item">
-                            <span>Confirmado em</span>
+                            <span>Data da confirmação</span>
                             <strong><?= htmlspecialchars($formatDate((string) ($confirmation['paid_at'] ?? ''))) ?></strong>
                         </div>
                     </div>
