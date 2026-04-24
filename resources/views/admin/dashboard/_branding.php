@@ -115,7 +115,7 @@ $bannerUrl = $bannerPath !== '' ? company_image_url($bannerPath) : '';
                             <input id="company_name" name="company_name" type="text" required value="<?= htmlspecialchars($companyName) ?>">
                         </div>
                         <div class="field">
-                            <label for="title">Título acima do Comanda360</label>
+                            <label for="title">Título acima do MesiMenu</label>
                             <input id="title" name="title" type="text" value="<?= htmlspecialchars($companyTitle !== '' ? $companyTitle : $companyName) ?>">
                         </div>
                         <div class="field full">

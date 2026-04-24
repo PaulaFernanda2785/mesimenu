@@ -129,7 +129,7 @@ final class SubscriptionGatewayService
         $startDate = $startsAt !== '' ? date('c', strtotime($startsAt)) : date('c');
 
         $response = $this->gateway->createSubscription([
-            'reason' => 'Assinatura ' . trim((string) ($subscription['plan_name'] ?? 'Comanda360')),
+            'reason' => 'Assinatura ' . trim((string) ($subscription['plan_name'] ?? 'MesiMenu')),
             'external_reference' => 'subscription:' . (int) ($subscription['id'] ?? 0),
             'payer_email' => $companyEmail,
             'back_url' => $backUrl !== null && trim($backUrl) !== ''
@@ -350,7 +350,7 @@ final class SubscriptionGatewayService
     {
         return sprintf(
             'Assinatura %s - %02d/%04d',
-            trim((string) ($subscription['plan_name'] ?? 'Comanda360')),
+            trim((string) ($subscription['plan_name'] ?? 'MesiMenu')),
             (int) ($payment['reference_month'] ?? 0),
             (int) ($payment['reference_year'] ?? 0)
         );

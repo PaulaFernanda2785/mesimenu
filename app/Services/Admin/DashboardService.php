@@ -86,7 +86,7 @@ final class DashboardService
     private const DEFAULT_SECONDARY_COLOR = '#0f172a';
     private const DEFAULT_ACCENT_COLOR = '#0ea5e9';
     private const DEFAULT_MAIN_CARD_COLOR = '#0f172a';
-    private const DEFAULT_FOOTER_TEXT = 'Comanda360 - Sistema de gestao de atendimento e vendas.';
+    private const DEFAULT_FOOTER_TEXT = 'MesiMenu - Sistema de gestao de atendimento e vendas.';
 
     public function __construct(
         private readonly DashboardRepository $repository = new DashboardRepository(),

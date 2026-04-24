@@ -73,8 +73,8 @@ $routeMatches = static function (string $path, array $routes): bool {
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title ?? 'SaaS') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="<?= htmlspecialchars(base_url('/img/comanda360.ico')) ?>">
-    <link rel="shortcut icon" href="<?= htmlspecialchars(base_url('/img/comanda360.ico')) ?>">
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars(base_url('/img/logo-mesimenu.png')) ?>">
+    <link rel="shortcut icon" href="<?= htmlspecialchars(base_url('/img/logo-mesimenu.png')) ?>">
     <style>
         :root{
             --theme-primary:#1d4ed8;
@@ -214,7 +214,7 @@ $routeMatches = static function (string $path, array $routes): bool {
 <body>
 <div class="shell">
     <aside class="sidebar">
-        <h2>Comanda360 SaaS</h2>
+        <h2>MesiMenu SaaS</h2>
         <p><?= htmlspecialchars((string) ($user['name'] ?? 'Usuario')) ?></p>
 
         <p class="sidebar-label">Navegacao</p>
@@ -276,7 +276,7 @@ $routeMatches = static function (string $path, array $routes): bool {
 <script>
 (() => {
     const idleTimeoutMs = <?= (int) $idleTimeoutSeconds ?> * 1000;
-    const scrollStateKey = 'comanda360:scroll-restore';
+    const scrollStateKey = 'mesimenu:scroll-restore';
     const submitControls = (form) => Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
     const getScrollTarget = () => {
         const main = document.querySelector('main');

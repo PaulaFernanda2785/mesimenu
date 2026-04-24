@@ -10,14 +10,14 @@ $theme = $menuTheme + [
     'main_card_color' => '#0f172a',
     'logo_path' => '',
     'banner_path' => '',
-    'footer_text' => 'Comanda360 - Atendimento digital da mesa.',
+    'footer_text' => 'MesiMenu - Atendimento digital da mesa.',
 ];
 $logoUrl = trim((string) ($theme['logo_path'] ?? '')) !== '' ? company_image_url((string) $theme['logo_path']) : '';
 $bannerUrl = trim((string) ($theme['banner_path'] ?? '')) !== '' ? company_image_url((string) $theme['banner_path']) : '';
 $brandTitle = trim((string) ($theme['title'] ?? 'Menu digital'));
 $brandDescription = trim((string) ($theme['description'] ?? ''));
 $companyName = trim((string) ($theme['company_name'] ?? 'Estabelecimento'));
-$footerText = trim((string) ($theme['footer_text'] ?? 'Comanda360 - Atendimento digital da mesa.'));
+$footerText = trim((string) ($theme['footer_text'] ?? 'MesiMenu - Atendimento digital da mesa.'));
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -25,7 +25,7 @@ $footerText = trim((string) ($theme['footer_text'] ?? 'Comanda360 - Atendimento 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title ?? 'Menu digital') ?></title>
-    <link rel="icon" type="image/x-icon" href="<?= htmlspecialchars(base_url('/img/comanda360.ico')) ?>">
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars(base_url('/img/logo-mesimenu.png')) ?>">
     <style>
         :root{
             --dm-primary: <?= htmlspecialchars((string) ($theme['primary_color'] ?? '#1d4ed8')) ?>;
@@ -156,7 +156,7 @@ $footerText = trim((string) ($theme['footer_text'] ?? 'Comanda360 - Atendimento 
                     <span><?= htmlspecialchars($brandDescription !== '' ? $brandDescription : 'Atendimento digital da mesa com comanda vinculada ao QR Code.') ?></span>
                 </div>
             </div>
-            <span class="dm-topbar-badge">Comanda360 QR</span>
+            <span class="dm-topbar-badge">MesiMenu QR</span>
         </header>
 
         <?php if (!empty($flashSuccess)): ?>

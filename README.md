@@ -1,6 +1,6 @@
-# Comanda360 - Estrutura MVC Inicial
+# MesiMenu - Estrutura MVC Inicial
 
-Projeto base do Comanda360 em PHP puro com arquitetura MVC modular.
+Projeto base do MesiMenu em PHP puro com arquitetura MVC modular.
 
 ## Requisitos
 - PHP 8.3+
@@ -34,4 +34,4 @@ Projeto base do Comanda360 em PHP puro com arquitetura MVC modular.
 - O script consulta o gateway, atualiza o status local da assinatura e reprocessa o financeiro da empresa.
 
 ## Usuário demo esperado
-Use os registros que foram preparados no `seed_demo_comanda360.sql`.
+Use os registros que foram preparados no `seed_demo_comanda360.sql` enquanto a migracao do banco para MesiMenu nao for concluida.

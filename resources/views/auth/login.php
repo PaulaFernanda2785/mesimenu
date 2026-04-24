@@ -2308,7 +2308,7 @@ $formatLimitValue = static function (?int $value): string {
         <div class="container site-header-inner">
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
                 <span class="brand-mark">
-                    <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
+                    <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
                 </span>
             </a>
 
@@ -2334,9 +2334,9 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="hero-copy reveal is-visible">
                     <div class="hero-copy-top">
                         <div class="hero-kicker">
-                            <span class="eyebrow">Comanda360 com foco em atracao, operacao e recorrencia</span>
+                            <span class="eyebrow">MesiMenu com foco em atracao, operacao e recorrencia</span>
                             <h1>Transforme vendas manuais em um fluxo digital que vende, cobra e escala.</h1>
-                            <p>A Comanda360 ajuda empresas a organizar atendimento, pedidos, comandas, fechamento e cobranca recorrente em uma plataforma feita para contratar, operar e crescer com mais controle.</p>
+                            <p>A MesiMenu ajuda empresas a organizar atendimento, pedidos, comandas, fechamento e cobranca recorrente em uma plataforma feita para contratar, operar e crescer com mais controle.</p>
 
                             <div class="hero-actions">
                                 <a class="btn btn-primary" href="#planos">Ver planos ativos</a>
@@ -2364,14 +2364,14 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Sobre</span>
-                    <h2>A Comanda360 foi desenhada para digitalizar atendimento, operacao e receita em um unico fluxo.</h2>
+                    <h2>A MesiMenu foi desenhada para digitalizar atendimento, operacao e receita em um unico fluxo.</h2>
                 </div>
 
                 <div class="about-grid">
                     <article class="about-panel about-story reveal">
                         <div class="about-lead">
-                            <span class="about-kicker">Plataforma operacional Comanda360</span>
-                            <h3>O valor da Comanda360 nao esta em um modulo isolado, mas na integracao entre atendimento, operacao e gestao.</h3>
+                            <span class="about-kicker">Plataforma operacional MesiMenu</span>
+                            <h3>O valor da MesiMenu nao esta em um modulo isolado, mas na integracao entre atendimento, operacao e gestao.</h3>
                             <p>Na pratica, a plataforma conecta cardapio digital, pedidos por QR Code, comandas, cozinha, caixa, entregas, estoque, usuarios, suporte e assinaturas recorrentes em uma arquitetura multiempresa preparada para uso diario.</p>
                             <p>Isso reduz o problema mais comum desse mercado: sistemas e processos soltos demais para quem precisa vender rapido, operar com menos erro e manter leitura gerencial confiavel.</p>
                         </div>
@@ -2408,19 +2408,19 @@ $formatLimitValue = static function (?int $value): string {
                         <div class="about-visual-copy">
                             <span class="about-kicker is-contrast">Painel em tablet</span>
                             <h3>Uma interface pensada para uso real em operacao, gestao e acompanhamento institucional.</h3>
-                            <p>A imagem abaixo usa o painel do proprio sistema em formato tablet para mostrar um ponto importante: a Comanda360 nao depende de uma unica tela. Ela foi estruturada para funcionar com clareza em contextos moveis, administrativos e operacionais.</p>
+                            <p>A imagem abaixo usa o painel do proprio sistema em formato tablet para mostrar um ponto importante: a MesiMenu nao depende de uma unica tela. Ela foi estruturada para funcionar com clareza em contextos moveis, administrativos e operacionais.</p>
                         </div>
 
                         <div class="tablet-stage">
                             <span class="about-floating-tag tag-top">Dashboard, usuarios, suporte e assinatura no mesmo ecossistema</span>
-                            <img src="<?= htmlspecialchars($aboutPanelImageUrl) ?>" alt="Painel da Comanda360 exibido em um tablet">
+                            <img src="<?= htmlspecialchars($aboutPanelImageUrl) ?>" alt="Painel da MesiMenu exibido em um tablet">
                             <span class="about-floating-tag tag-bottom">Leitura confortavel para salao, caixa e acompanhamento gerencial em rotina de campo</span>
                         </div>
 
                         <div class="about-visual-footer">
                             <div class="about-footer-card">
                                 <strong>Produto com camadas bem separadas</strong>
-                                <span>Cliente final, equipe operacional, administracao do estabelecimento e area global da Comanda360 convivem no mesmo produto sem misturar contexto nem permissao.</span>
+                                <span>Cliente final, equipe operacional, administracao do estabelecimento e area global da MesiMenu convivem no mesmo produto sem misturar contexto nem permissao.</span>
                             </div>
                         </div>
                     </aside>
@@ -2477,13 +2477,13 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="section-head reveal">
                     <span class="eyebrow">Solucoes</span>
                     <h2>Menos erro, mais controle e uma operacao pronta para vender melhor.</h2>
-                    <p>A Comanda360 foi pensada para ajudar a empresa a atender melhor, organizar pedidos, fechar com mais seguranca e contratar uma plataforma alinhada ao seu momento operacional.</p>
+                    <p>A MesiMenu foi pensada para ajudar a empresa a atender melhor, organizar pedidos, fechar com mais seguranca e contratar uma plataforma alinhada ao seu momento operacional.</p>
                 </div>
 
                 <div class="solutions-layout">
                     <aside class="solutions-panel reveal">
                         <span class="solutions-panel-badge">Resposta estrutural</span>
-                        <h3>A Comanda360 entra para conectar operacao, pagamento e crescimento.</h3>
+                        <h3>A MesiMenu entra para conectar operacao, pagamento e crescimento.</h3>
                         <p>A proposta nao e empilhar mais improviso em cima da rotina. E dar para a empresa uma plataforma mais clara para atendimento, comandas, caixa, fechamento e decisao de contratacao.</p>
 
                         <div class="solutions-panel-list">
@@ -2497,7 +2497,7 @@ $formatLimitValue = static function (?int $value): string {
                             </div>
                             <div>
                                 <strong>Venda com mais coerencia</strong>
-                                <span>Esta pagina da Comanda360 passa a comunicar melhor o que a plataforma resolve, atraindo empresas com mais aderencia ao produto.</span>
+                                <span>Esta pagina da MesiMenu passa a comunicar melhor o que a plataforma resolve, atraindo empresas com mais aderencia ao produto.</span>
                             </div>
                         </div>
                     </aside>
@@ -2531,16 +2531,16 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Funcionalidades</span>
-                    <h2>Da entrada do cliente ao fechamento, a Comanda360 organiza a rotina em etapas claras.</h2>
-                    <p>Veja como a Comanda360 ajuda a acelerar atendimento, vender com mais clareza, fechar com menos erro e dar mais controle para a empresa no dia a dia.</p>
+                    <h2>Da entrada do cliente ao fechamento, a MesiMenu organiza a rotina em etapas claras.</h2>
+                    <p>Veja como a MesiMenu ajuda a acelerar atendimento, vender com mais clareza, fechar com menos erro e dar mais controle para a empresa no dia a dia.</p>
                 </div>
 
                 <div class="features-showcase">
                     <article class="features-hero reveal">
                         <div class="features-hero-copy">
-                            <span class="features-hero-badge">Fluxo funcional Comanda360</span>
+                            <span class="features-hero-badge">Fluxo funcional MesiMenu</span>
                             <h3>Uma jornada pensada para vender mais, atender melhor e fechar com mais seguranca.</h3>
-                            <p>A Comanda360 conecta o que normalmente fica solto na rotina da empresa: entrada do cliente, escolha do pedido, registro de consumo, fechamento financeiro e leitura gerencial da operacao.</p>
+                            <p>A MesiMenu conecta o que normalmente fica solto na rotina da empresa: entrada do cliente, escolha do pedido, registro de consumo, fechamento financeiro e leitura gerencial da operacao.</p>
 
                             <div class="features-hero-points">
                                 <div class="features-hero-point">
@@ -2559,7 +2559,7 @@ $formatLimitValue = static function (?int $value): string {
                         </div>
 
                         <div class="features-hero-visual">
-                            <img src="<?= htmlspecialchars($featuresPanelImageUrl) ?>" alt="Painel principal da Comanda360">
+                            <img src="<?= htmlspecialchars($featuresPanelImageUrl) ?>" alt="Painel principal da MesiMenu">
                         </div>
                     </article>
 
@@ -2581,9 +2581,9 @@ $formatLimitValue = static function (?int $value): string {
                                 <?php $featureImageUrl = $featureImage !== '' ? public_embedded_image_url($featureImage) : ''; ?>
                                 <?php if ($featureImageUrl !== ''): ?>
                                     <div class="feature-media">
-                                        <button class="feature-media-button" type="button" data-image-zoom-trigger data-image-zoom-src="<?= htmlspecialchars($featureImageUrl) ?>" data-image-zoom-alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade Comanda360'))) ?>" data-image-zoom-trigger-title="<?= htmlspecialchars((string) ($group['title'] ?? 'Funcionalidade Comanda360')) ?>">
+                                        <button class="feature-media-button" type="button" data-image-zoom-trigger data-image-zoom-src="<?= htmlspecialchars($featureImageUrl) ?>" data-image-zoom-alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade MesiMenu'))) ?>" data-image-zoom-trigger-title="<?= htmlspecialchars((string) ($group['title'] ?? 'Funcionalidade MesiMenu')) ?>">
                                             <span class="feature-media-hint">Clique para ampliar</span>
-                                            <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade Comanda360'))) ?>" loading="eager" decoding="async">
+                                            <img src="<?= htmlspecialchars($featureImageUrl) ?>" alt="<?= htmlspecialchars((string) ($group['image_alt'] ?? ($group['title'] ?? 'Funcionalidade MesiMenu'))) ?>" loading="eager" decoding="async">
                                         </button>
                                     </div>
                                 <?php endif; ?>
@@ -2609,7 +2609,7 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Planos</span>
-                    <h2>Escolha o plano da Comanda360 mais aderente ao momento da sua empresa.</h2>
+                    <h2>Escolha o plano da MesiMenu mais aderente ao momento da sua empresa.</h2>
                 </div>
 
                 <div class="plans-head reveal">
@@ -2626,7 +2626,7 @@ $formatLimitValue = static function (?int $value): string {
                 <?php if ($plans === []): ?>
                     <article class="content-card reveal">
                         <h3>Nenhum plano disponivel no momento</h3>
-                        <p>Os planos da Comanda360 ainda nao estao disponiveis para exibicao nesta pagina.</p>
+                        <p>Os planos da MesiMenu ainda nao estao disponiveis para exibicao nesta pagina.</p>
                     </article>
                 <?php else: ?>
                     <div class="plans-grid">
@@ -2648,7 +2648,7 @@ $formatLimitValue = static function (?int $value): string {
                                 </div>
                                 <div class="plan-copy">
                                     <h3><?= htmlspecialchars($planName) ?></h3>
-                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao da Comanda360 com cobranca recorrente.') ?></p>
+                                    <p><?= htmlspecialchars($planDescription !== '' ? $planDescription : 'Plano comercial ativo para operacao da MesiMenu com cobranca recorrente.') ?></p>
                                 </div>
 
                                 <div class="plan-price">
@@ -2701,8 +2701,8 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Feedback</span>
-                    <h2>Feedback e sugestoes para mostrar o valor da Comanda360 com mais clareza.</h2>
-                    <p>Use este espaco para contar sua percepcao sobre o sistema, sugerir melhorias e acompanhar feedbacks que ajudam a reforcar a confianca na Comanda360.</p>
+                    <h2>Feedback e sugestoes para mostrar o valor da MesiMenu com mais clareza.</h2>
+                    <p>Use este espaco para contar sua percepcao sobre o sistema, sugerir melhorias e acompanhar feedbacks que ajudam a reforcar a confianca na MesiMenu.</p>
                 </div>
 
                 <?php if ($landingFormContext === 'feedback' && (!empty($flashSuccess) || !empty($flashError))): ?>
@@ -2718,14 +2718,14 @@ $formatLimitValue = static function (?int $value): string {
 
                 <div class="blog-layout">
                     <aside class="blog-showcase reveal">
-                        <span class="blog-showcase-badge">Feedback da Comanda360</span>
+                        <span class="blog-showcase-badge">Feedback da MesiMenu</span>
                         <h3>Um espaco para ouvir o mercado e reforcar a confianca no sistema.</h3>
-                        <p>Quando a pagina mostra percepcoes reais de quem conhece a Comanda360, ela ganha mais proximidade, mais credibilidade e mais forca para sustentar a decisao de compra.</p>
+                        <p>Quando a pagina mostra percepcoes reais de quem conhece a MesiMenu, ela ganha mais proximidade, mais credibilidade e mais forca para sustentar a decisao de compra.</p>
 
                         <div class="blog-showcase-points">
                             <div class="blog-showcase-point">
                                 <strong>Mais proximidade com quem visita a pagina</strong>
-                                <span>O feedback abre um canal direto para entender duvidas, percepcoes e oportunidades de melhoria sobre a Comanda360.</span>
+                                <span>O feedback abre um canal direto para entender duvidas, percepcoes e oportunidades de melhoria sobre a MesiMenu.</span>
                             </div>
                             <div class="blog-showcase-point">
                                 <strong>Mais clareza sobre o que o produto entrega</strong>
@@ -2741,14 +2741,14 @@ $formatLimitValue = static function (?int $value): string {
                     <article class="contact-card blog-form-card reveal">
                         <div class="blog-form-head">
                             <div>
-                                <h3>Enviar feedback para a equipe Comanda360</h3>
-                                <p>Compartilhe sua opiniao sobre o sistema, envie uma sugestao ou registre sua percepcao sobre a Comanda360.</p>
+                                <h3>Enviar feedback para a equipe MesiMenu</h3>
+                                <p>Compartilhe sua opiniao sobre o sistema, envie uma sugestao ou registre sua percepcao sobre a MesiMenu.</p>
                             </div>
                             <span class="blog-form-badge">Campos obrigatorios</span>
                         </div>
 
                         <div class="blog-form-note">
-                            Seu feedback ajuda a Comanda360 a evoluir a experiencia, comunicar melhor o produto e ficar mais alinhada ao que o mercado espera.
+                            Seu feedback ajuda a MesiMenu a evoluir a experiencia, comunicar melhor o produto e ficar mais alinhada ao que o mercado espera.
                         </div>
 
                         <form method="POST" action="<?= htmlspecialchars(base_url('/blog/interactions')) ?>">
@@ -2766,7 +2766,7 @@ $formatLimitValue = static function (?int $value): string {
                                 </div>
                                 <div class="field full">
                                     <label for="interaction_message">Mensagem</label>
-                                    <textarea id="interaction_message" name="message" required placeholder="Escreva seu feedback, sua sugestao ou sua percepcao sobre a Comanda360."></textarea>
+                                    <textarea id="interaction_message" name="message" required placeholder="Escreva seu feedback, sua sugestao ou sua percepcao sobre a MesiMenu."></textarea>
                                 </div>
                             </div>
 
@@ -2781,7 +2781,7 @@ $formatLimitValue = static function (?int $value): string {
 
                 <?php if ($publicInteractions === []): ?>
                     <div class="blog-empty reveal">
-                        Os primeiros feedbacks em destaque vao aparecer aqui conforme a Comanda360 ampliar essa vitrine de percepcoes e sugestoes do mercado.
+                        Os primeiros feedbacks em destaque vao aparecer aqui conforme a MesiMenu ampliar essa vitrine de percepcoes e sugestoes do mercado.
                     </div>
                 <?php else: ?>
                     <div class="blog-published-grid">
@@ -2810,13 +2810,13 @@ $formatLimitValue = static function (?int $value): string {
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">Contato</span>
-                    <h2>Abra uma conversa comercial com a Comanda360 e avance para a contratacao certa.</h2>
-                    <p>Se a empresa quer contratar a Comanda360 para organizar atendimento, pedidos, comandas, pagamentos e fechamento, este e o canal para falar com o comercial.</p>
+                    <h2>Abra uma conversa comercial com a MesiMenu e avance para a contratacao certa.</h2>
+                    <p>Se a empresa quer contratar a MesiMenu para organizar atendimento, pedidos, comandas, pagamentos e fechamento, este e o canal para falar com o comercial.</p>
                 </div>
 
                 <div class="contact-grid">
                     <aside class="contact-card contact-panel reveal">
-                        <span class="contact-panel-badge">Canal comercial Comanda360</span>
+                        <span class="contact-panel-badge">Canal comercial MesiMenu</span>
                         <h3>Uma entrada mais direta para quem ja esta em momento de compra ou avaliacao.</h3>
                         <p>Aqui o visitante nao envia uma mensagem generica. Ele entra em uma fila comercial preparada para retorno rapido, leitura do contexto e conducao mais objetiva da venda.</p>
 
@@ -2878,7 +2878,7 @@ $formatLimitValue = static function (?int $value): string {
                         <?php endif; ?>
 
                         <div class="contact-form-note">
-                            Este formulario entra direto na fila comercial da Comanda360. A equipe pode registrar o lead, definir status, anotar observacoes e seguir o retorno por e-mail, telefone ou WhatsApp.
+                            Este formulario entra direto na fila comercial da MesiMenu. A equipe pode registrar o lead, definir status, anotar observacoes e seguir o retorno por e-mail, telefone ou WhatsApp.
                         </div>
 
                         <form method="POST" action="<?= htmlspecialchars(base_url('/contact')) ?>">
@@ -2927,7 +2927,7 @@ $formatLimitValue = static function (?int $value): string {
                                 </div>
                                 <div class="field full">
                                     <label for="lead_message">Mensagem</label>
-                                    <textarea id="lead_message" name="message" required placeholder="Descreva rapidamente a operacao, o momento comercial e o que voce quer estruturar com a Comanda360."></textarea>
+                                    <textarea id="lead_message" name="message" required placeholder="Descreva rapidamente a operacao, o momento comercial e o que voce quer estruturar com a MesiMenu."></textarea>
                                 </div>
                             </div>
 
@@ -2946,19 +2946,19 @@ $formatLimitValue = static function (?int $value): string {
                 <div class="section-head reveal">
                     <span class="eyebrow">FAQ</span>
                     <h2>Duvidas que costumam travar a decisao antes do contato comercial.</h2>
-                    <p>Aqui ficam respostas diretas para empresas que estao avaliando a contratacao da Comanda360 e querem entender melhor plano, operacao e aderencia da plataforma.</p>
+                    <p>Aqui ficam respostas diretas para empresas que estao avaliando a contratacao da MesiMenu e querem entender melhor plano, operacao e aderencia da plataforma.</p>
                 </div>
 
                 <div class="faq-layout">
                     <article class="content-card faq-panel reveal">
                         <span class="faq-panel-badge">Leitura comercial rapida</span>
-                        <h3>O FAQ existe para ajudar a empresa a decidir se a Comanda360 faz sentido para a sua operacao.</h3>
+                        <h3>O FAQ existe para ajudar a empresa a decidir se a MesiMenu faz sentido para a sua operacao.</h3>
                         <p>Quando a pagina responde as duvidas certas, a conversa comercial avanca com mais criterio e a contratacao fica mais proxima da realidade da empresa.</p>
 
                         <div class="faq-panel-list">
                             <div>
                                 <strong>Mais clareza sobre o produto</strong>
-                                <span>A empresa entende com mais rapidez o que a Comanda360 organiza na operacao e onde ela gera valor real.</span>
+                                <span>A empresa entende com mais rapidez o que a MesiMenu organiza na operacao e onde ela gera valor real.</span>
                             </div>
                             <div>
                                 <strong>Menos atrito na avaliacao</strong>
@@ -2994,10 +2994,10 @@ $formatLimitValue = static function (?int $value): string {
                 <div>
                     <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
                         <span class="brand-mark">
-                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
+                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
                         </span>
                     </a>
-                    <p>Landing publica desenhada para atrair novas empresas, sustentar indexacao e transformar visitas em oportunidades de assinatura para a Comanda360.</p>
+                    <p>Landing publica desenhada para atrair novas empresas, sustentar indexacao e transformar visitas em oportunidades de assinatura para a MesiMenu.</p>
                 </div>
 
                 <div>
@@ -3030,8 +3030,8 @@ $formatLimitValue = static function (?int $value): string {
             </div>
 
             <div class="footer-bottom">
-                <span><?= htmlspecialchars((string) ($seo['title'] ?? 'Comanda360')) ?></span>
-                <span>Pagina publica pensada para atrair novas empresas interessadas em contratar a Comanda360.</span>
+                <span><?= htmlspecialchars((string) ($seo['title'] ?? 'MesiMenu')) ?></span>
+                <span>Pagina publica pensada para atrair novas empresas interessadas em contratar a MesiMenu.</span>
             </div>
         </div>
     </footer>

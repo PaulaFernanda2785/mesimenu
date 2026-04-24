@@ -205,7 +205,7 @@ $total = (float) ($group['total_amount'] ?? ($order['total_amount'] ?? 0));
                             <img class="ticket-logo" src="<?= htmlspecialchars($companyLogoUrl) ?>" alt="Logo da empresa">
                         <?php endif; ?>
                         <div class="ticket-title"><?= htmlspecialchars($companyName) ?></div>
-                        <div class="ticket-muted">Comanda360.com.br</div>
+                        <div class="ticket-muted">MesiMenu</div>
                     </div>
 
                     <div class="ticket-divider"></div>

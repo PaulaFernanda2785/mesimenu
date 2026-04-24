@@ -1,11 +1,11 @@
 <?php
 $seo = is_array($seo ?? null) ? $seo : [];
-$title = trim((string) ($seo['title'] ?? ($title ?? 'Comanda360')));
+$title = trim((string) ($seo['title'] ?? ($title ?? 'MesiMenu')));
 $description = trim((string) ($seo['description'] ?? ''));
 $keywords = trim((string) ($seo['keywords'] ?? ''));
 $canonical = trim((string) ($seo['canonical'] ?? app_url('/')));
 $robots = trim((string) ($seo['robots'] ?? 'index,follow'));
-$ogImage = trim((string) ($seo['og_image'] ?? asset_url('/img/logo-comanda360.png')));
+$ogImage = trim((string) ($seo['og_image'] ?? asset_url('/img/logo-mesimenu.png')));
 $structuredData = is_array($seo['structured_data'] ?? null) ? $seo['structured_data'] : [];
 ?>
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ $structuredData = is_array($seo['structured_data'] ?? null) ? $seo['structured_d
     <meta name="robots" content="<?= htmlspecialchars($robots) ?>">
     <meta name="theme-color" content="#05131f">
     <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
-    <link rel="icon" type="image/x-icon" href="<?= htmlspecialchars(asset_url('/img/comanda360.ico')) ?>">
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars(asset_url('/img/logo-mesimenu.png')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">

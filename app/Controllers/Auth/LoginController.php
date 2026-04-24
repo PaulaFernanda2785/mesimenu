@@ -113,7 +113,7 @@ final class LoginController extends Controller
         $landingPage = $this->landingPage->build();
 
         return $this->view('auth/login', [
-            'title' => 'Comanda360',
+            'title' => 'MesiMenu',
             'seo' => $landingPage['seo'] ?? [],
             'landingPage' => $landingPage,
         ], 'layouts/public');
@@ -122,10 +122,10 @@ final class LoginController extends Controller
     private function renderLoginPage(?string $error = null): Response
     {
         return $this->view('auth/access', [
-            'title' => 'Login | Comanda360',
+            'title' => 'Login | MesiMenu',
             'seo' => [
-                'title' => 'Login | Comanda360',
-                'description' => 'Acesse a plataforma Comanda360 com seu e-mail e senha.',
+                'title' => 'Login | MesiMenu',
+                'description' => 'Acesse a plataforma MesiMenu com seu e-mail e senha.',
                 'canonical' => app_url('/login'),
                 'robots' => 'noindex,nofollow',
             ],

@@ -116,7 +116,7 @@ if (!function_exists('public_logo_url')) {
             return $cached;
         }
 
-        $logoFile = BASE_PATH . '/public/img/logo-comanda360.png';
+        $logoFile = BASE_PATH . '/public/img/logo-mesimenu.png';
         if (is_file($logoFile) && is_readable($logoFile)) {
             $contents = @file_get_contents($logoFile);
             if (is_string($contents) && $contents !== '') {
@@ -128,8 +128,8 @@ if (!function_exists('public_logo_url')) {
         $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
         $logoRelativePath = str_contains($scriptName, '/public/')
             || str_ends_with($scriptName, '/public/index.php')
-            ? '/img/logo-comanda360.png'
-            : '/public/img/logo-comanda360.png';
+            ? '/img/logo-mesimenu.png'
+            : '/public/img/logo-mesimenu.png';
 
         $cached = base_url($logoRelativePath);
         return $cached;

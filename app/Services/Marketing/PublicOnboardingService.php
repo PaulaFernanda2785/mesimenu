@@ -41,7 +41,7 @@ final class PublicOnboardingService
         return [
             'title' => 'Cadastro da empresa',
             'seo' => $this->buildSeo(
-                'Cadastro da empresa | Comanda360',
+                'Cadastro da empresa | MesiMenu',
                 'Conclua o cadastro da empresa com o plano selecionado e avance para o pagamento da assinatura.'
             ),
             'selectedPlan' => $selection,
@@ -108,7 +108,7 @@ final class PublicOnboardingService
         return [
             'title' => 'Pagamento da assinatura',
             'seo' => $this->buildSeo(
-                'Pagamento da assinatura | Comanda360',
+                'Pagamento da assinatura | MesiMenu',
                 'Escolha PIX ou cartao, acompanhe a confirmacao do pagamento e libere o acesso da empresa ao sistema.'
             ),
             'completed' => false,
@@ -218,7 +218,7 @@ final class PublicOnboardingService
         return [
             'title' => 'Assinatura confirmada',
             'seo' => $this->buildSeo(
-                'Assinatura confirmada | Comanda360',
+                'Assinatura confirmada | MesiMenu',
                 'Assinatura confirmada e acesso liberado para o primeiro login da empresa.'
             ),
             'confirmation' => $payload,
@@ -579,10 +579,10 @@ final class PublicOnboardingService
         return [
             'title' => $title,
             'description' => $description,
-            'keywords' => 'cadastro empresa comanda360, pagamento pix cartao, onboarding assinatura comanda360',
+            'keywords' => 'cadastro empresa mesimenu, pagamento pix cartao, onboarding assinatura mesimenu',
             'canonical' => app_url((string) ($_SERVER['REQUEST_URI'] ?? '/')),
             'robots' => 'noindex,nofollow',
-            'og_image' => asset_url('/img/logo-comanda360.png'),
+            'og_image' => asset_url('/img/logo-mesimenu.png'),
             'structured_data' => [],
         ];
     }

@@ -189,7 +189,7 @@ $formatDate = static function (?string $value): string {
     <div class="container">
         <div class="topbar">
             <a class="brand" href="<?= htmlspecialchars(base_url('/')) ?>">
-                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Comanda360">
+                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="MesiMenu">
             </a>
             <a class="btn btn-secondary" href="<?= htmlspecialchars(base_url('/login')) ?>">Ir para o login</a>
         </div>

@@ -27,7 +27,7 @@ final class AppShellService
             'main_card_color' => '#0f172a',
             'logo_path' => '',
             'banner_path' => '',
-            'footer_text' => 'Comanda360 - Sistema de gestÃ£o de atendimento e vendas.',
+            'footer_text' => 'MesiMenu - Sistema de gestao de atendimento e vendas.',
         ];
 
         if (!is_array($user)) {
@@ -62,7 +62,10 @@ final class AppShellService
 
         if ($normalized['footer_text'] === '') {
             $normalized['footer_text'] = $defaults['footer_text'];
-        } elseif ($normalized['footer_text'] === 'Comanda360 - Sistema de gestao de atendimento e vendas.') {
+        } elseif (
+            $normalized['footer_text'] === 'Comanda360 - Sistema de gestao de atendimento e vendas.'
+            || $normalized['footer_text'] === 'Comanda360 - Sistema de gestÃ£o de atendimento e vendas.'
+        ) {
             $normalized['footer_text'] = $defaults['footer_text'];
         }
 

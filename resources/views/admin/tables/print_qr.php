@@ -103,7 +103,7 @@ $qrImageUrl = $qrPayload !== ''
                     <span>Não foi possível gerar a imagem do QR.</span>
                 <?php endif; ?>
             </div>
-            <div class="qr-tech">Comanda360.com.br</div>
+            <div class="qr-tech">MesiMenu</div>
             <div class="qr-token">Token QR: <?= htmlspecialchars($token !== '' ? $token : '-') ?></div>
             <div class="qr-caption">Este QR identifica a mesa para o fluxo de atendimento.</div>
         </div>

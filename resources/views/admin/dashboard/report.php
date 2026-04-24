@@ -409,7 +409,7 @@ $paymentLabel = $paymentStatusFilter !== '' ? status_label('order_payment_status
         </div>
 
         <footer class="report-footer report-section" id="sec-rodape">
-            <span>Relatório gerado automaticamente pelo Comanda360 • <?= htmlspecialchars($companyName) ?></span>
+            <span>Relatorio gerado automaticamente pelo MesiMenu - <?= htmlspecialchars($companyName) ?></span>
             <span class="page-counter"></span>
         </footer>
     </article>

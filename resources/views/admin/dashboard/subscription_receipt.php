@@ -12,7 +12,7 @@ $companyEmail = trim((string) ($payment['company_email'] ?? ''));
 $companyPhone = trim((string) ($payment['company_phone'] ?? ($payment['company_whatsapp'] ?? '')));
 $companyLogoPath = trim((string) ($payment['company_logo_path'] ?? ''));
 $companyLogoUrl = $companyLogoPath !== '' ? company_image_url($companyLogoPath) : '';
-$saasLogoUrl = base_url('/img/logo-comanda360.png');
+$saasLogoUrl = base_url('/img/logo-mesimenu.png');
 
 $receiptNumber = trim((string) ($context['receipt_number'] ?? ''));
 $referenceLabel = trim((string) ($context['reference_label'] ?? ''));
@@ -51,7 +51,7 @@ $dueDate = $formatDate($payment['due_date'] ?? null);
 $amountLabel = $formatMoney($payment['amount'] ?? 0);
 
 $signatureMode = trim((string) ($saasSignature['mode'] ?? 'institutional'));
-$signatureName = trim((string) ($saasSignature['name'] ?? 'Comanda360 SaaS'));
+$signatureName = trim((string) ($saasSignature['name'] ?? 'MesiMenu SaaS'));
 $signatureEmail = trim((string) ($saasSignature['email'] ?? ''));
 $signatureRole = trim((string) ($saasSignature['role_name'] ?? 'Administrador SaaS'));
 $signatureSignedAt = $formatDate($saasSignature['signed_at'] ?? null, true);
@@ -228,10 +228,10 @@ $signatureHash = strtoupper(substr(sha1($signatureHashBase), 0, 16));
                 <section class="receipt-paper">
                     <header class="receipt-header">
                         <div class="receipt-brand">
-                            <div class="receipt-brand-block" aria-label="Comanda360 SaaS">
-                                <img src="<?= htmlspecialchars($saasLogoUrl) ?>" alt="Logo do Comanda360 SaaS">
+                            <div class="receipt-brand-block" aria-label="MesiMenu SaaS">
+                                <img src="<?= htmlspecialchars($saasLogoUrl) ?>" alt="Logo do MesiMenu SaaS">
                                 <div class="receipt-brand-copy">
-                                    <strong>Comanda360 SaaS</strong>
+                                    <strong>MesiMenu SaaS</strong>
                                     <span>Plataforma de gestao e cobranca</span>
                                 </div>
                             </div>
@@ -298,7 +298,7 @@ $signatureHash = strtoupper(substr(sha1($signatureHashBase), 0, 16));
                     </section>
 
                     <footer class="receipt-footer">
-                        <p>Este recibo foi gerado automaticamente pelo Comanda360 SaaS com base no historico financeiro da assinatura vinculada a empresa.</p>
+                        <p>Este recibo foi gerado automaticamente pelo MesiMenu SaaS com base no historico financeiro da assinatura vinculada a empresa.</p>
                         <p>Para auditoria e comprovacao, preserve este documento juntamente com a referencia externa do pagamento e o identificador do gateway quando houver integracao ativa.</p>
 
                         <div class="receipt-signatures">
@@ -308,7 +308,7 @@ $signatureHash = strtoupper(substr(sha1($signatureHashBase), 0, 16));
                                     <?php if ($signatureMode === 'named'): ?>
                                         Emissao vinculada ao operador SaaS responsavel pela baixa ou validacao manual deste pagamento.
                                     <?php else: ?>
-                                        Pagamento sem operador SaaS nominal registrado no historico. A emissao abaixo representa a assinatura institucional do Comanda360 SaaS.
+                                        Pagamento sem operador SaaS nominal registrado no historico. A emissao abaixo representa a assinatura institucional do MesiMenu SaaS.
                                     <?php endif; ?>
                                 </p>
                                 <div class="receipt-signature-mark">
@@ -324,7 +324,7 @@ $signatureHash = strtoupper(substr(sha1($signatureHashBase), 0, 16));
 
                             <div class="receipt-signature">
                                 Emitente
-                                <strong>Comanda360 SaaS</strong>
+                                <strong>MesiMenu SaaS</strong>
                             </div>
                         </div>
                     </footer>

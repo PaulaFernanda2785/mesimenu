@@ -1108,7 +1108,7 @@ final class SubscriptionPortalService
 
         return [
             'mode' => ($name !== '' || $email !== '') ? 'named' : 'institutional',
-            'name' => $name !== '' ? $name : 'Comanda360 SaaS',
+            'name' => $name !== '' ? $name : 'MesiMenu SaaS',
             'email' => $email,
             'role_name' => $roleName !== '' ? $roleName : 'Administrador SaaS',
             'signed_at' => $signedAt,

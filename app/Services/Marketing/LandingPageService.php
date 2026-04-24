@@ -105,7 +105,7 @@ final class LandingPageService
                 [
                     'eyebrow' => 'Governanca SaaS',
                     'title' => 'Empresas, planos, assinaturas e suporte',
-                    'description' => 'A Comanda360 tambem opera como produto recorrente, com gestao de empresas assinantes, planos de assinatura, cobranca e acompanhamento institucional.',
+                    'description' => 'A MesiMenu tambem opera como produto recorrente, com gestao de empresas assinantes, planos de assinatura, cobranca e acompanhamento institucional.',
                 ],
             ],
             'problem_points' => [
@@ -138,7 +138,7 @@ final class LandingPageService
                 [
                     'eyebrow' => 'Operacao',
                     'title' => 'Atendimento mais rapido e operacao mais organizada',
-                    'description' => 'A Comanda360 conecta mesas, comandas, pedidos e cozinha em um fluxo mais claro para reduzir falhas, acelerar o atendimento e melhorar a experiencia do cliente.',
+                    'description' => 'A MesiMenu conecta mesas, comandas, pedidos e cozinha em um fluxo mais claro para reduzir falhas, acelerar o atendimento e melhorar a experiencia do cliente.',
                 ],
                 [
                     'eyebrow' => 'Pagamento',
@@ -153,7 +153,7 @@ final class LandingPageService
                 [
                     'eyebrow' => 'Crescimento',
                     'title' => 'Mais forca comercial para atrair e converter novas empresas',
-                    'description' => 'A pagina da Comanda360, os planos e o fluxo de contato ajudam a apresentar melhor a solucao, fortalecer a proposta de valor e transformar interesse em oportunidade real de assinatura.',
+                    'description' => 'A pagina da MesiMenu, os planos e o fluxo de contato ajudam a apresentar melhor a solucao, fortalecer a proposta de valor e transformar interesse em oportunidade real de assinatura.',
                 ],
             ],
             'feature_groups' => $this->featureGroups(),
@@ -212,7 +212,7 @@ final class LandingPageService
     private function buildSeo(): array
     {
         $canonical = app_url('/');
-        $logoUrl = asset_url('/img/logo-comanda360.png');
+        $logoUrl = asset_url('/img/logo-mesimenu.png');
         $faq = [];
         foreach ($this->faqItems() as $item) {
             if (!is_array($item)) {
@@ -236,9 +236,9 @@ final class LandingPageService
         }
 
         return [
-            'title' => 'Comanda360 | Plataforma para empresas que querem organizar atendimento, pedidos e cobranca',
-            'description' => 'Comanda360 para empresas que querem organizar atendimento, comandas, pagamentos e contratacao recorrente com planos mensais ou anuais.',
-            'keywords' => 'sistema para restaurante, comanda360, comanda digital, qr code para mesas, sistema de pedidos, cobranca recorrente pix',
+            'title' => 'MesiMenu | Plataforma para empresas que querem organizar atendimento, pedidos e cobranca',
+            'description' => 'MesiMenu para empresas que querem organizar atendimento, comandas, pagamentos e contratacao recorrente com planos mensais ou anuais.',
+            'keywords' => 'sistema para restaurante, mesimenu, comanda digital, qr code para mesas, sistema de pedidos, cobranca recorrente pix',
             'canonical' => $canonical,
             'robots' => 'index,follow,max-image-preview:large',
             'og_image' => $logoUrl,
@@ -246,24 +246,24 @@ final class LandingPageService
                 [
                     '@context' => 'https://schema.org',
                     '@type' => 'Organization',
-                    'name' => 'Comanda360',
+                    'name' => 'MesiMenu',
                     'url' => $canonical,
                     'logo' => $logoUrl,
                 ],
                 [
                     '@context' => 'https://schema.org',
                     '@type' => 'WebSite',
-                    'name' => 'Comanda360',
+                    'name' => 'MesiMenu',
                     'url' => $canonical,
                 ],
                 [
                     '@context' => 'https://schema.org',
                     '@type' => 'SoftwareApplication',
-                    'name' => 'Comanda360',
+                    'name' => 'MesiMenu',
                     'applicationCategory' => 'BusinessApplication',
                     'operatingSystem' => 'Web',
                     'url' => $canonical,
-                    'description' => 'Comanda360 para operacao comercial, assinaturas, pagamentos via PIX e cartao e digitalizacao de vendas.',
+                    'description' => 'MesiMenu para operacao comercial, assinaturas, pagamentos via PIX e cartao e digitalizacao de vendas.',
                 ],
                 [
                     '@context' => 'https://schema.org',
@@ -291,15 +291,15 @@ final class LandingPageService
     {
         return [
             [
-                'question' => 'A Comanda360 atende empresas com mesas, comandas e pedidos no salao?',
-                'answer' => 'Sim. A Comanda360 foi pensada para organizar mesas, comandas, pedidos, atendimento e fechamento em um fluxo mais claro para a empresa assinante.',
+                'question' => 'A MesiMenu atende empresas com mesas, comandas e pedidos no salao?',
+                'answer' => 'Sim. A MesiMenu foi pensada para organizar mesas, comandas, pedidos, atendimento e fechamento em um fluxo mais claro para a empresa assinante.',
             ],
             [
                 'question' => 'Depois da contratacao, meus clientes conseguem acessar o cardapio pelo QR Code da mesa?',
                 'answer' => 'Sim. Depois que a empresa entra na plataforma, os clientes do estabelecimento podem acessar o cardapio pelo QR Code e seguir a jornada com mais autonomia.',
             ],
             [
-                'question' => 'A Comanda360 ajuda no fechamento da conta e no controle de pagamento da empresa?',
+                'question' => 'A MesiMenu ajuda no fechamento da conta e no controle de pagamento da empresa?',
                 'answer' => 'Sim. Consumo, comanda, formas de pagamento e fechamento ficam mais conectados para reduzir erro operacional e dar mais seguranca no caixa da empresa.',
             ],
             [
@@ -307,20 +307,20 @@ final class LandingPageService
                 'answer' => 'Sim. A plataforma contempla PIX, cartao e cobranca recorrente conforme o ciclo escolhido pela empresa no momento da assinatura.',
             ],
             [
-                'question' => 'Posso contratar a Comanda360 no plano mensal ou anual?',
-                'answer' => 'Sim. A Comanda360 pode apresentar contratacao mensal e anual para facilitar a escolha do formato mais adequado para a empresa.',
+                'question' => 'Posso contratar a MesiMenu no plano mensal ou anual?',
+                'answer' => 'Sim. A MesiMenu pode apresentar contratacao mensal e anual para facilitar a escolha do formato mais adequado para a empresa.',
             ],
             [
                 'question' => 'Como eu escolho o plano ideal para a minha empresa?',
                 'answer' => 'A comparacao entre os planos ajuda a entender qual estrutura faz mais sentido para o momento da sua operacao. Se houver duvida, o canal de contato comercial existe justamente para orientar essa decisao.',
             ],
             [
-                'question' => 'A Comanda360 serve apenas para operacao ou tambem ajuda a empresa a vender melhor?',
+                'question' => 'A MesiMenu serve apenas para operacao ou tambem ajuda a empresa a vender melhor?',
                 'answer' => 'Os dois. A plataforma melhora atendimento, organizacao da operacao, fechamento e a capacidade da empresa de atender melhor e vender com menos erro.',
             ],
             [
-                'question' => 'Esta pagina publica e da minha empresa ou da propria Comanda360?',
-                'answer' => 'Esta pagina publica e da propria Comanda360 e foi feita para atrair novas empresas interessadas em contratar a plataforma. Ela nao e uma pagina promocional das empresas assinantes.',
+                'question' => 'Esta pagina publica e da minha empresa ou da propria MesiMenu?',
+                'answer' => 'Esta pagina publica e da propria MesiMenu e foi feita para atrair novas empresas interessadas em contratar a plataforma. Ela nao e uma pagina promocional das empresas assinantes.',
             ],
             [
                 'question' => 'Se eu quiser entender melhor o plano ideal, posso falar com o comercial antes de assinar?',
@@ -338,7 +338,7 @@ final class LandingPageService
                 'title' => 'O cliente entra no fluxo certo sem depender do atendimento manual',
                 'description' => 'A leitura do QR Code identifica a mesa e reduz o atrito logo no primeiro contato, deixando o inicio do atendimento mais rapido e mais confiavel.',
                 'image' => 'img/qrcode-celular.png',
-                'image_alt' => 'Acesso por QR Code no celular com a Comanda360',
+                'image_alt' => 'Acesso por QR Code no celular com a MesiMenu',
                 'result' => 'Menos erro na identificacao da mesa e mais agilidade no inicio do pedido.',
                 'items' => [
                     'Entrada direta pelo celular do cliente',
@@ -352,7 +352,7 @@ final class LandingPageService
                 'title' => 'A empresa apresenta melhor o cardapio e vende com mais clareza',
                 'description' => 'Produtos, categorias e jornada de escolha ficam mais intuitivos no celular, ajudando o cliente a navegar melhor e aumentando a chance de conversao.',
                 'image' => 'img/menu-celular.png',
-                'image_alt' => 'Cardapio digital da Comanda360 no celular',
+                'image_alt' => 'Cardapio digital da MesiMenu no celular',
                 'result' => 'Mais autonomia para o cliente e mais capacidade de venda no salao.',
                 'items' => [
                     'Categorias mais organizadas',
@@ -366,7 +366,7 @@ final class LandingPageService
                 'title' => 'Itens, adicionais e observacoes ficam mais precisos no pedido',
                 'description' => 'A escolha de produtos e complementos passa a seguir um fluxo guiado, reduzindo ruído entre cliente, atendimento e cozinha.',
                 'image' => 'img/produtos-celular.png',
-                'image_alt' => 'Tela de produtos e adicionais da Comanda360',
+                'image_alt' => 'Tela de produtos e adicionais da MesiMenu',
                 'result' => 'Menos retrabalho operacional e mais precisao no que vai para producao.',
                 'items' => [
                     'Escolha de itens com melhor orientacao visual',
@@ -380,7 +380,7 @@ final class LandingPageService
                 'title' => 'A equipe acompanha consumo, caixa e fechamento com mais controle',
                 'description' => 'Mesa, comanda e movimentacao financeira deixam de ficar soltas e passam a seguir um fluxo operacional mais legivel para quem atende e para quem gere.',
                 'image' => 'img/caixa-celular.png',
-                'image_alt' => 'Controle de caixa e comandas da Comanda360',
+                'image_alt' => 'Controle de caixa e comandas da MesiMenu',
                 'result' => 'Mais seguranca na operacao diaria e menos dependencia de memoria da equipe.',
                 'items' => [
                     'Abertura e leitura mais clara das comandas',
@@ -394,7 +394,7 @@ final class LandingPageService
                 'title' => 'O recebimento acontece com mais seguranca e menos divergencia',
                 'description' => 'Pagamentos, status da comanda e fechamento passam a conversar entre si, diminuindo erro de cobranca e melhorando a leitura do que realmente foi recebido.',
                 'image' => 'img/pagamento-celular.png',
-                'image_alt' => 'Fluxo de pagamentos da Comanda360',
+                'image_alt' => 'Fluxo de pagamentos da MesiMenu',
                 'result' => 'Menos atrito no fechamento e mais confianca no controle financeiro.',
                 'items' => [
                     'PIX e cartao no mesmo ecossistema',
@@ -408,7 +408,7 @@ final class LandingPageService
                 'title' => 'A gestao acompanha indicadores e decide com mais visibilidade',
                 'description' => 'A empresa sai do improviso e passa a ter uma camada visual de acompanhamento para entender desempenho, gargalos e oportunidades de crescimento.',
                 'image' => 'img/estatistica-celular.png',
-                'image_alt' => 'Indicadores e estatisticas da Comanda360',
+                'image_alt' => 'Indicadores e estatisticas da MesiMenu',
                 'result' => 'Mais visibilidade para ajustar operacao, venda e crescimento com base real.',
                 'items' => [
                     'Indicadores para leitura mais rapida da operacao',

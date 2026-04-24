@@ -1,7 +1,7 @@
 {
-  "name": "comanda360",
+  "name": "mesimenu",
   "version": "1.0.0",
-  "description": "Projeto base do Comanda360 em PHP puro com arquitetura MVC modular.",
+  "description": "Projeto base do MesiMenu em PHP puro com arquitetura MVC modular.",
   "main": "index.js",
   "directories": {
     "doc": "doc"
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PaulaFernanda2785/comanda360.git"
+    "url": "git+https://github.com/PaulaFernanda2785/mesimenu.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PaulaFernanda2785/comanda360/issues"
+    "url": "https://github.com/PaulaFernanda2785/mesimenu/issues"
   },
-  "homepage": "https://github.com/PaulaFernanda2785/comanda360#readme",
+  "homepage": "https://github.com/PaulaFernanda2785/mesimenu#readme",
   "dependencies": {
     "qrcode": "^1.5.4"
   }

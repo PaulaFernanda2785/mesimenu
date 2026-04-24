@@ -51,7 +51,7 @@ final class DigitalMenuService
             'main_card_color' => '#0f172a',
             'logo_path' => '',
             'banner_path' => '',
-            'footer_text' => 'Comanda360 - Atendimento digital da mesa.',
+            'footer_text' => 'MesiMenu - Atendimento digital da mesa.',
         ];
     }
 

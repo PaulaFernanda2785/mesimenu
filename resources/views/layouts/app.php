@@ -10,7 +10,7 @@ $themeMainCard = (string) ($appShellTheme['main_card_color'] ?? '#0f172a');
 $companyName = trim((string) ($appShellTheme['company_name'] ?? 'Estabelecimento'));
 $brandTitle = trim((string) ($appShellTheme['title'] ?? 'Painel da Empresa'));
 $brandDescription = trim((string) ($appShellTheme['description'] ?? ''));
-$footerText = trim((string) ($appShellTheme['footer_text'] ?? 'Comanda360 - Sistema de gestão de atendimento e vendas.'));
+$footerText = trim((string) ($appShellTheme['footer_text'] ?? 'MesiMenu - Sistema de gestao de atendimento e vendas.'));
 
 $logoPath = trim((string) ($appShellTheme['logo_path'] ?? ''));
 $bannerPath = trim((string) ($appShellTheme['banner_path'] ?? ''));
@@ -89,8 +89,8 @@ $routeMatches = static function (string $path, array $routes): bool {
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title ?? 'Sistema') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="<?= htmlspecialchars(base_url('/img/comanda360.ico')) ?>">
-    <link rel="shortcut icon" href="<?= htmlspecialchars(base_url('/img/comanda360.ico')) ?>">
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars(base_url('/img/logo-mesimenu.png')) ?>">
+    <link rel="shortcut icon" href="<?= htmlspecialchars(base_url('/img/logo-mesimenu.png')) ?>">
     <style>
         :root{
             --theme-primary:<?= htmlspecialchars($themePrimary) ?>;
@@ -494,7 +494,7 @@ $routeMatches = static function (string $path, array $routes): bool {
                 <?php endif; ?>
             </div>
             <p class="brand-title"><?= htmlspecialchars($brandTitle !== '' ? $brandTitle : $companyName) ?></p>
-            <h2 class="brand-headline">Comanda360</h2>
+            <h2 class="brand-headline">MesiMenu</h2>
             <p class="brand-company"><?= htmlspecialchars($companyName) ?></p>
         </div>
 
@@ -579,7 +579,7 @@ $routeMatches = static function (string $path, array $routes): bool {
 <script>
 (() => {
     const idleTimeoutMs = <?= (int) $idleTimeoutSeconds ?> * 1000;
-    const scrollStateKey = 'comanda360:scroll-restore';
+    const scrollStateKey = 'mesimenu:scroll-restore';
     const findSubmitControls = (form) => Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
     const getScrollTarget = () => {
         const main = document.querySelector('main');
