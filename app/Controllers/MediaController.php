@@ -86,15 +86,24 @@ final class MediaController extends Controller
                     'Cache-Control' => 'public, max-age=31536000',
                 ]);
             } catch (RuntimeException $svgError) {
-                return Response::make(
-                    $this->buildFailureSvg('Falha ao gerar QR em SVG.'),
-                    200,
-                    [
+                try {
+                    $svgContent = $this->loadOrGenerateRemoteQr($rawData, $size, $cacheDir, $cacheSvgPath, 'svg');
+                    return Response::make($svgContent, 200, [
                         'Content-Type' => 'image/svg+xml; charset=UTF-8',
-                        'Cache-Control' => 'no-store',
-                        'X-QR-Fallback' => 'error-svg',
-                    ]
-                );
+                        'Cache-Control' => 'public, max-age=31536000',
+                        'X-QR-Fallback' => 'remote-svg',
+                    ]);
+                } catch (RuntimeException $remoteSvgError) {
+                    return Response::make(
+                        $this->buildFailureSvg('Falha ao gerar QR em SVG.'),
+                        200,
+                        [
+                            'Content-Type' => 'image/svg+xml; charset=UTF-8',
+                            'Cache-Control' => 'no-store',
+                            'X-QR-Fallback' => 'error-svg',
+                        ]
+                    );
+                }
             }
         }
 
@@ -113,6 +122,18 @@ final class MediaController extends Controller
             }
         } catch (RuntimeException $pngError) {
             try {
+                $content = $this->loadOrGenerateRemoteQr($rawData, $size, $cacheDir, $cachePngPath, 'png');
+
+                return Response::make($content, 200, [
+                    'Content-Type' => 'image/png',
+                    'Cache-Control' => 'public, max-age=31536000',
+                    'X-QR-Fallback' => 'remote-png',
+                ]);
+            } catch (RuntimeException $remotePngError) {
+                // Continue to SVG fallback below.
+            }
+
+            try {
                 $svgContent = $this->loadOrGenerateQrSvg($rawData, $size, $cacheDir, $cacheSvgPath);
 
                 return Response::make($svgContent, 200, [
@@ -121,15 +142,25 @@ final class MediaController extends Controller
                     'X-QR-Fallback' => 'svg',
                 ]);
             } catch (RuntimeException $svgError) {
-                return Response::make(
-                    $this->buildFailureSvg('Falha ao gerar QR (PNG e SVG).'),
-                    200,
-                    [
+                try {
+                    $svgContent = $this->loadOrGenerateRemoteQr($rawData, $size, $cacheDir, $cacheSvgPath, 'svg');
+
+                    return Response::make($svgContent, 200, [
                         'Content-Type' => 'image/svg+xml; charset=UTF-8',
-                        'Cache-Control' => 'no-store',
-                        'X-QR-Fallback' => 'error-svg',
-                    ]
-                );
+                        'Cache-Control' => 'public, max-age=31536000',
+                        'X-QR-Fallback' => 'remote-svg',
+                    ]);
+                } catch (RuntimeException $remoteSvgError) {
+                    return Response::make(
+                        $this->buildFailureSvg('Falha ao gerar QR (PNG e SVG).'),
+                        200,
+                        [
+                            'Content-Type' => 'image/svg+xml; charset=UTF-8',
+                            'Cache-Control' => 'no-store',
+                            'X-QR-Fallback' => 'error-svg',
+                        ]
+                    );
+                }
             }
         }
 
@@ -209,6 +240,27 @@ final class MediaController extends Controller
         }
 
         return $svgContent;
+    }
+
+    private function loadOrGenerateRemoteQr(string $payload, int $size, string $cacheDir, string $cachePath, string $format): string
+    {
+        if (!is_file($cachePath)) {
+            if (!is_dir($cacheDir) && !mkdir($cacheDir, 0775, true) && !is_dir($cacheDir)) {
+                throw new RuntimeException('Nao foi possivel preparar o diretorio de cache do QR.');
+            }
+
+            $content = $this->downloadQrFromRemoteService($payload, $size, $format);
+            if (file_put_contents($cachePath, $content) === false) {
+                throw new RuntimeException('Nao foi possivel gravar o QR remoto no cache.');
+            }
+        }
+
+        $cachedContent = file_get_contents($cachePath);
+        if ($cachedContent === false || $cachedContent === '') {
+            throw new RuntimeException('Falha ao ler o QR remoto em cache.');
+        }
+
+        return $cachedContent;
     }
 
     private function servePublicImage(string $rawPath, array $allowedPatterns): Response
@@ -343,6 +395,65 @@ SVG;
                 $error !== '' ? 'Falha ao gerar QR internamente: ' . $error : 'Falha ao gerar QR internamente.'
             );
         }
+    }
+
+    private function downloadQrFromRemoteService(string $payload, int $size, string $format): string
+    {
+        if ($format !== 'png' && $format !== 'svg') {
+            throw new RuntimeException('Formato de QR remoto invalido.');
+        }
+
+        $url = 'https://api.qrserver.com/v1/create-qr-code/?size=' .
+            $size . 'x' . $size .
+            '&format=' . rawurlencode($format) .
+            '&data=' . rawurlencode($payload);
+
+        $content = false;
+        if (function_exists('curl_init')) {
+            $curl = curl_init($url);
+            if ($curl !== false) {
+                curl_setopt_array($curl, [
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_CONNECTTIMEOUT => 5,
+                    CURLOPT_TIMEOUT => 12,
+                    CURLOPT_FOLLOWLOCATION => false,
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_SSL_VERIFYHOST => 2,
+                    CURLOPT_USERAGENT => 'MesiMenu QR Generator',
+                ]);
+                $content = curl_exec($curl);
+                $status = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+                curl_close($curl);
+
+                if ($status < 200 || $status >= 300) {
+                    $content = false;
+                }
+            }
+        }
+
+        if ($content === false && filter_var((string) ini_get('allow_url_fopen'), FILTER_VALIDATE_BOOLEAN)) {
+            $context = stream_context_create([
+                'http' => [
+                    'method' => 'GET',
+                    'timeout' => 12,
+                    'header' => "User-Agent: MesiMenu QR Generator\r\n",
+                ],
+            ]);
+            $content = @file_get_contents($url, false, $context);
+        }
+
+        if (!is_string($content) || $content === '') {
+            throw new RuntimeException('Falha ao gerar QR por servico remoto.');
+        }
+
+        if ($format === 'svg' && !str_contains(substr(ltrim($content), 0, 500), '<svg')) {
+            throw new RuntimeException('Servico remoto nao retornou SVG valido.');
+        }
+        if ($format === 'png' && substr($content, 0, 8) !== "\x89PNG\r\n\x1a\n") {
+            throw new RuntimeException('Servico remoto nao retornou PNG valido.');
+        }
+
+        return $content;
     }
 
     private function resolveNodeBinary(): string

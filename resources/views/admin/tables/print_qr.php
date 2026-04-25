@@ -11,9 +11,13 @@ $qrPayload = trim((string) ($context['qr_payload'] ?? ''));
 $token = trim((string) ($tableData['qr_code_token'] ?? ''));
 $logoPath = trim((string) ($context['company_logo_path'] ?? ''));
 $logoUrl = $logoPath !== '' ? company_image_url($logoPath) : '';
-$qrImageUrl = $qrPayload !== ''
+$qrLocalImageUrl = $qrPayload !== ''
     ? base_url('/media/table-qr?size=760&data=' . rawurlencode($qrPayload))
     : '';
+$qrRemoteImageUrl = $qrPayload !== ''
+    ? 'https://api.qrserver.com/v1/create-qr-code/?size=760x760&format=png&data=' . rawurlencode($qrPayload)
+    : '';
+$qrImageUrl = $qrRemoteImageUrl !== '' ? $qrRemoteImageUrl : $qrLocalImageUrl;
 ?>
 
 <style>
@@ -98,7 +102,13 @@ $qrImageUrl = $qrPayload !== ''
         <div class="qr-wrapper">
             <div class="qr-image-box">
                 <?php if ($qrImageUrl !== ''): ?>
-                    <img src="<?= htmlspecialchars($qrImageUrl) ?>" alt="QR Code da mesa">
+                    <img
+                        src="<?= htmlspecialchars($qrImageUrl) ?>"
+                        alt="QR Code da mesa"
+                        <?php if ($qrLocalImageUrl !== '' && $qrLocalImageUrl !== $qrImageUrl): ?>
+                            onerror="this.onerror=null;this.src='<?= htmlspecialchars($qrLocalImageUrl, ENT_QUOTES, 'UTF-8') ?>';"
+                        <?php endif; ?>
+                    >
                 <?php else: ?>
                     <span>Não foi possível gerar a imagem do QR.</span>
                 <?php endif; ?>

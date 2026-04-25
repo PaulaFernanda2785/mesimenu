@@ -66,10 +66,10 @@ $footerText = trim((string) ($theme['footer_text'] ?? 'MesiMenu - Atendimento di
         }
         .dm-brand{display:flex;align-items:center;gap:12px;min-width:0}
         .dm-logo{
-            width:52px;height:52px;border-radius:16px;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.6);
+            width:68px;height:52px;flex:0 0 68px;border-radius:16px;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.6);padding:6px;
             display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--dm-secondary);box-shadow:inset 0 0 0 1px rgba(148,163,184,.14)
         }
-        .dm-logo img{width:100%;height:100%;object-fit:cover}
+        .dm-logo img{width:100%;height:100%;object-fit:contain}
         .dm-brand-copy{display:grid;gap:4px;min-width:0}
         .dm-brand-copy strong{font-size:15px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .dm-brand-copy span{font-size:12px;color:var(--dm-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -135,6 +135,7 @@ $footerText = trim((string) ($theme['footer_text'] ?? 'MesiMenu - Atendimento di
             .dm-topbar{padding:10px 12px;flex-direction:column;align-items:stretch}
             .dm-card,.dm-hero{padding:16px}
             .dm-brand{align-items:flex-start}
+            .dm-logo{width:64px;height:50px;flex-basis:64px}
             .dm-topbar-badge{align-self:flex-start;max-width:100%}
             .dm-brand-copy strong,.dm-brand-copy span,.dm-topbar-badge{white-space:normal}
         }
