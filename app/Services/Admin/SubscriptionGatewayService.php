@@ -9,6 +9,8 @@ use App\Repositories\SubscriptionPaymentRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Services\Billing\MercadoPagoGateway;
 use App\Services\Shared\CompanyAccessProvisioningService;
+use DateTimeImmutable;
+use DateTimeZone;
 
 final class SubscriptionGatewayService
 {
@@ -125,8 +127,19 @@ final class SubscriptionGatewayService
 
         $frequencyType = ((string) ($subscription['billing_cycle'] ?? 'mensal')) === 'anual' ? 'months' : 'months';
         $frequency = ((string) ($subscription['billing_cycle'] ?? 'mensal')) === 'anual' ? 12 : 1;
-        $startsAt = trim((string) ($subscription['starts_at'] ?? ''));
-        $startDate = $startsAt !== '' ? date('c', strtotime($startsAt)) : date('c');
+        $startDate = $this->formatRecurringStartDate((string) ($subscription['starts_at'] ?? ''));
+        $endDate = $this->formatRecurringEndDate((string) ($subscription['ends_at'] ?? ''), $startDate);
+        $autoRecurring = [
+            'frequency' => $frequency,
+            'frequency_type' => $frequencyType,
+            'start_date' => $startDate,
+            'transaction_amount' => round((float) ($subscription['amount'] ?? 0), 2),
+            'currency_id' => 'BRL',
+        ];
+
+        if ($endDate !== null) {
+            $autoRecurring['end_date'] = $endDate;
+        }
 
         $response = $this->gateway->createSubscription([
             'reason' => 'Assinatura ' . trim((string) ($subscription['plan_name'] ?? 'MesiMenu')),
@@ -136,13 +149,7 @@ final class SubscriptionGatewayService
                 ? $backUrl
                 : app_url('/admin/dashboard?section=subscription'),
             'status' => 'pending',
-            'auto_recurring' => [
-                'frequency' => $frequency,
-                'frequency_type' => $frequencyType,
-                'start_date' => $startDate,
-                'transaction_amount' => round((float) ($subscription['amount'] ?? 0), 2),
-                'currency_id' => 'BRL',
-            ],
+            'auto_recurring' => $autoRecurring,
         ]);
 
         $this->subscriptions->updateGatewayProfile((int) $subscription['id'], [
@@ -425,6 +432,54 @@ final class SubscriptionGatewayService
         }
 
         return null;
+    }
+
+    private function formatRecurringStartDate(string $value): string
+    {
+        $now = new DateTimeImmutable('now');
+        $date = $this->parseDateTime($value) ?? $now;
+
+        if ($date <= $now) {
+            $date = $now->modify('+5 minutes');
+        }
+
+        return $this->formatMercadoPagoDate($date);
+    }
+
+    private function formatRecurringEndDate(string $value, string $startDate): ?string
+    {
+        $date = $this->parseDateTime($value);
+        if ($date === null) {
+            return null;
+        }
+
+        $start = $this->parseDateTime($startDate);
+        if ($start !== null && $date <= $start) {
+            return null;
+        }
+
+        return $this->formatMercadoPagoDate($date);
+    }
+
+    private function parseDateTime(string $value): ?DateTimeImmutable
+    {
+        $normalized = trim($value);
+        if ($normalized === '') {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($normalized);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function formatMercadoPagoDate(DateTimeImmutable $date): string
+    {
+        return $date
+            ->setTimezone(new DateTimeZone('UTC'))
+            ->format('Y-m-d\TH:i:s.v\Z');
     }
 
     private function isValidCpf(string $cpf): bool
