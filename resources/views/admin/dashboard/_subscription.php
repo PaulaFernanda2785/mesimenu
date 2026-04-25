@@ -402,7 +402,7 @@ $historyTo = (int) ($subscriptionHistoryPagination['to'] ?? 0);
                                         </div>
                                     <?php else: ?>
                                         <div class="sp-actions">
-                                            <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/subscription/gateway/checkout')) ?>">
+                                            <form method="POST" action="<?= htmlspecialchars(base_url('/admin/dashboard/subscription/gateway/checkout')) ?>" target="_blank" rel="noopener">
                                                 <?= form_security_fields('dashboard.subscription.gateway.checkout') ?>
                                                 <input type="hidden" name="return_query" value="<?= htmlspecialchars($returnSubscriptionQuery) ?>">
                                                 <button class="btn" type="submit"><?= htmlspecialchars($subscriptionCardActionLabel) ?></button>

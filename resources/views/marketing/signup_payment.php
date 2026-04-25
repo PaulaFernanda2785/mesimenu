@@ -564,7 +564,7 @@ $stateHint = trim((string) ($paymentState['hint'] ?? ''));
                         <h3>Cartão</h3>
                         <p>Use cartão para concluir a assinatura com recorrência no ciclo mensal ou anual escolhido.</p>
                         <div class="payment-actions">
-                            <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/cartao')) ?>">
+                            <form method="POST" action="<?= htmlspecialchars(base_url('/cadastro/pagamento/cartao')) ?>" target="_blank" rel="noopener">
                                 <?= form_security_fields('marketing.public.payment.card') ?>
                                 <button class="btn btn-dark" type="submit">Pagar com cartão</button>
                             </form>
